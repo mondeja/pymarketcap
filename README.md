@@ -35,7 +35,7 @@ or install from PyPi
 >>> coinmarketcap.ticker('ethereum')
 
 # Add VERBOSE=True or V=True for a string response, like this:
->>> coinmarketcap.ticker('STEEM', VERBOSE=True)
+>>> coinmarketcap.ticker('STEEM', V=True)
 
 # This is for receive all the currencies in a string
 >>> coinmarketcap.ticker(VERBOSE=True)
@@ -187,7 +187,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```
   Apache v2.0 License
-  Copyright 2017 ¡lvaro MondÈjar
+  Copyright 2017 √Ålvaro Mond√©jar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
