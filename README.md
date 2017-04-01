@@ -26,7 +26,7 @@ or install from PyPi
 - **`GET /v1/ticker/currency`**
 
 ```python
->>> from pymarketcap import * # Only exits the class pymarketcap
+>>> from pymarketcap import *           # Only exits the class pymarketcap
 >>> coinmarketcap = pymarketcap()
 >>> coinmarketcap.ticker(<currency>)
 # <currency> can be passed through 'ethereum' or 'ETH' and returns in json
@@ -184,7 +184,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```
   Apache v2.0 License
-  Copyright 2017 ¡lvaro MondÈjar
+  Copyright 2017 √Ålvaro Mond√©jar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
