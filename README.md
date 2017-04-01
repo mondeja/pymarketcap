@@ -75,19 +75,6 @@ or install from PyPi
 ```
 
 
-
-```python
->>> coinmarketcap.markets('ETH', v=True)
-{
-  total_market_cap_usd: 8280726727,
-  total_24h_volume_usd: 108644044,
-  bitcoin_percentage_of_market_cap: 81.77,
-  active_currencies: 690,
-  active_assets: 57,
-  active_markets: 1902
-}		
-```
-
 ### Web Parser methods
 
 #### [Currency markets](http://coinmarketcap.com/currencies/<currency>/#markets)
@@ -125,6 +112,7 @@ or install from PyPi
 ]
 ```
 
+
 #### [Global ranks](http://www.coinmarketcap.com/gainers-losers/)
 
 - **`GET http://www.coinmarketcap.com/gainers-losers/`**
@@ -152,7 +140,6 @@ or install from PyPi
       ...
 
 # You can pass '7d', '24h', '1h', 'gainers' and 'losers' for filter responses:
-
 coinmarketcap.ranks('gainers', '1h', V=True)
 
 {
