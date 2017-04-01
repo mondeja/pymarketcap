@@ -26,10 +26,10 @@ or install from PyPi
 - **`GET /v1/ticker/currency`**
 
 ```python
->>> from pymarketcap import *
+>>> from pymarketcap import * # Only exits the class pymarketcap
 >>> coinmarketcap = pymarketcap()
 >>> coinmarketcap.ticker(<currency>)
-# <currency> can be passed through 'ethereum' or 'ETH' and responses a dictionary in json
+# <currency> can be passed through 'ethereum' or 'ETH' and returns in json
 
 >>> coinmarketcap.ticker('ETH')
 >>> coinmarketcap.ticker('ethereum')
@@ -74,7 +74,7 @@ or install from PyPi
 ]			
 ```
 
-- **`GET http://coinmarketcap.com/currencies<currency>/#markets`**
+- **`GET http://coinmarketcap.com/currencies/<currency>/#markets`**
 
 ```python
 >>> coinmarketcap.markets('ETH', v=True)
@@ -90,9 +90,9 @@ or install from PyPi
 
 ### Web Parser methods
 
-##### Currency markets
+#### [Currency markets](http://coinmarketcap.com/currencies/<currency>/#markets)
 
-http://coinmarketcap.com/currencies/<currency>/#markets
+
 
 ```python
 >>> coinmarketcap.markets('ETH', V=True)
@@ -124,9 +124,9 @@ http://coinmarketcap.com/currencies/<currency>/#markets
 ]
 ```
 
-##### Global ranks
+#### [Global ranks](http://www.coinmarketcap.com/gainers-losers/)
 
-http://www.coinmarketcap.com/gainers-losers/
+
 
 ```python
 >>> coinmarketcap.ranks(V=True)
@@ -184,7 +184,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```
   Apache v2.0 License
-  Copyright 2017 √Ålvaro Mond√©jar
+  Copyright 2017 ¡lvaro MondÈjar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
