@@ -75,6 +75,21 @@ or install from PyPi
 ```
 
 
+- **`GET /v1/global/`**
+
+```python
+>>> coinmarketcap.stats(VERBOSE=True)
+{
+  total_market_cap_usd: 8280726727,
+  total_24h_volume_usd: 108644044,
+  bitcoin_percentage_of_market_cap: 81.77,
+  active_currencies: 690,
+  active_assets: 57,
+  active_markets: 1902
+}		
+```
+
+
 ### Web Parser methods
 
 #### [Currency markets](http://coinmarketcap.com/currencies/<currency>/#markets)
@@ -112,20 +127,6 @@ or install from PyPi
 ]
 ```
 
-
-- **`GET /v1/global/`**
-
-```python
->>> coinmarketcap.stats(VERBOSE=True)
-{
-  total_market_cap_usd: 8280726727,
-  total_24h_volume_usd: 108644044,
-  bitcoin_percentage_of_market_cap: 81.77,
-  active_currencies: 690,
-  active_assets: 57,
-  active_markets: 1902
-}		
-```
 
 #### [Global ranks](http://www.coinmarketcap.com/gainers-losers/)
 
