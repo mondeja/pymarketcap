@@ -74,7 +74,7 @@ or install from PyPi
 ]			
 ```
 
-- **`GET http://coinmarketcap.com/currencies/<currency>/#markets`**
+
 
 ```python
 >>> coinmarketcap.markets('ETH', v=True)
@@ -92,6 +92,7 @@ or install from PyPi
 
 #### [Currency markets](http://coinmarketcap.com/currencies/<currency>/#markets)
 
+- **`GET http://coinmarketcap.com/currencies/<currency>/#markets`**
 
 
 ```python
@@ -126,7 +127,7 @@ or install from PyPi
 
 #### [Global ranks](http://www.coinmarketcap.com/gainers-losers/)
 
-
+- **`GET http://www.coinmarketcap.com/gainers-losers/`**
 
 ```python
 >>> coinmarketcap.ranks(V=True)
@@ -150,7 +151,7 @@ or install from PyPi
       },
       ...
 
-You can pass '7d', '24h', '1h', 'gainers' and 'losers' for filter responses:
+# You can pass '7d', '24h', '1h', 'gainers' and 'losers' for filter responses:
 
 coinmarketcap.ranks('gainers', '1h', V=True)
 
@@ -184,7 +185,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```
   Apache v2.0 License
-  Copyright 2017 √Ålvaro Mond√©jar
+  Copyright 2017 ¡lvaro MondÈjar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
