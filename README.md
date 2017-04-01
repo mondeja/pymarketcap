@@ -1,5 +1,3 @@
-# -*- coding: cp1252 -*-
-
 <h1>pymarketcap</h1>
 
 [![PyPi Version](http://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap/)
@@ -186,7 +184,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```
   Apache v2.0 License
-  Copyright 2017 ¡lvaro MondÈjar
+  Copyright 2017 √Ålvaro Mond√©jar
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
