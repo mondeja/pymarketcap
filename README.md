@@ -16,7 +16,7 @@ From source use
 
 or install from PyPi
 
-    $ pip install py2marketcap
+    $ pip install pymarketcap
 
 ## Documentation:
 
