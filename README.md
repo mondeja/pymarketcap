@@ -26,7 +26,7 @@ or install from PyPi
 - **`GET /v1/ticker/currency`**
 
 ```python
->>> from pymarketcap import *       # Only exits the class Pymarketcap
+>>> from pymarketcap import *       # Only contains the class Pymarketcap
 >>> coinmarketcap = Pymarketcap()
 >>> coinmarketcap.ticker(<currency>)
 # <currency> can be passed through 'ethereum' or 'ETH' and returns in json
