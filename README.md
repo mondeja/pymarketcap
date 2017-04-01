@@ -2,7 +2,7 @@
 
 [![PyPi Version](http://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap/)
 
-**pymarketcap** is an APACHE licensed library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and web. Consist of a parser built on BeautifulSoup and a API wrapper. If you only want the API wrapper only go to [here](https://github.com/mondeja/coinmarketcap-api).
+**pymarketcap** is an APACHE licensed library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and web. Consist of a parser built on BeautifulSoup and a API wrapper. If you only want the API wrapper, go to [here](https://github.com/mondeja/coinmarketcap-api).
 
 ## Installation:
 
