@@ -14,10 +14,6 @@ From source use
 
     $ python setup.py install
 
-or install from PyPi
-
-    $ pip install pymarketcap
-
 ## Documentation:
 
 ### API methods
