@@ -38,7 +38,7 @@ def _convert(currency):
             exc = "The currency %s isn't in coinmarketcap" % currency
             raise NameError(exc)
 
-class pymarketcap(object):
+class Pymarketcap(object):
     def __init__(self, base_url='https://'):
         self.base_url = base_url
         self.opener = urllib2.build_opener()
