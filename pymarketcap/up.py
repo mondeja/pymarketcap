@@ -4,9 +4,9 @@
 ''' Return a dic with all the available currencies
 and their symbols correspondences '''
 def get_currencies():
-        from core import pymarketcap
+        from core import Pymarketcap
         dic = {}
-        for currency in pymarketcap()._up():
+        for currency in Pymarketcap()._up():
             iid = currency.get('id')
             symbol = currency.get('symbol')
             dic[symbol] = iid
