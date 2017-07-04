@@ -161,7 +161,10 @@ class Pymarketcap(object):
                         pair = pair.replace(' *', '')
                 elif n == 10:
                     percent_volume = float(nav.replace('%', ''))
-            market = {'source': source, 'pair': pair, '24h_volume_usd': volume_24h, 'price_usd': price, 'percent_volume': percent_volume}
+            market = {'source': source, 'pair': pair, 
+                      '24h_volume_usd': volume_24h, 
+                      'price_usd': price, 
+                      'percent_volume': percent_volume}
             markets.append(market)
             
         if VERBOSE == True or V == True:
@@ -205,7 +208,9 @@ class Pymarketcap(object):
                         percent = float(str(g.string).replace('%', ''))
                     else:
                         percent = float(str(unicode(g.string)).replace('%', ''))
-            currency = {'name': name, 'symbol': symbol, '24h_volume_usd': volume_24h, 'price_usd': price, 'percent_change': percent}
+            currency = {'name': name, 'symbol': symbol, 
+                        '24h_volume_usd': volume_24h,
+                        'price_usd': price, 'percent_change': percent}
             final_list.append(currency)
 
         return final_list
