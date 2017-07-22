@@ -177,7 +177,7 @@ class Pymarketcap(object):
         """ Internal function for get gainers and losers """
         
         url = 'http://coinmarketcap.com/gainers-losers/'
-        req = req = urllib2.urlopen(url)
+        req = urllib2.urlopen(url)
         status_code = req.getcode()
         if status_code == 200:
             html = BeautifulSoup(req.read(), "html.parser")
