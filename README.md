@@ -12,6 +12,8 @@ You need to install BeautifulSoup before:
 
 From source use
 
+    $ git clone https://github.com/mondeja/pymarketcap.git
+    $ cd pymarketcap
     $ python setup.py install
 
 ## Documentation:
