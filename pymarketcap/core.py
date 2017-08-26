@@ -43,8 +43,8 @@ class Pymarketcap(object):
         self.base_url = base_url
         self.opener = urllib2.build_opener()
         self.opener.addheaders.append(('Content-Type', 'application/json'))
-        self.opener.addheaders.append(("""User-agent', 'coinmarketcap - python wrapper and web parser \
-        around coinmarketcap.com (github.com/mondeja/pymarketcap)"""))
+        self.opener.addheaders.append(('User-agent', 'coinmarketcap - python wrapper and web parser \
+        around coinmarketcap.com (github.com/mondeja/pymarketcap)'))
     
     def _api_url(self):
         return 'api.coinmarketcap.com/v1/'
