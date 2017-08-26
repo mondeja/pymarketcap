@@ -39,6 +39,14 @@ From source use
 # This is for receive all the currencies in a string
 >>> coinmarketcap.ticker(VERBOSE=True)
 
+# This is for convert the price in response
+# (Only works if you pass a currency)
+>>> coinmarketcap.ticker('NXT', convert='EUR') 
+
+# This is for limit the amount of currencies:
+# (Only works if you don't pass a currency)
+>>> coinmarketcap.ticker(limit=10)
+
 [
   {
     id: "bitcoin",
