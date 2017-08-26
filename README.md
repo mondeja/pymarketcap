@@ -182,7 +182,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 ...
 ```
 
-#### [Historical data](https://coinmarketcap.com/currencies/btc/historical-data/)
+#### [Historical data](https://coinmarketcap.com/currencies/bitcoin/historical-data/)
 
 - **`GET https://coinmarketcap.com/currencies/steem/historical-data/?start=20170131&end=20170825`**
 
