@@ -182,6 +182,44 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 ...
 ```
 
+#### [Historical data](https://coinmarketcap.com/currencies/btc/historical-data/)
+
+- **`GET https://coinmarketcap.com/currencies/steem/historical-data/?start=20170131&end=20170825`**
+
+```python
+>>> coinmarketcap.historical('STEEM', 20170131, 20170825)
+
+# First argument is the currency. Second and third are start and end 
+#       times for retrieve the data in the form yearmonthday
+
+[
+  {datetime.datetime(2017, 8, 25, 0, 0): {'low': 1.26, 
+                                         'usd_market_cap': 306485000, 
+                                         'open': 1.28, 
+                                         'high': 1.37, 
+                                         'close': 1.37, 
+                                         'usd_volume': 1456350}
+                                         }, 
+  {datetime.datetime(2017, 8, 24, 0, 0): {'low': 1.2, 
+                                         'usd_market_cap': 295147000, 
+                                         'open': 1.23, 
+                                         'high': 1.33, 
+                                         'close': 1.28, 
+                                         'usd_volume': 1958180}
+                                         }, 
+  {datetime.datetime(2017, 8, 23, 0, 0): {'low': 1.19, 
+                                         'usd_market_cap': 289363000, 
+                                         'open': 1.21, 
+                                         'high': 1.31, 
+                                         'close': 1.24, 
+                                         'usd_volume': 2415700}
+                                         }, 
+  ...
+]
+
+```
+
+
 ## License:
 
 ```
