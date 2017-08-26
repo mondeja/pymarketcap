@@ -491,7 +491,12 @@ class Pymarketcap(object):
                                        'volume_24h_usd': volume_24h_usd,
                                        'price_usd': price_usd,
                                        'perc_change': perc_change}
-                        exchange_data['markets'].append(market_data)
+                        exist = False
+                        for _market_data in exchange_data['markets']:
+                            if market_data['rank'] == _market_data['rank']:
+                                exist = True
+                        if exist == False:
+                            exchange_data['markets'].append(market_data)
             else:
                 # Si llegamos de nuevo aquí significa que hemos encontrado
                 # una nueva exchange, por lo tanto, guardamos los datos
@@ -510,7 +515,7 @@ class Pymarketcap(object):
                 # We create a dict where we will save the markets data
                 exchange_data['name'] = exchange
                 exchange_data['markets'] = []
-                
+
         if VERBOSE == True or V == True:
             from json import dumps
             return dumps(response, indent=2)
