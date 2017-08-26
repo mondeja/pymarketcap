@@ -15,7 +15,7 @@ From source use
 
     $ git clone https://github.com/mondeja/pymarketcap.git
     $ cd pymarketcap
-    $ python setup.py install
+    $ python3 setup.py install
 
 ## Documentation:
 
@@ -302,6 +302,8 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 ```python
 >>> coinmarketcap.exchanges(limit=3)
+
+# Admits an argument for limit the amount of exchanges (default == 50)
 
 [
   {'rank': 1, 
