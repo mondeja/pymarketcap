@@ -184,7 +184,7 @@ coinmarketcap.ranks('gainers', '1h', V=True)
 
 #### [Historical data](https://coinmarketcap.com/currencies/bitcoin/historical-data/)
 
-- **`GET https://coinmarketcap.com/currencies/steem/historical-data/?start=20170131&end=20170825`**
+- **`GET https://coinmarketcap.com/currencies/<currency>/historical-data/?start=<start_time>&end=<end_time>`**
 
 ```python
 >>> coinmarketcap.historical('STEEM', 20170131, 20170825)
@@ -215,6 +215,142 @@ coinmarketcap.ranks('gainers', '1h', V=True)
                                          'usd_volume': 2415700}
                                          }, 
   ...
+]
+
+```
+
+#### [Recently added](https://coinmarketcap.com/new/)
+
+- **`GET https://coinmarketcap.com/new/`**
+
+```python
+>>> coinmarketcap.recently()
+
+
+[
+  {'days_ago': 1, 
+  'price_usd': 0.150346, 
+  'market_cap': '?', 
+  'volume_24h_usd': 9154, 
+  'name': 'AdCoin', 
+  'symbol': 'ACC', 
+  'mineable': False, 
+  'circulating_supply': '?'}, 
+  
+  {'days_ago': 2, 
+  'price_usd': 0.029002, 
+  'market_cap': '?', 
+  'volume_24h_usd': 13658, 
+  'name': 'OX Fina', 
+  'symbol': 'OX', 
+  'mineable': True, 
+  'circulating_supply': '?'},
+  
+  {'days_ago': 2, 
+  'price_usd': 4.3e-05, 
+  'market_cap': '?', 
+  'volume_24h_usd': 4945, 
+  'name': 'Protean', 
+  'symbol': 'PRN', 
+  'mineable': True, 
+  'circulating_supply': '?'},
+  
+  ...
+]
+
+```
+
+
+#### [Exchange](https://coinmarketcap.com/exchanges/poloniex/)
+
+- **`GET https://coinmarketcap.com/exchanges/<exchange>/`**
+
+```python
+>>> coinmarketcap.exchange('poloniex')
+
+
+[
+  {'perc_volume': 32.08, 
+  'price_usd': 136.66, 
+  'name': 'Monero', 
+  'volume_24h_usd': 124742000, 
+  'market': 'XMR/BTC', 
+  'volume_rank': 1}, 
+  
+  {'perc_volume': 8.17, 
+  'price_usd': 328.77, 
+  'name': 'Ethereum', 
+  'volume_24h_usd': 31765800, 
+  'market': 'ETH/BTC', 
+  'volume_rank': 2},
+  
+  {'perc_volume': 7.94, 
+  'price_usd': 0.210747, 
+  'name': 'Ripple', 
+  'volume_24h_usd': 30864200, 
+  'market': 'XRP/BTC', 
+  'volume_rank': 3},
+  
+  ...
+]
+```
+
+
+#### [Exchanges](https://coinmarketcap.com/exchanges/volume/24-hour/all/)
+
+- **`GET https://coinmarketcap.com/exchanges/volume/24-hour/all/`**
+
+```python
+>>> coinmarketcap.exchanges(limit=3)
+
+[
+  {'rank': 1, 
+  'markets': [
+               {'rank': 1, 
+               'price_usd': 377.74, 
+               'volume_24h_usd': 134254000, 
+               'perc_change': 30.56, 
+               'market': 'DASH/KRW'}, 
+               
+               {'rank': 2, 
+               'price_usd': 0.21399, 
+               'volume_24h_usd': 80827100, 
+               'perc_change': 18.4, 
+               'market': 'XRP/KRW'}, 
+               
+               {'rank': 3, 
+               'price_usd': 333.56, 
+               'volume_24h_usd': 75882000, 
+               'perc_change': 17.27, 
+               'market': 'ETH/KRW'}, 
+               
+               {'rank': 4, 
+               'price_usd': 633.5, 
+               'volume_24h_usd': 62741200, 
+               'perc_change': 14.28, 
+               'market': 'BCH/KRW'}, 
+               
+               {'rank': 5, 
+               'price_usd': 4353.8, 
+               'volume_24h_usd': 40231500, 
+               'perc_change': 9.16, 
+               'market': 'BTC/KRW'}, 
+               
+               {'rank': 6, 
+               'price_usd': 51.61, 
+               'volume_24h_usd': 31873700, 
+               'perc_change': 7.26, 
+               'market': 'LTC/KRW'}, 
+               
+               {'rank': 7, 
+               'price_usd': 15.35, 
+               'volume_24h_usd': 13454900, 
+               'perc_change': 3.06, 
+               'market': 'ETC/KRW'}, 
+             ], 
+   'volume_usd': 439264400, 
+   'name': 'bithumb'},
+ ...
 ]
 
 ```
