@@ -277,7 +277,8 @@ class Pymarketcap(object):
 
     def historical(self, currency, start, end, 
                     VERBOSE=False, V=False):
-        """ Function that returns information from markets. It needs a currency as argument.
+        """ Function that returns historical data from currencies. 
+        It needs a currency, start and end times.
         pass VERBOSE=True or V=True for return a more readable string reponse 
 
         Start and end times are passed in a num with the form yearmonthday
@@ -331,3 +332,188 @@ class Pymarketcap(object):
             from json import dumps
             return dumps(response, indent=2)
         return response
+
+    def recently(self, VERBOSE=False, V=False):
+        """ Function that returns recently addeds currencies """
+        from re import sub
+        url = 'https://coinmarketcap.com/new/'
+
+        req = r.get(url)
+        status_code = req.status_code
+        if status_code == 200:
+            html = BeautifulSoup(req.text, "html.parser")
+        else:
+            print("Status Code %d" % status_code)
+            return 'Error'
+        response = []
+        marks = html.find('tbody').find_all('tr')
+        for m in marks:
+            _childs, childs = (m.contents, [])
+            for c in _childs:
+                if c != '\n':
+                    childs.append(c)
+            for n, c in enumerate(childs):
+                if n == 0:
+                    name = str(c.getText().replace('\n', ''))
+                elif n == 1:
+                    symbol = str(c.getText())
+                elif n == 2:
+                    days_ago = int(sub(r'\D', '', c.getText()))
+                elif n == 3:
+                    market_cap = str(c.getText().replace('\n', '').replace(' ', ''))
+                    if '$' in market_cap:
+                        market_cap = market_cap.replace('$', '')
+                        market_cap_usd = int(market_cap.replace(',', ''))
+                elif n == 4:
+                    price_usd = float(c.getText().replace('$', '').replace('\n', '').replace(' ', ''))
+                elif n == 5:
+                    circulating_supply = str(c.getText().replace('\n', '').replace(' ', ''))
+                    if '*' in circulating_supply:
+                        circulating_supply = circulating_supply.replace('*', '')
+                        mineable = True
+                    else:
+                        mineable = False
+                    if '?' not in circulating_supply:
+                        circulating_supply = int(circulating_supply.replace(',', ''))
+                elif n == 6:
+                    volume_24h_usd = c.getText().replace('\n', '').replace('$', '').replace(',', '')
+                    if volume_24h_usd != 'Low Vol':
+                        volume_24h_usd = int(volume_24h_usd)
+                elif n == 7:
+                    percent_change = c.getText().replace(' %', '')
+                    if '?' not in percent_change:
+                        percent_change = float(percent_change)
+            indicators = {'name': name, 'symbol': symbol,
+                        'days_ago': days_ago, 'market_cap': market_cap,
+                        'price_usd': price_usd, 'circulating_supply': circulating_supply,
+                        'mineable': mineable, 'volume_24h_usd': volume_24h_usd}
+            response.append(indicators)
+
+        if VERBOSE == True or V == True:
+            from json import dumps
+            return dumps(response, indent=2)
+        return response
+
+    def exchange(self, name, VERBOSE=False, V=False):
+        """ Function that returns data from a exchange passed as argument """
+        url = 'https://coinmarketcap.com/exchanges/{}/'.format(name)
+
+        req = r.get(url)
+        status_code = req.status_code
+        if status_code == 200:
+            html = BeautifulSoup(req.text, "html.parser")
+        else:
+            print("Status Code %d" % status_code)
+            return 'Error'
+        marks = html.find('table').find_all('tr')
+        response = []
+        for m in marks[1:]:
+            _childs, childs = (m.contents, [])
+            for c in _childs:
+                if c != '\n':
+                    childs.append(c)
+            for n, c in enumerate(childs):
+                if n == 0:
+                    volume_rank = int(c.getText())
+                elif n == 1:
+                    name = str(c.getText())
+                elif n == 2:
+                    market = str(c.getText())
+                elif n == 3:
+                    volume_24h_usd = int(c.getText().replace('$', '').replace(',', ''))
+                elif n == 4:
+                    price_usd = float(c.getText().replace('$', ''))
+                elif n == 5:
+                    perc_volume = float(c.getText().replace('%', ''))
+            indicators = {'volume_rank': volume_rank,
+                          'name': name,
+                          'market': market,
+                          'volume_24h_usd': volume_24h_usd,
+                          'price_usd': price_usd,
+                          'perc_volume': perc_volume}
+            response.append(indicators)
+
+        if VERBOSE == True or V == True:
+            from json import dumps
+            return dumps(response, indent=2)
+        return response
+
+    def exchanges(self, limit=50, VERBOSE=False, V=False):
+        """ Function that returns all the exchanges in coninmarketcap
+        rankeds with his larger markets by volumes. Admits an argument
+        for limit the amount of exchanges """
+        from re import sub
+        url = 'https://coinmarketcap.com/exchanges/volume/24-hour/all/'
+
+        req = r.get(url)
+        status_code = req.status_code
+        if status_code == 200:
+            html = BeautifulSoup(req.text, "html.parser")
+        else:
+            print("Status Code %d" % status_code)
+            return 'Error'
+
+        exs = html.find('table').find_all('tr') # Exchanges
+        dating = False
+        response = []
+        for e in exs:
+            try:
+                exchange = e['id']
+            except KeyError:
+                if 'Pair' not in str(e):
+                    if 'Total' in str(e):
+                        total = int(e.getText().replace('$', '').replace(',', '').replace('Total', ''))
+                        exchange_data['volume_usd'] = total
+                    if 'View More' in str(e):
+                        pass
+                    else:
+                        # In this case is market data
+                        _childs, childs = (e.contents, [])
+                        for c in _childs:
+                            if c != '\n' and 'Total' not in str(c) \
+                                        and 'bold text-right volume' not in str(c) \
+                                        and str(c) != '<td></td>':
+                                childs.append(c)
+                        for n, c in enumerate(childs):
+                            if n == 0:
+                                rank = int(c.getText())
+                            elif n == 2:
+                                market = str(c.getText())
+                            elif n == 3:
+                                volume_24h_usd = int(c.getText().replace('$', '').replace(',', ''))
+                            elif n == 4:
+                                price_usd = float(c.getText().replace('$', '').replace(',', ''))
+                            elif n == 5:
+                                perc_change = float(c.getText().replace('%', ''))
+                        
+                        market_data = {'rank': rank,
+                                       'market': market,
+                                       'volume_24h_usd': volume_24h_usd,
+                                       'price_usd': price_usd,
+                                       'perc_change': perc_change}
+                        exchange_data['markets'].append(market_data)
+            else:
+                # Si llegamos de nuevo aquí significa que hemos encontrado
+                # una nueva exchange, por lo tanto, guardamos los datos
+                # de los mercados de la anterior exchange
+                try:
+                    response.append(exchange_data)
+                except UnboundLocalError:
+                    pass
+                else:
+                    if len(response) >= limit:
+                        break
+                # In this case is the exchange name
+                exchange_data = {}
+                rank = int(sub(r'\D', '', e.getText()))
+                exchange_data['rank'] = rank
+                # We create a dict where we will save the markets data
+                exchange_data['name'] = exchange
+                exchange_data['markets'] = []
+                
+        if VERBOSE == True or V == True:
+            from json import dumps
+            return dumps(response, indent=2)
+        return response
+
+
