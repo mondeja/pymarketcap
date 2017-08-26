@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import urllib.request as urllib2
-except ImportError:
-    import urllib2
+import requests as r
 
 from bs4 import BeautifulSoup
 
@@ -41,25 +38,17 @@ class Pymarketcap(object):
     def __init__(self):
         self.base_url = 'https://'
         self.api_url = 'api.coinmarketcap.com/v1/'
-        self.opener = urllib2.build_opener()
-        self.opener.addheaders.append(('Content-Type', 'application/json'))
-        self.opener.addheaders.append(('User-agent', 'coinmarketcap - python wrapper and web parser \
-        around coinmarketcap.com (github.com/mondeja/pymarketcap)'))
     
     def _urljoin(self, *args):
-        """ Internal urljoin function because urlparse.urljoin sucks """
+        """ Internal urljoin function """
         urljoin = "/".join(map(lambda x: str(x).rstrip('/'), args))
         return urljoin
 
     def _up(self, param=None):
         """ Internal function for update symbols currencies """
         url = self._urljoin(self.base_url + self.api_url, 'ticker/')
-        response = self.opener.open(url).read()
-        import json, sys
-        if int(sys.version[0]) < 3:
-            return json.loads(response)
-        else:
-            return json.loads(response.decode('utf-8'))
+        response = r.get(url).json()
+        return response
 
     ''' ####### API METHODS ####### '''
     
@@ -100,16 +89,17 @@ class Pymarketcap(object):
                         url += '&'
                 if limit:
                     url += 'limit={}'.format(str(limit))
-        response = self.opener.open(url).read()
+
+        #response = self.opener.open(url).read()
+        response = r.get(url).json()
+        if currency:
+            response = response[0]
 
         if VERBOSE == True or V == True:
-            return data
+            from json import dumps
+            return dumps(response, indent=2)
         else:
-            import json, sys
-            if int(sys.version[0]) < 2:
-                return json.loads(response)
-            else:
-                return json.loads(response.decode('utf-8'))
+            return response
         
         
     def stats(self, VERBOSE=False, V=False):
@@ -119,15 +109,12 @@ class Pymarketcap(object):
             VERBOSE=True or V=True -> stats() return a string
         """
         url = self._urljoin(self.base_url + self.api_url, 'global/')
-        response = self.opener.open(url).read()
+        response = r.get(url).json()
         if VERBOSE == True or V == True:
-            return response
+            from json import dumps
+            return dumps(response, indent=2)
         else:
-            import json, sys
-            if int(sys.version[0]) > 2:
-                return json.loads(response)
-            else:
-                return json.loads(response.decode('utf-8'))
+            return response
 
     ''' ####### WEB PARSER METHODS ####### '''
     
@@ -137,10 +124,10 @@ class Pymarketcap(object):
 
     def _html(self, currency_id):
         """ Internal function for parse currencies htmls """
-        req = urllib2.urlopen(self._html_url(currency_id))
-        status_code = req.getcode()
+        req = r.get(self._html_url(currency_id))
+        status_code = req.status_code
         if status_code == 200:
-            return BeautifulSoup(req.read(), "html.parser")
+            return BeautifulSoup(req.text, "html.parser")
         else:
             print("Status Code %d" % status_code)
             return 'Error'
@@ -192,10 +179,10 @@ class Pymarketcap(object):
     def _get_ranks(self, query, temp):
         """ Internal function for get gainers and losers """
         url = 'http://coinmarketcap.com/gainers-losers/'
-        req = urllib2.urlopen(url)
-        status_code = req.getcode()
+        req = r.get(url)
+        status_code = req.status_code
         if status_code == 200:
-            html = BeautifulSoup(req.read(), "html.parser")
+            html = BeautifulSoup(req.text, "html.parser")
         else:
             print("Status Code %d" % status_code)
             return 'Error'
@@ -207,9 +194,11 @@ class Pymarketcap(object):
         from sys import version
         for curr in html_rank[1:]:
             for n, g in enumerate(curr.contents):
+                '''
                 if n == 3:
-                    name = str(g.img.getText().replace('\n', ''))
-                elif n == 5:
+                    name = str(g.img.getText())#.replace('\n', ''))
+                '''
+                if n == 5:
                     if int(version[0]) > 2:
                         symbol = str(g.string)
                     else:
@@ -223,7 +212,7 @@ class Pymarketcap(object):
                         percent = float(str(g.string).replace('%', ''))
                     else:
                         percent = float(str(unicode(g.string)).replace('%', ''))
-            currency = {'name': name, 'symbol': symbol, 
+            currency = {'symbol': symbol, #'name': name, 
                         '24h_volume_usd': volume_24h,
                         'price_usd': price, 'percent_change': percent}
             final_list.append(currency)
@@ -286,7 +275,8 @@ class Pymarketcap(object):
         else:
             return response
 
-    def historical(self, currency, start, end, VERBOSE=False, V=False):
+    def historical(self, currency, start, end, 
+                    VERBOSE=False, V=False):
         """ Function that returns information from markets. It needs a currency as argument.
         pass VERBOSE=True or V=True for return a more readable string reponse 
 
@@ -303,15 +293,15 @@ class Pymarketcap(object):
         url = 'http://coinmarketcap.com/currencies/' + currency + '/historical-data/'
         url += '?start={}&end={}'.format(str(start), str(end))
 
-        req = urllib2.urlopen(url)
-        status_code = req.getcode()
+        req = r.get(url)
+        status_code = req.status_code
         if status_code == 200:
-            html = BeautifulSoup(req.read(), "html.parser")
+            html = BeautifulSoup(req.text, "html.parser")
         else:
             print("Status Code %d" % status_code)
             return 'Error'
 
-        response = {}
+        response = []
         marks = html.find('tbody').find_all('tr')
         #print(marks[0])
         for m in marks:
@@ -335,7 +325,7 @@ class Pymarketcap(object):
                     indicators['usd_volume'] = int(c.getText().replace(',', ''))
                 if n == 6:
                     indicators['usd_market_cap'] = int(c.getText().replace(',', ''))
-            response[date] = indicators
+            response.append({date: indicators})
 
         if VERBOSE == True or V == True:
             from json import dumps
