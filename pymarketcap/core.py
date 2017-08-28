@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import requests as r
-
+from decimal import Decimal
 from bs4 import BeautifulSoup
 
 def _reimport(update=False):
@@ -161,7 +161,7 @@ class Pymarketcap(object):
         from sys import version
         for m in marks:
             volume_24h = int(m.find('span', {'class': 'volume'}).getText().replace('$', '').replace(',', ''))
-            price = float(m.find('span', {'class': 'price'}).getText().replace('$', ''))
+            price = Decimal(m.find('span', {'class': 'price'}).getText().replace('$', ''))
             childs = m.contents
             for n, c in enumerate(childs):
                 if int(version[0]) > 2:
@@ -175,7 +175,7 @@ class Pymarketcap(object):
                     if pair[-1] == '*':
                         pair = pair.replace(' *', '')
                 elif n == 10:
-                    percent_volume = float(nav.replace('%', ''))
+                    percent_volume = Decimal(nav.replace('%', ''))
             market = {'source': source, 'pair': pair, 
                       '24h_volume_usd': volume_24h, 
                       'price_usd': price, 
@@ -218,12 +218,12 @@ class Pymarketcap(object):
                 elif n == 7:
                     volume_24h = int(str(g.a.getText()).replace('$', '').replace(',', ''))
                 elif n == 9:
-                    price = float(str(g.a.getText()).replace('$', ''))
+                    price = Decimal(str(g.a.getText()).replace('$', ''))
                 elif n == 11:
                     if int(version[0]) > 2:
-                        percent = float(str(g.string).replace('%', ''))
+                        percent = Decimal(str(g.string).replace('%', ''))
                     else:
-                        percent = float(str(unicode(g.string)).replace('%', ''))
+                        percent = Decimal(str(unicode(g.string)).replace('%', ''))
             currency = {'symbol': symbol, #'name': name, 
                         '24h_volume_usd': volume_24h,
                         'price_usd': price, 'percent_change': percent}
@@ -330,13 +330,13 @@ class Pymarketcap(object):
                     except ValueError:
                         date = datetime.strptime('Jan 01 0001', '%b %d %Y')
                 if n == 1:
-                    indicators['open'] = float(c.getText())
+                    indicators['open'] = Decimal(c.getText())
                 if n == 2:
-                    indicators['high'] = float(c.getText())
+                    indicators['high'] = Decimal(c.getText())
                 if n == 3:
-                    indicators['low'] = float(c.getText())
+                    indicators['low'] = Decimal(c.getText())
                 if n == 4:
-                    indicators['close'] = float(c.getText())
+                    indicators['close'] = Decimal(c.getText())
                 if n == 5:
                     try:
                         indicators['usd_volume'] = int(c.getText().replace(',', ''))
@@ -386,7 +386,7 @@ class Pymarketcap(object):
                         market_cap = market_cap.replace('$', '')
                         market_cap_usd = int(market_cap.replace(',', ''))
                 elif n == 4:
-                    price_usd = float(c.getText().replace('$', '').replace('\n', '').replace(' ', ''))
+                    price_usd = Decimal(c.getText().replace('$', '').replace('\n', '').replace(' ', ''))
                 elif n == 5:
                     circulating_supply = str(c.getText().replace('\n', '').replace(' ', ''))
                     if '*' in circulating_supply:
@@ -403,7 +403,7 @@ class Pymarketcap(object):
                 elif n == 7:
                     percent_change = c.getText().replace(' %', '')
                     if '?' not in percent_change:
-                        percent_change = float(percent_change)
+                        percent_change = Decimal(percent_change)
             indicators = {'name': name, 'symbol': symbol,
                         'days_ago': days_ago, 'market_cap': market_cap,
                         'price_usd': price_usd, 'circulating_supply': circulating_supply,
@@ -443,9 +443,9 @@ class Pymarketcap(object):
                 elif n == 3:
                     volume_24h_usd = int(c.getText().replace('$', '').replace(',', ''))
                 elif n == 4:
-                    price_usd = float(c.getText().replace('$', ''))
+                    price_usd = Decimal(c.getText().replace('$', ''))
                 elif n == 5:
-                    perc_volume = float(c.getText().replace('%', ''))
+                    perc_volume = Decimal(c.getText().replace('%', ''))
             indicators = {'volume_rank': volume_rank,
                           'name': name,
                           'market': market,
@@ -503,9 +503,9 @@ class Pymarketcap(object):
                             elif n == 3:
                                 volume_24h_usd = int(c.getText().replace('$', '').replace(',', ''))
                             elif n == 4:
-                                price_usd = float(c.getText().replace('$', '').replace(',', ''))
+                                price_usd = Decimal(c.getText().replace('$', '').replace(',', ''))
                             elif n == 5:
-                                perc_change = float(c.getText().replace('%', ''))
+                                perc_change = Decimal(c.getText().replace('%', ''))
                         
                         market_data = {'rank': rank,
                                        'market': market,
