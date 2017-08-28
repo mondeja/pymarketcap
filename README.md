@@ -25,7 +25,7 @@ From source use:
 >>> from pymarketcap import *       # Only contains the class Pymarketcap
 >>> coinmarketcap = Pymarketcap()
 >>> coinmarketcap.ticker(<currency>)
-# <currency> can be passed through 'ethereum' or 'ETH' and returns in json
+# <currency> can be passed through 'currency_name' or 'SYMBOL' and returns in json
 
 >>> coinmarketcap.ticker('ETH')
 >>> coinmarketcap.ticker('ethereum')
