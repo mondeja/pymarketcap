@@ -93,7 +93,7 @@ From source use:
 }		
 ```
 
-** Get market symbols **
+- **`Get market symbols`**
 ```python
 coinmarketcap.symbols()
 
