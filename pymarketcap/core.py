@@ -325,7 +325,10 @@ class Pymarketcap(object):
                 if n == 5:
                     indicators['usd_volume'] = int(c.getText().replace(',', ''))
                 if n == 6:
-                    indicators['usd_market_cap'] = int(c.getText().replace(',', ''))
+                    try:
+                        indicators['usd_market_cap'] = int(c.getText().replace(',', ''))
+                    except ValueError:
+                        indicators['usd_market_cap'] = c.getText().replace(',', '')
             response.append({date: indicators})
 
         if VERBOSE == True or V == True:
