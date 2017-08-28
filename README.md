@@ -93,6 +93,15 @@ From source use:
 }		
 ```
 
+** Get market symbols **
+```python
+coinmarketcap.symbols()
+
+['BTC', 'ETH', 'BCH', 'XRP', 'LTC', 'DASH',
+ 'XEM', 'MIOTA', 'XMR', 'NEO', 'ETC'...
+]
+```
+
 
 ### Web Parser methods
 
