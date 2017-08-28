@@ -325,7 +325,10 @@ class Pymarketcap(object):
             indicators = {}
             for n, c in enumerate(childs):
                 if n == 0:
-                    date = datetime.strptime(c.getText().replace(',', ''), '%b %d %Y')
+                    try:
+                        date = datetime.strptime(c.getText().replace(',', ''), '%b %d %Y')
+                    except ValueError:
+                        date = datetime.strptime('Jan 01 0001', '%b %d %Y')
                 if n == 1:
                     indicators['open'] = float(c.getText())
                 if n == 2:
