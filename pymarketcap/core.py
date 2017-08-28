@@ -338,7 +338,10 @@ class Pymarketcap(object):
                 if n == 4:
                     indicators['close'] = float(c.getText())
                 if n == 5:
-                    indicators['usd_volume'] = int(c.getText().replace(',', ''))
+                    try:
+                        indicators['usd_volume'] = int(c.getText().replace(',', ''))
+                    except ValueError:
+                        indicators['usd_volume'] = c.getText().replace(',', '')
                 if n == 6:
                     try:
                         indicators['usd_market_cap'] = int(c.getText().replace(',', ''))
