@@ -1,7 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from distutils.core import setup
+
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
 
 setup(
     name = 'pymarketcap',
@@ -15,4 +18,5 @@ setup(
     description = 'Python3 API and web scraper for coinmarketcap.com.',
     long_description = open('README.md','r').read(),
     keywords = ['coinmarketcap', 'cryptocurrency', 'API', 'wrapper', 'scraper', 'json', 'BTC', 'Bitcoin'],
+    install_requires = requirements
 )
