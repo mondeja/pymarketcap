@@ -49,6 +49,18 @@ class Pymarketcap(object):
         url = self._urljoin(self.base_url + self.api_url, 'ticker/')
         response = r.get(url).json()
         return response
+    
+    def symbols(self):
+        """ Return all symbols available in coinmarketcap
+
+        :rtype: list
+        """
+        url = self._urljoin(self.base_url + self.api_url, 'ticker/')
+        currencies = r.get(url).json()
+        response = []
+        for c in currencies:
+            response.append(c['symbol'])
+        return response
 
     ''' ####### API METHODS ####### '''
     
