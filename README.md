@@ -10,7 +10,6 @@ From source use:
 ```
     $ git clone https://github.com/mondeja/pymarketcap.git
     $ cd pymarketcap
-    $ pip install -r requirements.txt
     $ python setup.py install
 ``` 
 
