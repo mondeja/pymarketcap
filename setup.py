@@ -13,7 +13,7 @@ setup(
     download_url = 'https://github.com/mondeja/pymarketcap/archive/master.zip',
     author = 'Álvaro Mondéjar <mondejar1994@gmail.com>',
     author_email = 'mondejar1994@gmail.com',
-    license = 'Apache v2.0 License',
+    license = 'BSD License',
     packages = ['pymarketcap'],
     description = 'Python3 API and web scraper for coinmarketcap.com.',
     long_description = open('README.md','r').read(),
