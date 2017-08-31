@@ -15,7 +15,7 @@ From source use:
 ``` 
 
 ## Documentation:
-All methods are self explained in doctrings. Also, you can see all availablee methods at [pymarketcap/docs](https://github.com/mondeja/pymarketcap/blob/master/pymarketcap/docs/README.md).
+All methods are self explained in doctrings. Also, you can see all available methods at [pymarketcap/docs](https://github.com/mondeja/pymarketcap/blob/master/pymarketcap/docs/README.md).
 
 ## Contribute
 
@@ -38,6 +38,7 @@ All methods are self explained in doctrings. Also, you can see all availablee me
 |`exchange`                | ✔ | ✔ | ✔ |
 |`exchanges`               | ✔ | ✔ | ✔ |
 |`_exchange_names`         | ✔ | ✔ | ✔ |
+|`assets`                  | ✘ | ✘ | ✘ |
 
 ## Support
 
