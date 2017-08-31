@@ -1,6 +1,8 @@
-STATS
 COPYING
 setup.py
 README.md
-coinmarketcap/core.py
-coinmarketcap/__init__.py
+pymarketcap/core.py
+pymarketcap/__init__.py
+pymarketcap/tests.py
+pymarketcap/up.py
+pymarketcap/docs/README.md

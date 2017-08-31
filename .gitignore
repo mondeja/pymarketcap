@@ -8,6 +8,7 @@
 *.so
 *.pyc
 __pycache__
+tmp
 
 # Packages #
 ############

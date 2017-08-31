@@ -1,5 +1,5 @@
 
-# `pymarketcap` documentation
+# pymarketcap documentation
 
 ### Example usage
 
