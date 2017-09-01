@@ -117,7 +117,7 @@ class Pymarketcap(object):
     
     def ticker(self, currency=None, convert=None, limit=None):
         """ 
-        Returns all currencies with other aditional data.
+        Returns currencies with other aditional data.
         
         Return example (currency != None):
             {'name': 'Bitcoin', 
@@ -156,7 +156,7 @@ class Pymarketcap(object):
             only works if currency == None (optional)
         :type limit: int
 
-        :return: 
+        :return: Currencies/currency with other metadata
         :rtype: list (currency == None) or dict (currency != None)
         """
         if currency != None:
@@ -435,9 +435,8 @@ class Pymarketcap(object):
 
         if self.verbose == True:
             from json import dumps
-            return dumps(response, indent=2)
+            return dumps(response, indent=self._indent)
         return response
-
 
     def historical(self, currency, start, end):
         """ 
@@ -532,7 +531,7 @@ class Pymarketcap(object):
 
         if self.verbose == True:
             from json import dumps
-            return dumps(response, indent=2)
+            return dumps(response, indent=self._indent)
         return response
 
     def recently(self):
@@ -618,7 +617,7 @@ class Pymarketcap(object):
 
         if self.verbose == True:
             from json import dumps
-            return dumps(response, indent=2)
+            return dumps(response, indent=self._indent)
         return response
 
     def _exchange_names(self):
@@ -701,7 +700,7 @@ class Pymarketcap(object):
 
         if self.verbose == True:
             from json import dumps
-            return dumps(response, indent=2)
+            return dumps(response, indent=self._indent)
         return response
 
     def exchanges(self, limit=50):
@@ -806,5 +805,5 @@ class Pymarketcap(object):
 
         if self.verbose == True:
             from json import dumps
-            return dumps(response, indent=2)
+            return dumps(response, indent=self._indent)
         return response
