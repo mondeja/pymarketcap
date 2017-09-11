@@ -295,7 +295,7 @@ class Pymarketcap(object):
             _volume_24h = m.find('span', {'class': 'volume'}).getText()
             volume_24h = self.parse_int(sub(r'\D', '', _volume_24h))
             _price = m.find('span', {'class': 'price'}).getText()
-            price = self.parse_float(sub(r'\$', '', _price))
+            price = self.parse_float(sub(r'\$| |\*', '', _price))
 
             _childs, childs = (m.contents, [])
             for c in _childs:
@@ -600,7 +600,14 @@ class Pymarketcap(object):
                     _volume_24h_usd = c.getText().replace('\n', '')
                     volume_24h_usd = sub(r'\$|,', '', _volume_24h_usd)
                     if volume_24h_usd != 'Low Vol':
-                        volume_24h_usd = self.parse_int(volume_24h_usd)
+                        try:
+                            volume_24h_usd = self.parse_int(volume_24h_usd)
+                        except ValueError:
+                            # Is a '?' value?
+                            if volume_24h_usd == '?':
+                                pass
+                            else:
+                                raise ValueError('volume_24h_usd ==', volume_24h_usd)
                 elif n == 7:
                     percent_change = c.getText().replace(' %', '')
                     if '?' not in percent_change:
@@ -685,7 +692,7 @@ class Pymarketcap(object):
                     _volume_24h_usd = sub(r'\$|,', '', c.getText())
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
                 elif n == 4:
-                    _price_usd = c.getText().replace('$', '')
+                    _price_usd = sub(r'\$| |\*', '', c.getText())
                     price_usd = self.parse_float(_price_usd)
                 elif n == 5:
                     _perc_volume = c.getText().replace('%', '')

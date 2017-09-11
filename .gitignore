@@ -7,8 +7,13 @@
 *.o
 *.so
 *.pyc
-__pycache__
-tmp
+.env
+
+# Directories #
+############
+__pycache__/
+tmp/
+env/
 
 # Packages #
 ############
