@@ -14,7 +14,7 @@ setup(
     author = 'Álvaro Mondéjar <mondejar1994@gmail.com>',
     author_email = 'mondejar1994@gmail.com',
     license = 'BSD License',
-    packages = ['pymarketcap'],
+    packages = ['pymarketcap', 'pymarketcap.tests'],
     description = 'Python3 API and web scraper for coinmarketcap.com.',
     long_description = open('README.md','r').read(),
     keywords = ['coinmarketcap', 'cryptocurrency', 'API', 'wrapper', 'scraper', 'json', 'BTC', 'Bitcoin'],

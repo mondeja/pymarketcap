@@ -3,6 +3,8 @@ setup.py
 README.md
 pymarketcap/core.py
 pymarketcap/__init__.py
-pymarketcap/tests.py
 pymarketcap/up.py
 pymarketcap/docs/README.md
+pymarketcap/docs/README.html
+pymarketcap/tests/__init__.py
+pymarketcap/tests/tests.py
