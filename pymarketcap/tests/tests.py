@@ -158,7 +158,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                        'usd_market_cap': [str, int], 
                        'circulating_supply': [str, int],
                        'volume_24h_usd': [str, int], 
-                       'days_ago': int, 
+                       'days_ago': [str, int], 
                        'name': str}
         self.assertIs(type(actual), list)
         for c in actual:

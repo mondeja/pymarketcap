@@ -577,8 +577,11 @@ class Pymarketcap(object):
                 elif n == 1:
                     symbol = str(c.getText())
                 elif n == 2:
-                    _days_ago = sub(r'\D', '', c.getText())
-                    days_ago = self.parse_int(_days_ago)
+                    days_ago = sub(r'\D', '', c.getText())
+                    try:
+                        days_ago = self.parse_int(days_ago)
+                    except ValueError:
+                        pass
                 elif n == 3:
                     _usd_market_cap = c.getText().replace('\n', '')
                     usd_market_cap = str(_usd_market_cap.replace(' ', ''))
