@@ -160,6 +160,9 @@ class Pymarketcap(object):
         :return: Currencies/currency with other metadata
         :rtype: list (currency == None) or dict (currency != None)
         """
+        if not convert:
+            convert = "USD"
+
         if currency != None:
             if currency.isupper() == True:
                 currency = _convert(currency)
@@ -181,22 +184,26 @@ class Pymarketcap(object):
 
         def parse_currency(raw_data):
             value_types = {'price_btc': self.parse_float, 
+                           'price_usd': self.parse_float, 
                            'percent_change_7d': self.parse_float, 
                            'percent_change_1h': self.parse_float, 
                            'name': str, 
                            'percent_change_24h': self.parse_float, 
                            'market_cap_usd': self.parse_float, 
+                           'market_cap_%s' % convert.lower(): self.parse_float, 
                            'last_updated': self.parse_int, 
                            'rank': self.parse_int, 
                            'available_supply': self.parse_float, 
-                           'price_usd': self.parse_float, 
+                           'price_%s' % convert.lower(): self.parse_float, 
                            'symbol': str, 
+                           '24h_volume_%s' % convert.lower(): self.parse_float, 
                            '24h_volume_usd': self.parse_float, 
                            'total_supply': self.parse_float, 
                            'id': str}
             data = {}
             for key, value in raw_data.items():
                 try:
+
                     data[key] = value_types[key](value)
                 except TypeError as e:
                     if 'conversion from NoneType' in repr(e):

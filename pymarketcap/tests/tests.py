@@ -54,6 +54,15 @@ class TestApiCoinmarketcap(unittest.TestCase):
         actual = self.coinmarketcap.ticker(config.COIN)
         self.assertIs(type(actual), dict)
 
+        # With param convert
+        actual = self.coinmarketcap.ticker(config.COIN, 
+                                           convert="EUR")
+        self.assertIs(type(actual), dict)
+
+        actual = self.coinmarketcap.ticker("ETH", 
+                                           convert="CNY")
+        self.assertIs(type(actual), dict)
+
     def test_stats(self):
         actual = self.coinmarketcap.stats()
 
