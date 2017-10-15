@@ -4,6 +4,7 @@
 import requests as r
 from json import loads as _loads
 from decimal import Decimal
+from datetime import datetime
 from bs4 import BeautifulSoup
 
 def _reimport(update=False):
@@ -446,7 +447,10 @@ class Pymarketcap(object):
             return dumps(response, indent=self._indent)
         return response
 
-    def historical(self, currency, start, end):
+    def historical(self, currency, 
+                   start=datetime(2008, 8, 18), 
+                   end=datetime.now(),
+                   revert=False):
         """ 
         Returns historical data for a currency. 
         
@@ -473,23 +477,27 @@ class Pymarketcap(object):
         :param currency: Currency to scrap historical data
         :type currency: str
 
-        :param start: Time for start scraping periods,
-            in the form yearmonthday (ie: 20140101)
-        :type start: int or str
+        :param start: Time for start scraping periods
+            (optional, default == datetime(2018, 8, 18))
+        :type start: datetime
 
-        :param end: Time for end scraping periods,
-            in the form yearmonthday (ie: 20160215)
-        :type end: int or str
+        :param end: Time for end scraping periods
+            (optional, default == datetime.now())
+        :type end: datetime
+
+        :param revert: If False, return the first date first,
+            in chronological order
+            (optional, default == False)
 
         :return: historical data for a currency
         :rtype: list
         """
-        from datetime import datetime
         if currency.isupper():
             currency = _convert(currency)
 
         url = self.web_url + 'currencies/' + currency + '/historical-data/'
-        url += '?start={}&end={}'.format(str(start), str(end))
+        url += '?start={}&end={}'.format(str(int(start.timestamp())), 
+                                         str(int(end.timestamp())))
 
         html = self._html(url)
 
@@ -497,6 +505,7 @@ class Pymarketcap(object):
         marks = html.find('tbody').find_all('tr')
         #print(marks[0])
         for m in marks:
+            insert = True # Ignore all dates not in range
             _childs, childs = (m.contents, [])
             for c in _childs:
                 if c != '\n':
@@ -509,6 +518,10 @@ class Pymarketcap(object):
                         date = datetime.strptime(_date, '%b %d %Y')
                     except ValueError:
                         date = _date #datetime.strptime('Jan 01 0001', '%b %d %Y')
+                    else:
+                        if date < start or date > end:
+                            insert = False
+                            break
                 if n == 1:
                     _open = self.parse_float(c.getText())
                     indicators['open'] = _open
@@ -535,7 +548,11 @@ class Pymarketcap(object):
                     except ValueError:
                         pass
                     indicators['usd_market_cap'] = _usd_market_cap
-            response.append({date: indicators})
+            if insert:
+                response.append({date: indicators})
+
+        if not revert:
+            response.reverse()
 
         if self.verbose == True:
             from json import dumps

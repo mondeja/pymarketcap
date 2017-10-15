@@ -148,8 +148,9 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                        'high': Decimal}
 
         actual = self.coinmarketcap.historical(config.COIN,
-                                               20170624, 
-                                               20170825)
+                                               datetime(2017, 9, 30), 
+                                               datetime(2017, 10, 10))
+
         self.assertIs(type(actual), list)
         for tick in actual:
             self.assertIs(type(tick), dict)
