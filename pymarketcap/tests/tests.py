@@ -145,20 +145,18 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                        'usd_volume': int, 
                        'open': Decimal, 
                        'usd_market_cap': int, 
-                       'high': Decimal}
+                       'high': Decimal,
+                       'date': datetime}
 
         actual = self.coinmarketcap.historical(config.COIN,
                                                datetime(2017, 9, 30), 
                                                datetime(2017, 10, 10))
-
         self.assertIs(type(actual), list)
         for tick in actual:
             self.assertIs(type(tick), dict)
-            for date, data in tick.items():
-                self.assertIs(type(date), datetime)
-                for key, value in data.items():
-                    self.assertIs(type(value),
-                                  value_types[key])
+            for key, value in tick.items():
+                self.assertIs(type(value),
+                              value_types[key])
 
     def test_recently(self):
         actual = self.coinmarketcap.recently()

@@ -522,6 +522,7 @@ class Pymarketcap(object):
                         if date < start or date > end:
                             insert = False
                             break
+                    indicators['date'] = date
                 if n == 1:
                     _open = self.parse_float(c.getText())
                     indicators['open'] = _open
@@ -549,7 +550,7 @@ class Pymarketcap(object):
                         pass
                     indicators['usd_market_cap'] = _usd_market_cap
             if insert:
-                response.append({date: indicators})
+                response.append(indicators)
 
         if not revert:
             response.reverse()
