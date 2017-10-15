@@ -191,33 +191,38 @@ coinmarketcap.ranks('gainers', '1h')
 - **`GET https://coinmarketcap.com/currencies/<currency>/historical-data/?start=<start_time>&end=<end_time>`**
 
 ```python
->>> coinmarketcap.historical('STEEM', 20170131, 20170825)
+>>> from datetime import datetime
+>>> start, end = (datetime(2017, 9, 30), datetime(2017, 10, 10))
+>>> coinmarketcap.historical("BTC", start, end)
 
 # First argument is the currency. Second and third are start and end 
-#       times for retrieve the data in the form yearmonthday
+#       times for retrieve the data in datetime format.
 
 [
-  {datetime.datetime(2017, 8, 25, 0, 0): {'low': 1.26, 
-                                         'usd_market_cap': 306485000, 
-                                         'open': 1.28, 
-                                         'high': 1.37, 
-                                         'close': 1.37, 
-                                         'usd_volume': 1456350}
-                                         }, 
-  {datetime.datetime(2017, 8, 24, 0, 0): {'low': 1.2, 
-                                         'usd_market_cap': 295147000, 
-                                         'open': 1.23, 
-                                         'high': 1.33, 
-                                         'close': 1.28, 
-                                         'usd_volume': 1958180}
-                                         }, 
-  {datetime.datetime(2017, 8, 23, 0, 0): {'low': 1.19, 
-                                         'usd_market_cap': 289363000, 
-                                         'open': 1.21, 
-                                         'high': 1.31, 
-                                         'close': 1.24, 
-                                         'usd_volume': 2415700}
-                                         }, 
+    {'close': Decimal('4338.71'),
+     'date': datetime.datetime(2017, 9, 30, 0, 0),
+     'high': Decimal('4358.43'),
+     'low': Decimal('4160.86'),
+     'open': Decimal('4166.11'),
+     'usd_market_cap': 69136600000,
+     'usd_volume': 1207450000
+     },
+    {'close': Decimal('4403.74'),
+     'date': datetime.datetime(2017, 10, 1, 0, 0),
+     'high': Decimal('4403.74'),
+     'low': Decimal('4269.81'),
+     'open': Decimal('4341.05'),
+     'usd_market_cap': 72047300000,
+     'usd_volume': 1208210000
+     },
+    {'close': Decimal('4409.32'),
+     'date': datetime.datetime(2017, 10, 2, 0, 0),
+     'high': Decimal('4470.23'),
+     'low': Decimal('4377.46'),
+     'open': Decimal('4395.81'),
+     'usd_market_cap': 72963200000,
+     'usd_volume': 1431730000
+     }, 
   ...
 ]
 
