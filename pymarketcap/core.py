@@ -478,7 +478,7 @@ class Pymarketcap(object):
 
         url = self.web_url + 'currencies/' + currency + '/historical-data/'
         url += '?start={}&end={}'.format(str(start.year) + str(start.month), + str(start.day), 
-                                         str(end.year) + str(end.month), + str(end.day))
+                                         str(end.year) + str(end.month) + str(end.day))
 
         html = self._html(url)
 
