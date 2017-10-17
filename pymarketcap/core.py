@@ -203,11 +203,7 @@ class Pymarketcap(object):
 
                     data[key] = value_types[key](value)
                 except TypeError as e:
-                    if 'conversion from NoneType' in repr(e):
-                        data[key] = None
-                    else:
-                        print(e)
-                        raise AssertionError
+                    data[key] = None
             return data
 
 
