@@ -436,19 +436,20 @@ class Pymarketcap(object):
         
 
         Example calls:
-            historical_data('STEEM', 20170624, 20170825) 
-            historical_data('ethereum', 20140101, 20160215)
+            historical_data('STEEM', datetime(2008, 8, 18), datetime.now()) 
+            historical_data('ethereum', datetime(2008, 8, 18), datetime.now())
 
         Example response:
             [
                {datetime.datetime(2017, 8, 25, 0, 0): 
-                      {'close': Decimal('4371.60'), 
-                       'low': Decimal('4307.35'), 
-                       'usd_volume': 1727970000, 
-                       'open': Decimal('4332.82'), 
-                       'usd_market_cap': 71595100000, 
-                       'high': Decimal('4455.70')}
-               }, {}, ...
+                'close': Decimal('4371.60'), 
+                'low': Decimal('4307.35'), 
+                'usd_volume': 1727970000, 
+                'open': Decimal('4332.82'), 
+                'usd_market_cap': 71595100000, 
+                'high': Decimal('4455.70')}, 
+                {...}, 
+             ...
             ]
 
         Endpoint:
