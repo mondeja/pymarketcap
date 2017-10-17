@@ -7,5 +7,5 @@ __author__ = 'Álvaro Mondéjar Rubio <mondejar1994@gmail.com>'
 __repo__    = 'https://github.com/mondeja/pymarketcap'
 __license__ = 'BSD License'
 
-from .core import Pymarketcap
+from .core import Pymarketcap, CoinmarketcapError
 

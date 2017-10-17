@@ -72,16 +72,15 @@ class Pymarketcap(object):
     :rtype: <class 'core.Pymarketcap'>
     """
 
-    def __init__(self, parse_float=Decimal, parse_int=int,
-                 pair_separator='-', verbose=False, indent=2):
+    def __init__(self, parse_float=Decimal, 
+                 parse_int=int,
+                 pair_separator='-'):
         base_url, api_version = ('https://', 'v1')
         self.api_url = '{}api.coinmarketcap.com/{}/'.format(base_url, 
                                                             api_version)
         self.web_url = 'https://coinmarketcap.com/'
         self.parse_float = parse_float
         self.parse_int = parse_int
-        self.verbose = verbose
-        self._indent = indent
         self.pair_separator = pair_separator
 
         self.symbols = self.symbols()
@@ -110,9 +109,6 @@ class Pymarketcap(object):
         for c in currencies:
             response.append(c['symbol'])
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     " ####### API METHODS ####### "
@@ -225,9 +221,6 @@ class Pymarketcap(object):
             for currency in _response:
                 response.append(parse_currency(currency))
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def stats(self):
@@ -250,9 +243,6 @@ class Pymarketcap(object):
         url = self._urljoin(self.api_url, 'global/')
         response = r.get(url).json(parse_int=self.parse_int,
                                    parse_float=self.parse_float)
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     " ####### WEB PARSER METHODS ####### "
@@ -326,9 +316,6 @@ class Pymarketcap(object):
                       'percent_volume': percent_volume}
             response.append(market)
             
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def _get_ranks(self, query, temp):
@@ -442,9 +429,6 @@ class Pymarketcap(object):
                     rankings[t] = ranking
                 response = rankings
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def historical(self, currency, 
@@ -555,9 +539,6 @@ class Pymarketcap(object):
         if not revert:
             response.reverse()
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def recently(self):
@@ -651,9 +632,6 @@ class Pymarketcap(object):
                          'volume_24h_usd': volume_24h_usd}
             response.append(indicators)
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def _exchange_names(self):
@@ -734,9 +712,6 @@ class Pymarketcap(object):
                           'perc_volume': perc_volume}
             response.append(indicators)
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
 
     def exchanges(self, limit=50):
@@ -839,7 +814,4 @@ class Pymarketcap(object):
                 exchange_data['name'] = exchange
                 exchange_data['markets'] = []
 
-        if self.verbose == True:
-            from json import dumps
-            return dumps(response, indent=self._indent)
         return response
