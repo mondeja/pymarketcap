@@ -14,9 +14,9 @@ pip install https://github.com/mondeja/pymarketcap/archive/master.zip
 or
 
 ```
-    $ git clone https://github.com/mondeja/pymarketcap.git
-    $ cd pymarketcap
-    $ python setup.py install
+git clone https://github.com/mondeja/pymarketcap.git
+cd pymarketcap
+python setup.py install
 ``` 
 
 ## Documentation:
