@@ -7,7 +7,9 @@
 ## Installation:
 
 From source use:
-`pip install https://github.com/mondeja/pymarketcap/archive/master.zip`
+```
+pip install https://github.com/mondeja/pymarketcap/archive/master.zip
+```
 
 or
 
