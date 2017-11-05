@@ -66,6 +66,11 @@ class TestApiCoinmarketcap(unittest.TestCase):
     def test_stats(self):
         actual = self.coinmarketcap.stats()
 
+""" ###########################################
+    ############  SCRAPER TESTS  ##############
+    ###########################################
+"""
+
 class TestScraperCoinmarketcap(unittest.TestCase):
     """
     Tests for Coinmarketcap Api commands. 

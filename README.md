@@ -7,6 +7,10 @@
 ## Installation:
 
 From source use:
+`pip install https://github.com/mondeja/pymarketcap/archive/master.zip`
+
+or
+
 ```
     $ git clone https://github.com/mondeja/pymarketcap.git
     $ cd pymarketcap
@@ -18,8 +22,8 @@ All methods are self explained in doctrings. Also, you can see all available met
 
 ## Contribute
 
-- Issue Tracker: https://github.com/mondeja/bittrex_v2/issues
-- Source Code: https://github.com/mondeja/bittrex_v2
+- Issue Tracker: https://github.com/mondeja/pymarketcap/issues
+- Source Code: https://github.com/mondeja/pymarketcap
 
 ### Development progress:
 
