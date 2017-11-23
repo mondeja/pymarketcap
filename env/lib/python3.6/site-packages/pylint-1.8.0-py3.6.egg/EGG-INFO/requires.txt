@@ -1,0 +1,14 @@
+astroid>=1.5.1
+six
+isort>=4.2.5
+mccabe
+
+[:python_version<"3.4"]
+singledispatch
+
+[:python_version=="2.7"]
+configparser
+backports.functools_lru_cache
+
+[:sys_platform=="win32"]
+colorama

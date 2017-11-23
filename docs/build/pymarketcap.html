@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pymarketcap package &mdash; pymarketcap 3.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pymarketcap 3.3.0 documentation" href="index.html"/>
+        <link rel="prev" title="Welcome to pymarketcap’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pymarketcap
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pymarketcap package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymarketcap.core">pymarketcap.core module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pymarketcap</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>pymarketcap package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pymarketcap.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pymarketcap-package">
+<h1>pymarketcap package<a class="headerlink" href="#pymarketcap-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pymarketcap.core">
+<span id="pymarketcap-core-module"></span><h2>pymarketcap.core module<a class="headerlink" href="#module-pymarketcap.core" title="Permalink to this headline">¶</a></h2>
+<p>Pymarketcap core, web parser and API wrapper</p>
+<dl class="exception">
+<dt id="pymarketcap.core.CoinmarketcapError">
+<em class="property">exception </em><code class="descclassname">pymarketcap.core.</code><code class="descname">CoinmarketcapError</code><span class="sig-paren">(</span><em>code</em>, <em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#CoinmarketcapError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.CoinmarketcapError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">requests.exceptions.HTTPError</span></code></p>
+<p>Exception for catch invalid commands and other repsonses
+that don’t match with 200 code responses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>code</strong> (<em>str</em>) – Exception error code.</li>
+<li><strong>msg</strong> (<em>str</em>) – Human readable string describing the exception.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymarketcap.core.Pymarketcap">
+<em class="property">class </em><code class="descclassname">pymarketcap.core.</code><code class="descname">Pymarketcap</code><span class="sig-paren">(</span><em>parse_float=&lt;class 'decimal.Decimal'&gt;</em>, <em>parse_int=&lt;class 'int'&gt;</em>, <em>pair_separator='-'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.exchange">
+<code class="descname">exchange</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.exchange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.exchange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain data from a exchange passed as argument</p>
+<p class="rubric">Example</p>
+<p>exchange(‘poloniex’)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – Exchange to retrieve data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – Data from all markets in a exchange</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymarketcap.core.Pymarketcap.exchange_names">
+<code class="descname">exchange_names</code><a class="headerlink" href="#pymarketcap.core.Pymarketcap.exchange_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function for get all exchange
+names available currently in coinmarketcap.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.exchanges">
+<code class="descname">exchanges</code><span class="sig-paren">(</span><em>limit=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.exchanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.exchanges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the exchanges markets data
+in coninmarketcap ranked by volumes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>limit</strong> (<em>int, optional</em>) – Limit the amount
+of exchanges in response. As default, 50</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – Markets by exchanges and volumes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.historical">
+<code class="descname">historical</code><span class="sig-paren">(</span><em>currency</em>, <em>start=None</em>, <em>end=None</em>, <em>revert=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.historical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.historical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get historical data for a currency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>currency</strong> (<em>str</em>) – Currency to scrap historical data</li>
+<li><strong>start</strong> (<em>date, optional</em>) – Time to start scraping
+periods as datetime.datetime type.
+As default datetime(2018, 8, 18)</li>
+<li><strong>end</strong> (<em>date, optional</em>) – Time to end scraping periods
+as datetime.datetime type.
+As default datetime.now()</li>
+<li><strong>revert</strong> (<em>bool, optional</em>) – If False, return first date
+first, in chronological order, otherwise returns
+reversed list of periods. As default False</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p><em>list</em> –</p>
+<dl class="docutils">
+<dt>Historical dayly results for low, high, open, close</dt>
+<dd><p class="first last">usd_market_cap and usd_volume</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.markets">
+<code class="descname">markets</code><span class="sig-paren">(</span><em>currency: str</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.markets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.markets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns information from markets
+availables at coinmarketcap. It needs a currency as argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>currency</strong> (<em>str</em>) – Currency to get market data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – markets on wich provided currency is currently tradeable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.ranks">
+<code class="descname">ranks</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.ranks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.ranks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data from gainers and losers rankings:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>*args</strong> (<em>str, optional</em>) – Positional arguments
+for filter rankings. Valid arguments:</p>
+<blockquote>
+<div><p>[‘7d’, ‘24h’, ‘1h’, ‘gainers’, ‘losers’]</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p><em>dict</em> –</p>
+<dl class="docutils">
+<dt>Gainers, losers or both rankings,</dt>
+<dd><p class="first last">depends of arguments filter</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.recently">
+<code class="descname">recently</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.recently"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.recently" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get recently added currencies along
+with other metadata</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – Recently added currencies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.stats">
+<code class="descname">stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get global cryptocurrencies statistics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>dict</em> – Global markets statistics</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymarketcap.core.Pymarketcap.ticker">
+<code class="descname">ticker</code><span class="sig-paren">(</span><em>currency=None</em>, <em>convert=None</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymarketcap/core.html#Pymarketcap.ticker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymarketcap.core.Pymarketcap.ticker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get currencies with other aditional data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>currency</strong> (<em>str, optional</em>) – Specify a currency to return,
+in this case the method returns a dict, otherwise
+returns a list. As default, None.</li>
+<li><strong>convert</strong> (<em>str, optional</em>) – As default, None. Allow to
+convert prices in response on one of next badges:
+[“AUD”, “BRL”, “CAD”, “CHF”, “CLP”, “CNY”, “CZK”, “DKK”,
+“EUR”, “GBP”, “HKD”, “HUF”, “IDR”, “ILS”, “INR”, “JPY”,
+“KRW”, “MXN”, “MYR”, “NOK”, “NZD”, “PHP”, “PKR”, “PLN”,
+“RUB”, “SEK”, “SGD”, “THB”, “TRY”, “TWD”, “ZAR”, “USD”]</li>
+<li><strong>limit</strong> (<em>int, optional</em>) – Limit amount of coins on response.
+Only works if <code class="docutils literal"><span class="pre">currency</span> <span class="pre">==</span> <span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>list</em> – If currency param is not provided.
+dict: If you specifies currency param.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to pymarketcap’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Álvaro.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

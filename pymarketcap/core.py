@@ -1,286 +1,209 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import requests as r
-from json import loads as _loads
-from decimal import Decimal
+"""Pymarketcap core, web parser and API wrapper"""
+
+# Python standard library
 from datetime import datetime
+from re import sub
+from decimal import Decimal
+
+# Third party libraries
+from requests import get
+from requests.compat import urljoin, urlencode
+from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
-def _reimport(update=False):
-    """ Internal function for serves symbols correspondences """
-    from os import path
-    p = path.dirname(path.abspath(__file__))
-    if update == True:
-        from sys import path as pth
-        pth.insert(1, p)
-        import up
-        up.update_currencies()
-        pth.remove(p)
-        if '' in pth:
-            pth.remove('')
-    with open(p + '/tmp/symbols.txt', 'r') as f:
-        availables = f.read()
-        from ast import literal_eval as l
-        return l(availables)
 
-def _convert(currency):
-    try:
-        availables = _reimport()
-    except IOError:
-        availables = _reimport(update=True)
-    if currency in availables:
-        return availables[currency]
-    else: # If the coin isn't in the dict
-        availables = _reimport(update=True)
-        if currency not in availables:
-            exc = "The currency %s isn't in coinmarketcap" % currency
-            raise NameError(exc)
-
-class CoinmarketcapError(Exception):
+class CoinmarketcapError(HTTPError):
     """
     Exception for catch invalid commands and other repsonses
     that don't match with 200 code responses.
-    """ 
-    def __init__(self, err):
-        print(err)
+
+    Args:
+       code (str): Exception error code.
+       msg (str): Human readable string describing the exception.
+
+    """
+    def __init__(self, code, msg):
+        self.code = code
+        self.msg = msg
+
+        super(CoinmarketcapError, self).__init__(code, msg)
+
 
 class Pymarketcap(object):
-    """ Main class for retrieve data from coinmarketcap
+    def __init__(self, parse_float=Decimal,
+                 parse_int=int, pair_separator="-"):
+        """Main class for retrieve data from coinmarketcap.com
 
-    :param parse_float: parser used by json.loads() for
-        retrieve float type returns (optional, default == Decimal)
-    :type parse_float: any
+        Args:
+            parse_float (any, optional): Parser used by json.loads()
+                for retrieve float type data. As default, decimal.Decimal
+            parse_int (any, optional): Parser used by json.loads()
+                for retrieve int type data. As default, int
+            pair_separator (str, optional): Separator between base and
+                quote pair in responses. As default "-"
+                (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
 
-    :param parse_int: parser used by json.loads() for
-        retrieve int type returns (optional, default == int) 
-    :type parse_int: any
-
-    :param pair_separator: Separator in pair returns 
-        (ie: pair_separator='_' -> BTC_USD) (optional, default == '-')
-    :type pair_separator: str
-        
-    :param verbose: With True returns is parsed by
-        json.dumps(indent=<indent param>) (optional, default == False)
-    :type verbose: bool
-
-    :param indent: Number of indentations in dumped response .
-        Only works with verbose == True (optional, default == 2)
-    :type indent: int
-
-    :return: Pymarketcap object
-    :rtype: <class 'core.Pymarketcap'>
-    """
-
-    def __init__(self, parse_float=Decimal, 
-                 parse_int=int,
-                 pair_separator='-'):
-        base_url, api_version = ('https://', 'v1')
-        self.api_url = '{}api.coinmarketcap.com/{}/'.format(base_url, 
-                                                            api_version)
+        """
+        base_url, api_version = ("https://", "v1")
+        self.api_url = "%sapi.coinmarketcap.com/%s/" % (base_url, api_version)
         self.web_url = 'https://coinmarketcap.com/'
         self.parse_float = parse_float
         self.parse_int = parse_int
         self.pair_separator = pair_separator
 
-        self.symbols = self.symbols()
-        self.exchange_names = self._exchange_names()
+        self._correspondences = self._cache_symbols()
+        self.symbols = list(self._correspondences.keys())
 
-    def _urljoin(self, *args):
-        """ Internal urljoin function """
-        urljoin = "/".join(map(lambda x: str(x).rstrip('/'), args))
-        return urljoin
-
-    def _up(self, param=None):
-        """ Internal function for update symbols currencies """
-        url = self._urljoin(self.api_url, 'ticker/')
-        response = r.get(url).json()
-        return response
-    
-    def symbols(self):
-        """ Return all symbols availables in coinmarketcap
-        
-        :return: Symbols currencies in coinmarketcap
-        :rtype: list
-        """
-        url = self._urljoin(self.api_url, 'ticker/')
-        currencies = r.get(url).json()
-        response = []
-        for c in currencies:
-            response.append(c['symbol'])
-
+    def _cache_symbols(self):
+        """Internal function for load in cache al symbols
+        in coinmarketcap with their respectives currency names"""
+        response = {}
+        url = urljoin(self.api_url, "ticker/")
+        for currency in get(url).json():
+            response[currency["symbol"]] = currency["id"]
         return response
 
-    " ####### API METHODS ####### "
-    
+
+    #######   API METHODS   #######
+
     def ticker(self, currency=None, convert=None, limit=None):
-        """ 
-        Returns currencies with other aditional data.
-        
-        Return example (currency != None):
-            {'name': 'Bitcoin', 
-            'market_cap_usd': Decimal('75281205275.0'), 
-            'percent_change_24h': Decimal('-0.89'), 
-            'percent_change_7d': Decimal('9.4'), 
-            'price_usd': Decimal('4553.16'), 
-            'price_btc': Decimal('1.0'), 
-            'last_updated': 1504131565, 
-            'rank': 1, 
-            'total_supply': Decimal('16533837.0'), 
-            'available_supply': Decimal('16533837.0'), 
-            'symbol': 'BTC', 
-            'id': 'bitcoin',
-            '24h_volume_usd': Decimal('1953710000.0'), 
-            'percent_change_1h': Decimal('0.03')}
+        """Get currencies with other aditional data.
 
-        Endpoints: 
-            /ticker/?convert=<convert>&limit=<limit>
-            /ticker/<currency>/?convert=<convert>&limit=<limit>
+        Args:
+            currency (str, optional): Specify a currency to return,
+                in this case the method returns a dict, otherwise
+                returns a list. As default, None.
+            convert (str, optional): As default, None. Allow to
+                convert prices in response on one of next badges:
+                ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
+                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
+                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR", "USD"]
+            limit (int, optional): Limit amount of coins on response.
+                Only works if ``currency == None``.
 
-        :param currency: Specify currency only, in this case
-            method returns a dict (default == None) (optional)
-        :type currency: str
+        Returns:
+            dict/list: If currency param is provided or not.
 
-        :param convert: Allow to convert the prices in response
-            on one of this badges:
-            "AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK", 
-            "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY", 
-            "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN", 
-            "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR", "USD"
-            (default == None) (optional)
-        :type convert: str
-        
-        :param limit: limit the amount of coins in response
-            only works if currency == None (optional)
-        :type limit: int
-
-        :return: Currencies/currency with other metadata
-        :rtype: list (currency == None) or dict (currency != None)
         """
         if not convert:
             convert = "USD"
 
-        if currency != None:
-            if currency.isupper() == True:
-                currency = _convert(currency)
+        url = urljoin(self.api_url, "ticker/")
 
-        url = self._urljoin(self.api_url, 'ticker/')
         if currency:
-            url = self._urljoin(url, currency)
-            if convert:
-                url += '?convert={}'.format(convert)
-        else:
-            if convert != None or limit != None:
-                url += '?'
-                if convert:
-                    url += 'convert={}'.format(convert)
-                    if limit:
-                        url += '&'
-                if limit:
-                    url += 'limit={}'.format(str(limit))
+            if currency.isupper():
+                currency = self._correspondences[currency]
+            url += "%s/" % currency
+
+        params = dict(convert=convert)
+        if limit:
+            params["limit"] = limit
+
+        url += "?" + urlencode(params)
 
         def parse_currency(raw_data):
-            value_types = {'price_btc': self.parse_float, 
-                           'price_usd': self.parse_float, 
-                           'percent_change_7d': self.parse_float, 
-                           'percent_change_1h': self.parse_float, 
-                           'name': str, 
-                           'percent_change_24h': self.parse_float, 
-                           'market_cap_usd': self.parse_float, 
-                           'market_cap_%s' % convert.lower(): self.parse_float, 
-                           'last_updated': self.parse_int, 
-                           'rank': self.parse_int, 
-                           'available_supply': self.parse_float, 
-                           'price_%s' % convert.lower(): self.parse_float, 
-                           'symbol': str, 
-                           '24h_volume_%s' % convert.lower(): self.parse_float, 
-                           '24h_volume_usd': self.parse_float, 
-                           'total_supply': self.parse_float, 
-                           'id': str}
+            """Internal function to parse every currency
+            in the provided types in constructor
+
+            Args:
+                raw_data: Response provided by the API on ticker method
+
+            Returns:
+                dict: Parsed values
+            """
+            value_types = {
+                'price_btc': self.parse_float,
+                'price_usd': self.parse_float,
+                'percent_change_7d': self.parse_float,
+                'percent_change_1h': self.parse_float,
+                'name': str,
+                'percent_change_24h': self.parse_float,
+                'market_cap_usd': self.parse_float,
+                'market_cap_%s' % convert.lower(): self.parse_float,
+                'last_updated': self.parse_int,
+                'rank': self.parse_int,
+                'available_supply': self.parse_float,
+                'price_%s' % convert.lower(): self.parse_float,
+                'symbol': str,
+                '24h_volume_%s' % convert.lower(): self.parse_float,
+                '24h_volume_usd': self.parse_float,
+                'total_supply': self.parse_float,
+                'max_supply': self.parse_float,
+                'id': str
+            }
+
             data = {}
             for key, value in raw_data.items():
                 try:
-
                     data[key] = value_types[key](value)
-                except TypeError as e:
+                except (TypeError, KeyError):
                     data[key] = None
             return data
 
+        data = get(url).json()
 
-        #response = self.opener.open(url).read()
-        _response = r.get(url).json()
-        
         if currency:
-            response = parse_currency(_response[0])
+            response = parse_currency(data[0])
         else:
             response = []
-            for currency in _response:
-                response.append(parse_currency(currency))
+            for curr in data:
+                response.append(parse_currency(curr))
 
         return response
+
 
     def stats(self):
-        """ Returns global cryptocurrencies statistics.
+        """ Get global cryptocurrencies statistics.
 
-        Return example:
-            {'total_market_cap_usd': Decimal('166537487011.0'), 
-            'active_currencies': 866, 
-            'active_assets': 229, 
-            'active_markets': 5373, 
-            'total_24h_volume_usd': Decimal('5735337860.0'), 
-            'bitcoin_percentage_of_market_cap': Decimal('45.18')}
-
-        Endpoint: 
-            /global/
-
-        :return: Global criptocurrencies statitics.
-        :rtype: dict
+        Returns:
+            dict: Global markets statistics
         """
-        url = self._urljoin(self.api_url, 'global/')
-        response = r.get(url).json(parse_int=self.parse_int,
-                                   parse_float=self.parse_float)
+        url = urljoin(self.api_url, 'global/')
+        response = get(url).json(parse_int=self.parse_int,
+                                 parse_float=self.parse_float)
         return response
 
-    " ####### WEB PARSER METHODS ####### "
 
-    def _html(self, url):
-        """ Internal function for get html """
-        req = r.get(url)
+    #######    WEB PARSER METHODS    #######
+
+    @staticmethod
+    def _html(url: str):
+        """Internal function for get plain html pages
+
+        Args:
+            url: Url page to obtain plain html code
+
+        Raises:
+            CoinmarketcapError: if status code is not equal to 200
+
+        Returns:
+            str: Plain html parsed with BeautifulSoup html parser
+        """
+        req = get(url)
         status_code = req.status_code
         if status_code == 200:
             return BeautifulSoup(req.text, "html.parser")
         else:
-            raise CoinmarketcapError("Status Code %d" % status_code)
+            raise CoinmarketcapError(status_code, url)
 
-    def markets(self, currency):
-        """ 
-        Function that returns information from markets. 
+    def markets(self, currency: str) -> list:
+        """Get available coinmarketcap markets data.
         It needs a currency as argument.
-        
-        Examples calls:
-            markets('STEEM'), markets('ethereum', V=True)
 
-        Example response:
-            [{'price_usd': Decimal('4626.18'), 
-            '24h_volume_usd': 657502, 
-            'percent_volume': Decimal('0.00'), 
-            'pair': 'BTC-USD', 
-            'exchange': 'Quoine'}, ... ] 
+        Args:
+            currency (str): Currency to get market data
 
-        Endpoint: 
-            /currencies/<currency>/#markets
-
-        :param currency: Currency to get data information
-        :type currency: str
-
-        :return: All markets where the currency is bought and sold
-        :rtype: list
+        Returns:
+            list: markets on wich provided currency is currently tradeable
         """
-        from re import sub
         if currency.isupper():
-            currency = _convert(currency)
+            currency = self._correspondences[currency]
 
-        url = self.web_url + 'currencies/' + currency + '/'
+        url = urljoin(self.web_url, "currencies/%s/" % currency)
         html = self._html(url)
 
         response = []
@@ -306,25 +229,30 @@ class Pymarketcap(object):
                         pair = pair.replace(' *', '')
                 elif n == 5:
                     percent_volume = self.parse_float(nav.replace('%', ''))
-            market = {'exchange': exchange, 'pair': pair, 
-                      '24h_volume_usd': volume_24h, 
+            market = {'exchange': exchange, 'pair': pair,
+                      '24h_volume_usd': volume_24h,
                       'price_usd': price,
                       'percent_volume': percent_volume}
             response.append(market)
-            
+
         return response
 
-    def _get_ranks(self, query, temp):
-        """ Internal function for get gainers and losers """
-        from re import sub
-        url = self.web_url + 'gainers-losers/'
+    def _get_ranks(self, query: str, temp: str) -> list:
+        """Internal function for get gainers and losers
+
+        Args:
+            query: Query to obtain ranks, gainers or losers
+            temp: Temporal period obtaining gainers or losers,
+                1h, 24h or 7d
+        """
+        url = urljoin(self.web_url, 'gainers-losers/')
         html = self._html(url)
-        
+
         call = str(query) + '-' + str(temp)
 
         response = []
         html_rank = html.find('div', {'id': call}).find_all('tr')
-        from sys import version
+
         for curr in html_rank[1:]:
             _childs, childs = (curr.contents, [])
             for c in _childs:
@@ -343,143 +271,84 @@ class Pymarketcap(object):
                     price = self.parse_float(_price)
                 elif n == 5:
                     percent = self.parse_float(sub(r'%', '', g.string))
-            currency = {'symbol': symbol, 'name': name, 
+            currency = {'symbol': symbol, 'name': name,
                         '24h_volume_usd': volume_24h,
                         'price_usd': price, 'percent_change': percent}
             response.append(currency)
-
         return response
-    
+
     def ranks(self, *args):
-        """ 
-        Returns information from gainers and losers rankings:
-        
-        Examples calls:
-            ranks(), ranks('gainers'), ranks('1h')...
+        """Returns data from gainers and losers rankings:
 
-        Example response:
-            {'gainers': 
-                {'7d': [
-                    {'percent_change': Decimal('578.41'),
-                     '24h_volume_usd': 273802, 
-                     'symbol': 'CV2', 
-                     'price_usd': Decimal('0.000203'),
-                      'name': 'Colossuscoin V2'}, ... 
-                       ]
-                },
-                {'24h': [...]}, 
-                {'1h': [...]},
+        Args:
+            *args (str, optional): Positional arguments
+                for filter rankings. Valid arguments:
+                     ['7d', '24h', '1h', 'gainers', 'losers']
 
-             'losers': ... 
-             }
-
-        Enpoint: 
-            /gainers-losers/
-
-        :param *args: period times for filter responses
-            Valid args: ['7d', '24h', '1h', 
-                         'gainers', 'losers']
-        :type args: str
-        
-        :return: Gainers and losers rankings ordered
-        :rtype: dict
+        Returns:
+            dict: Gainers, losers or both rankings, depends of arguments filter
         """
         all_temps = ['1h', '24h', '7d']
         all_queries = ['gainers', 'losers']
 
-        if len(args) == 0:
-            temps = all_temps
-            queries = all_queries
+        if not args:   # if len(args) == 0
+            temps, queries = (all_temps, all_queries)
         else:
-            temps = []
-            queries = []
+            temps, queries = ([], [])
             for a in args:
-                if a in all_temps:
-                    temps.append(a)
-                elif a in all_queries:
-                    queries.append(a)
-                elif a not in all_temps and \
-                     a not in all_queries:
+                if a in all_temps: temps.append(a)
+                elif a in all_queries: queries.append(a)
+                else:
                     msg = '%s is not a valid argument' % a
                     raise AttributeError(msg)
-            if len(temps) == 0:
+
+            if not temps:
                 temps = all_temps
-            if len(queries) == 0:
+            if not queries:
                 queries = all_queries
 
         response = {}
-        if len(queries) > 1:
-            for q in queries:
-                response[q] = {}
-            for q in queries:
-                rankings = {}
-                for t in temps:
-                    ranking = self._get_ranks(q, t)
-                    rankings[t] = ranking
+        for q in queries:
+            rankings = {}
+            for t in temps:
+                ranking = self._get_ranks(q, t)
+                rankings[t] = ranking
+            if len(queries) > 1:
                 response[q] = rankings
-        else:
-            for q in queries:
-                rankings = {}
-                for t in temps:
-                    ranking = self._get_ranks(q, t)
-                    rankings[t] = ranking
-                response = rankings
+            else: response = rankings
 
         return response
 
-    def historical(self, currency, 
-                   start=datetime(2008, 8, 18), 
-                   end=datetime.now(),
-                   revert=False):
-        """ 
-        Returns historical data for a currency. 
-        
+    def historical(self, currency, start=None,
+                   end=None, revert=False):
+        """Get historical data for a currency.
 
-        Example calls:
-            historical_data('STEEM', datetime(2008, 8, 18), datetime.now()) 
-            historical_data('ethereum', datetime(2008, 8, 18), datetime.now())
+        Args:
+            currency (str): Currency to scrap historical data
+            start (date, optional): Time to start scraping
+                periods as datetime.datetime type.
+                As default datetime(2008, 8, 18)
+            end (date, optional): Time to end scraping periods
+                as datetime.datetime type.
+                As default datetime.now()
+            revert (bool, optional): If False, return first date
+                first, in chronological order, otherwise returns
+                reversed list of periods. As default False
 
-        Example response:
-            [
-               {datetime.datetime(2017, 8, 25, 0, 0): 
-                'close': Decimal('4371.60'), 
-                'low': Decimal('4307.35'), 
-                'usd_volume': 1727970000, 
-                'open': Decimal('4332.82'), 
-                'usd_market_cap': 71595100000, 
-                'high': Decimal('4455.70')}, 
-                {...}, 
-             ...
-            ]
-
-        Endpoint:
-            /currencies/<currency>/historical-data/
-
-        :param currency: Currency to scrap historical data
-        :type currency: str
-
-        :param start: Time for start scraping periods
-            (optional, default == datetime(2018, 8, 18))
-        :type start: datetime
-
-        :param end: Time for end scraping periods
-            (optional, default == datetime.now())
-        :type end: datetime
-
-        :param revert: If False, return the first date first,
-            in chronological order
-            (optional, default == False)
-
-        :return: historical data for a currency
-        :rtype: list
+        Return:
+            list: Historical dayly results for a currency
         """
+        if not start: start = datetime(2008, 8, 18)
+        if not end: end = datetime.now()
+
         if currency.isupper():
-            currency = _convert(currency)
+            currency = self._correspondences[currency]
 
         url = self.web_url + 'currencies/' + currency + '/historical-data/'
-        url += '?start={}&end={}'.format(str(start.year) + str(start.month) + str(start.day), 
-                                         str(end.year) + str(end.month) + str(end.day))
-
+        url += '?start={}&end={}'.format(
+            str(start.year) + str(start.month) + str(start.day),
+            str(end.year) + str(end.month) + str(end.day)
+        )
         html = self._html(url)
 
         response = []
@@ -539,34 +408,16 @@ class Pymarketcap(object):
         return response
 
     def recently(self):
-        """ 
-        Returns recently addeds currencies along
+        """Get recently added currencies along
         with other metadata
 
-        Example response:
-            [
-             {'price_usd': Decimal('0.176407'), 
-             'mineable': True, 
-             'symbol': 'LLT', 
-             'usd_market_cap': '?', 
-             'circulating_supply': '?', 
-             'volume_24h_usd': 4181750, 
-             'days_ago': 1, 
-             'name': 'LLToken'}
-             }
-            ]
-
-        Endpoint:
-            /new/
-
-        :return: Recently added currencies
-        :rtype: list
-         """
-        from re import sub
-        url = self.web_url + 'new/'
+        Returns:
+            list: Recently added currencies
+        """
+        url = urljoin(self.web_url, 'new/')
 
         html = self._html(url)
-        
+
         response = []
         marks = html.find('tbody').find_all('tr')
         for m in marks:
@@ -619,62 +470,47 @@ class Pymarketcap(object):
                     percent_change = c.getText().replace(' %', '')
                     if '?' not in percent_change:
                         percent_change = self.parse_float(percent_change)
-            indicators = {'name': name, 
-                         'symbol': symbol,
-                         'days_ago': days_ago,
-                         'usd_market_cap': usd_market_cap,
-                         'price_usd': price_usd,
-                         'circulating_supply': circulating_supply,
-                         'mineable': mineable,
-                         'volume_24h_usd': volume_24h_usd}
+            indicators = {'name': name,
+                          'symbol': symbol,
+                          'days_ago': days_ago,
+                          'usd_market_cap': usd_market_cap,
+                          'price_usd': price_usd,
+                          'circulating_supply': circulating_supply,
+                          'mineable': mineable,
+                          'volume_24h_usd': volume_24h_usd}
             response.append(indicators)
 
         return response
 
-    def _exchange_names(self):
-        """ Internal function for return all exchange 
-        names available currently in coinmarketcap.
-        You can call it as attributte:
-            Pymarketcap().exchange_names """
-        exchs = self.exchanges(limit=10000)
-        response = []
-        for e in exchs:
-            if e['name'] not in response:
-                response.append(e['name'])
-        return response
+    @property
+    def exchange_names(self) -> list:
+        """Get all exchange names available currently in coinmarketcap.
 
-    def exchange(self, exchange_name):
-        """ 
-        Returns data from a exchange passed as argument
-        
-        Example call:
-            exchange('poloniex')
-
-        Example response:
-            [
-              {'perc_volume': Decimal('18.21'), 
-               'price_usd': Decimal('385.84'), 
-               'volume_rank': 1, 
-               'market': 'ETH-BTC', 
-               'name': 'Ethereum', 
-               'volume_24h_usd': 50556000},
-              {...}, ...
-            ]
-
-        Endpoint:
-            exchanges/<exchange_name>/
-
-        :param exchange_name: Exchange to retrieve data
-            For see all posible exchanges call:
-                Pymarketcap().exchange_names
-        :type exchange_name: str
-
-        :return: Data from all markets in exchange
-        :rtype: list
+        Returns:
+            list: All exchanges in coinmarketcap.
 
         """
-        from re import sub
-        url = self.web_url + 'exchanges/%s/' % exchange_name
+        exchanges = self.exchanges()
+        response = []
+        for exchange in exchanges:
+            exch = exchange["name"]
+            if exch not in response:
+                response.append(exch)
+        return response
+
+    def exchange(self, name):
+        """Obtain data from a exchange passed as argument
+
+        Example:
+            exchange('poloniex')
+
+        Args:
+            name (str): Exchange to retrieve data
+
+        Returns:
+            list: Data from all markets in a exchange
+        """
+        url = urljoin(self.web_url, 'exchanges/%s/' % name)
         html = self._html(url)
 
         marks = html.find('table').find_all('tr')
@@ -690,8 +526,9 @@ class Pymarketcap(object):
                 elif n == 1:
                     name = str(c.getText())
                 elif n == 2:
-                    market = str(c.getText().replace('/',
-                                    self.pair_separator))
+                    market = str(c.getText().replace(
+                        '/', self.pair_separator
+                    ))
                 elif n == 3:
                     _volume_24h_usd = sub(r'\$|,', '', c.getText())
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
@@ -712,46 +549,20 @@ class Pymarketcap(object):
         return response
 
     def exchanges(self, limit=50):
-        """ 
-        Returns all the exchanges markets data
+        """Get all the exchanges markets data
         in coninmarketcap ranked by volumes.
 
-        Example response:
-            [
-              {'rank': 1, 
-               'volume_usd': 507619219, 
-               'name': 'bittrex', 
-               'markets': [
-                            {'volume_24h_usd': 50465200, 
-                            'rank': 1, 
-                            'perc_change': Decimal('9.94'),
-                            'market': 'MCO/BTC', 
-                            'price_usd': Decimal('14.69')},
-                            ...
-                          ]
-              },
-              ...
-            ]
+        Args:
+            limit (int, optional): Limit the amount
+                of exchanges in response. As default, 50.
 
-        Endpoint: 
-            /exchanges/volume/24-hour/all/
-        
-        :param limit: Limit the amount of exchanges
-            in response (optional, default == 50)
-        :type limit: int
-
-        :return: Exchanges ranked by volumes 
-            with his markets ordered also
-            by volumes of transactions
-        :rtype: list
+        Returns:
+            list: Markets by exchanges and volumes
         """
-
-        from re import sub
-        url = self.web_url + 'exchanges/volume/24-hour/all/'
+        url = urljoin(self.web_url, 'exchanges/volume/24-hour/all/')
         html = self._html(url)
 
         exs = html.find('table').find_all('tr') # Exchanges
-        dating = False
         response = []
         for e in exs:
             try:
@@ -778,12 +589,18 @@ class Pymarketcap(object):
                             elif n == 2:
                                 market = str(c.getText())
                             elif n == 3:
-                                volume_24h_usd = self.parse_int(c.getText().replace('$', '').replace(',', ''))
+                                volume_24h_usd = self.parse_int(
+                                    c.getText().replace('$', '').replace(',', '')
+                                )
                             elif n == 4:
-                                price_usd = self.parse_float(c.getText().replace('$', '').replace(',', ''))
+                                price_usd = self.parse_float(
+                                    c.getText().replace('$', '').replace(',', '')
+                                )
                             elif n == 5:
-                                perc_change = self.parse_float(c.getText().replace('%', ''))
-                        
+                                perc_change = self.parse_float(
+                                    c.getText().replace('%', '')
+                                )
+
                         market_data = {'rank': rank,
                                        'market': market,
                                        'volume_24h_usd': volume_24h_usd,
@@ -793,7 +610,7 @@ class Pymarketcap(object):
                         for _market_data in exchange_data['markets']:
                             if market_data['rank'] == _market_data['rank']:
                                 exist = True
-                        if exist == False:
+                        if not exist:
                             exchange_data['markets'].append(market_data)
             else:
                 try:

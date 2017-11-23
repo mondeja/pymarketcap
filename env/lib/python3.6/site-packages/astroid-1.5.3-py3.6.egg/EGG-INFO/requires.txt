@@ -1,0 +1,10 @@
+lazy_object_proxy
+six
+wrapt
+
+[:python_version<"3.3"]
+backports.functools_lru_cache
+
+[:python_version<"3.4"]
+enum34>=1.1.3
+singledispatch
