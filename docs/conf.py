@@ -63,7 +63,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pymarketcap'
-copyright = '2017, Álvaro Mondejar Rubio'
+copyright = '2017, Alvaro Mondejar Rubio'
 author = 'Alvaro Mondejar Rubio'
 
 # The version info for the project you're documenting, acts as replacement for
