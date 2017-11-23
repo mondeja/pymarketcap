@@ -63,8 +63,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pymarketcap'
-copyright = '2017, Álvaro'
-author = 'Álvaro'
+copyright = '2017, Álvaro Mondejar Rubio'
+author = 'Alvaro Mondejar Rubio'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
