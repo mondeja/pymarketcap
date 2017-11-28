@@ -17,10 +17,13 @@ or
 git clone https://github.com/mondeja/pymarketcap.git
 cd pymarketcap
 python setup.py install
-``` 
+```
 
 ## Documentation:
-All methods are self explained in doctrings. Also, you can see all available methods at [pymarketcap/docs](https://github.com/mondeja/pymarketcap/blob/master/pymarketcap/docs/README.md).
+All methods are self explained in doctrings. You can see all available methods at [pymarketcap/docs](https://github.com/mondeja/pymarketcap/blob/master/pymarketcap/docs/README.md) or build docs with the next command from proyect's root folder:
+```
+sphinx-build -b html docs docs/build
+```
 
 ## Contribute
 
