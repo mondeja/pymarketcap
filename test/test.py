@@ -38,8 +38,8 @@ class TestApiCoinmarketcap(unittest.TestCase):
     Tests for Coinmarketcap Api commands. These will fail in the
     absence of an internet connection or if Coinmarketcap API goes down.
     """
-    def setUp(self):
-
+    def __init__(self, *args, **kwargs):
+        super(TestApiCoinmarketcap, self).__init__(*args, **kwargs)
         self.coinmarketcap = Pymarketcap()
 
     def test_symbols(self):
@@ -81,7 +81,8 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     These will fail in the absence of an internet
     connection or if Coinmarketcap API goes down.
     """
-    def setUp(self):
+    def __init__(self, *args, **kwargs):
+        super(TestScraperCoinmarketcap, self).__init__(*args, **kwargs)
         self.coinmarketcap = Pymarketcap()
 
     def test_endpoints(self):
