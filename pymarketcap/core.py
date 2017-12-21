@@ -171,7 +171,7 @@ class Pymarketcap(object):
     #######    WEB PARSER METHODS    #######
 
     @staticmethod
-    def _html(url: str):
+    def _html(url):
         """Internal function for get plain html pages
 
         Args:
@@ -190,7 +190,7 @@ class Pymarketcap(object):
         else:
             raise CoinmarketcapError(status_code, url)
 
-    def markets(self, currency: str) -> list:
+    def markets(self, currency):
         """Get available coinmarketcap markets data.
         It needs a currency as argument.
 
@@ -483,7 +483,7 @@ class Pymarketcap(object):
         return response
 
     @property
-    def exchange_names(self) -> list:
+    def exchange_names(self):
         """Get all exchange names available currently in coinmarketcap.
 
         Returns:
