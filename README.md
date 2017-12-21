@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap)
 
-**pymarketcap** is an APACHE licensed library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and web. Consist of a scraper built on BeautifulSoup and an API wrapper. Only tested in Python3.
+**pymarketcap** is an APACHE licensed library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and web. Consist of a scraper built on BeautifulSoup and an API wrapper.
 
 ## Installation:
 
