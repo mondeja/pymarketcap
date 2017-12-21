@@ -213,7 +213,8 @@ class Pymarketcap(object):
             _volume_24h = m.find('span', {'class': 'volume'}).getText()
             volume_24h = self.parse_int(sub(r'\D', '', _volume_24h))
             _price = m.find('span', {'class': 'price'}).getText()
-            price = self.parse_float(sub(r'\$| |\*', '', _price))
+            _price = sub(r'\$| |\*|,', '', _price)
+            price = self.parse_float(_price)
 
             _childs, childs = (m.contents, [])
             for c in _childs:
