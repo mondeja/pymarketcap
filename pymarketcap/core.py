@@ -739,7 +739,3 @@ class Pymarketcap(object):
             url += "%s/%s/" % (start, end)
 
         return get(url).json()
-
-    def proof(self):
-        
-
