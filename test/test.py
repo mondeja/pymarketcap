@@ -43,7 +43,7 @@ class TestApiCoinmarketcap(unittest.TestCase):
         actual = self.coinmarketcap.symbols
         self.assertIs(type(actual), list)
         self.assertEqual(len(actual) > 0, True)
-        self.assertIs(type(actual[0]), str)
+        self.assertIn(type(actual[0]), (str, unicode))
 
     def test_ticker(self):
         actual = self.coinmarketcap.ticker()
@@ -169,12 +169,12 @@ class TestScraperCoinmarketcap(unittest.TestCase):
         actual = self.coinmarketcap.recently()
         value_types = {'price_usd': Decimal,
                        'mineable': bool,
-                       'symbol': str,
-                       'usd_market_cap': [str, int],
-                       'circulating_supply': [str, int],
-                       'volume_24h_usd': [str, int],
-                       'days_ago': [str, int],
-                       'name': str}
+                       'symbol': [str, unicode],
+                       'usd_market_cap': [str, int, unicode],
+                       'circulating_supply': [str, int, unicode],
+                       'volume_24h_usd': [str, int, unicode],
+                       'days_ago': [str, int, unicode],
+                       'name': [str, , unicode]}
         self.assertIs(type(actual), list)
         for c in actual:
             self.assertIs(type(c), dict)
@@ -218,7 +218,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                 if key in ('rank', 'volume_usd'):
                     self.assertIs(type(value), int)
                 elif key == 'name':
-                    self.assertIs(type(value), str)
+                    self.assertIn(type(value), (str, unicode))
                 elif key == 'markets':
                     self.assertIs(type(value), list)
                     for m in value:
