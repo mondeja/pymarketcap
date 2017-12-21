@@ -58,6 +58,19 @@ class Pymarketcap(object):
         self._correspondences = self._cache_symbols()
         self.symbols = list(self._correspondences.keys())
 
+        self.graphs = type("Graphs", (), self._graphs_interface)
+
+
+    ######   RUNTIME INIT   #######
+
+    @property
+    def _graphs_interface(self):
+        return {
+            "currency": self.currency,
+            "global_cap": self.global_cap,
+            "dominance": self.dominance
+        }
+
     def _cache_symbols(self):
         """Internal function for load in cache al symbols
         in coinmarketcap with their respectives currency names"""
@@ -638,8 +651,17 @@ class Pymarketcap(object):
 
         return response
 
+
     #######   GRAPHS API METHODS   #######
-    def graphs(self, currency, start=None, end=None):
+
+    @staticmethod
+    def _parse_start_end(start, end):
+        return (
+            str(int(start.timestamp())),
+            str(int(end.timestamp()))
+        )
+
+    def currency(self, currency, start=None, end=None):
         """Get graphs data of a currency.
 
         Args:
@@ -663,10 +685,60 @@ class Pymarketcap(object):
         """
         if currency.isupper():
             currency = self._correspondences[currency]
+        url = self.graphs_api_url + "currencies/%s/" % currency
 
         if start and end:
-            start = str()
+            start, end = self._parse_start_end(start, end)
+            url += "%s/%s/" % (start, end)
 
-        url = self.graphs_api_url + "currencies/%s" % currency
+        return get(url).json()
+
+    def global_cap(self, bitcoin=True, start=None, end=None):
+        """Get global market capitalization graphs, including
+        or excluding Bitcoin
+
+        Args:
+            bitcoin (bool, optional): Indicates if Bitcoin will
+                be includedin global market capitalization graph.
+                As default True
+            start (optional, datetime): Time to start retrieving
+                graphs data. If not provided get As default None
+            end (optional, datetime): Time to end retrieving
+                graphs data.
+
+        Returns (dict):
+            List of lists with timestamp and values
+        """
+        base_url = self.graphs_api_url
+        if bitcoin:
+            endpoint = "global/marketcap-total/"
+        else:
+            endpoint = "global/marketcap-altcoin/"
+        url = base_url + endpoint
+
+        if start and end:
+            start, end = self._parse_start_end(start, end)
+            url += "%s/%s/" % (start, end)
+
+        return get(url).json()
+
+    def dominance(self, start=None, end=None):
+        """Get currencies dominance percentage graph
+
+        Args:
+            start (optional, datetime): Time to start retrieving
+                graphs data. If not provided get As default None
+            end (optional, datetime): Time to end retrieving
+                graphs data.
+
+        Returns (dict): Altcoins dict and dominance percentage
+            values with timestamps
+        """
+        url = self.graphs_api_url + "global/dominance/"
+
+        if start and end:
+            start, end = self._parse_start_end(start, end)
+            url += "%s/%s/" % (start, end)
+
         return get(url).json()
 

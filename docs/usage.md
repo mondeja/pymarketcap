@@ -370,14 +370,14 @@ coinmarketcap.ranks('gainers', '1h')
 
 ```
 
-#### [Graphs](https://graphs.coinmarketcap.com/currencies/bitcoin/)
+### Graphs API methods
 
 - **`GET https://graphs.coinmarketcap.com/currencies/<currency>/`**
 
 ```python
->>> coinmarketcap.graphs("BTC")
 
-# Admits `start` and `end` arguments in datetime objects
+# All graphs methods admit `start` and `end` arguments as datetime objects
+>>> coinmarketcap.graphs.currency("BTC")
 
 {
   "market_cap_by_available_supply": [
@@ -394,3 +394,38 @@ coinmarketcap.ranks('gainers', '1h')
 }
 
 ```
+
+- **`GET https://graphs.coinmarketcap.com/global/marketcap-total/`**
+
+```python
+>>> coinmarketcap.graphs.global_cap(bitcoin=False)
+
+# Select if you want Bitcoin charts or only altcoins total capitalization
+
+{
+  "market_cap_by_available_supply": [
+      [1484866474000, 0],
+      [1484888076000, 1147246],
+      [1484909675000, 783275],
+      [1484936374000, 60713],
+      [1484957973000, 151578],
+      ...
+  ],
+}
+
+```
+
+- **`GET https://graphs.coinmarketcap.com/global/dominance/`**
+
+```python
+>>> coinmarketcap.graphs.dominance()
+
+{
+  "bitcoin": [...],
+  "ethereum": [...],
+  "ripple": [...],
+
+  ...
+}
+```
+

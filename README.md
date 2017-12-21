@@ -46,7 +46,9 @@ sphinx-build -b html docs docs/build
 |`exchange`                | ✔ | ✔ | ✔ |
 |`exchanges`               | ✔ | ✔ | ✔ |
 |`exchange_names`          | ✔ | ✔ | ✔ |
-|`graphs`                  | ✔ | ✔ | ✔ |
+|`graphs.currency`         | ✔ | ✔ | ✔ |
+|`graphs.global_cap`       | ✔ | ✔ | ✔ |
+|`graphs.dominance`        | ✔ | ✔ | ✔ |
 |`assets`                  | ✘ | ✘ | ✘ |
 
 ## Support
