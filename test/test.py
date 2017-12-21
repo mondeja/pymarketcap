@@ -8,6 +8,9 @@ from decimal import Decimal
 
 from pymarketcap import Pymarketcap
 
+if sys.version_info[0] == 3:
+    unicode = str
+
 
 """ ###########################################
     #########  TESTS CONFIGURATION  ###########
