@@ -75,13 +75,10 @@ class Pymarketcap(object):
         """Internal function for load in cache al symbols
         in coinmarketcap with their respectives currency names"""
         response = {}
-        url = "https://coinmarketcap.com/all/views/all/"
-        html = self._html(url)
-        table_currencies = html.find(id="currencies-all")
-        for currency in table_currencies.find_all("tr")[1:]:
-            symbol = currency.find(class_="col-symbol").text
-            name = currency.find(class_="currency-name-container")["href"].split("/")[2]
-            response[symbol] = name
+        url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
+        currencies = get(url).json()
+        for currency in currencies:
+            response[currency["symbol"]] = currency["name"]
         return response
 
     #######   API METHODS   #######
@@ -742,3 +739,7 @@ class Pymarketcap(object):
             url += "%s/%s/" % (start, end)
 
         return get(url).json()
+
+    def proof(self):
+        
+
