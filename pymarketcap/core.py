@@ -237,7 +237,7 @@ class Pymarketcap(object):
 
         return response
 
-    def _get_ranks(self, query: str, temp: str) -> list:
+    def _get_ranks(self, query, temp) -> list:
         """Internal function for get gainers and losers
 
         Args:
