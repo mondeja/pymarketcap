@@ -5,16 +5,17 @@ import sys
 import os
 import unittest
 from decimal import Decimal
-
 from pymarketcap import Pymarketcap
 
-if sys.version_info[0] == 2:
-    str = unicode
+# Compatibility between Python 2 and 3
+is_py3 = sys.version_info[0] == 3
+is_py2 = sys.version_info[0] == 2
 
-""" ###########################################
-    #########  TESTS CONFIGURATION  ###########
-    ###########################################
-"""
+if is_py3:
+    unicode = str
+
+
+""" #########  TESTS CONFIGURATION  ########### """
 
 class ConfigTest:
     """
@@ -24,13 +25,10 @@ class ConfigTest:
     COIN_NAME = 'bitcoin'
     EXCHANGE = 'poloniex'
 
+    floats = float if is_py2 else Decimal
 
 
-""" ###########################################
-    ##############  API TESTS  ################
-    ###########################################
-"""
-
+""" ##############  API TESTS  ################ """
 
 class TestApiCoinmarketcap(unittest.TestCase):
     """
@@ -39,7 +37,7 @@ class TestApiCoinmarketcap(unittest.TestCase):
     """
     def __init__(self, *args, **kwargs):
         super(TestApiCoinmarketcap, self).__init__(*args, **kwargs)
-        self.coinmarketcap = Pymarketcap()
+        self.coinmarketcap = Pymarketcap(parse_float=config.floats)
 
     def test_symbols(self):
         actual = self.coinmarketcap.symbols
@@ -69,10 +67,8 @@ class TestApiCoinmarketcap(unittest.TestCase):
     def test_stats(self):
         actual = self.coinmarketcap.stats()
 
-""" ###########################################
-    ############  SCRAPER TESTS  ##############
-    ###########################################
-"""
+
+""" ############  SCRAPER TESTS  ############## """
 
 class TestScraperCoinmarketcap(unittest.TestCase):
     """
@@ -82,7 +78,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     """
     def __init__(self, *args, **kwargs):
         super(TestScraperCoinmarketcap, self).__init__(*args, **kwargs)
-        self.coinmarketcap = Pymarketcap()
+        self.coinmarketcap = Pymarketcap(parse_float=config.floats)
 
     def test_endpoints(self):
         from requests import get
@@ -104,9 +100,9 @@ class TestScraperCoinmarketcap(unittest.TestCase):
 
     def test_markets(self):
         actual = self.coinmarketcap.markets(config.COIN)
-        value_types = {'price_usd': Decimal,
+        value_types = {'price_usd': config.floats,
                        '24h_volume_usd': int,
-                       'percent_volume': Decimal,
+                       'percent_volume': config.floats,
                        'pair': str,
                        'exchange': str,
                        'updated': bool}
@@ -122,10 +118,10 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_ranks(self):
         temps = ['1h', '24h', '7d']
         queries = ['gainers', 'losers']
-        value_types = {'percent_change': Decimal,
+        value_types = {'percent_change': config.floats,
                        '24h_volume_usd': int,
                        'symbol': str,
-                       'price_usd': Decimal,
+                       'price_usd': config.floats,
                        'name': str}
 
         actual = self.coinmarketcap.ranks()
@@ -150,12 +146,12 @@ class TestScraperCoinmarketcap(unittest.TestCase):
 
     def test_historical(self):
         from datetime import datetime
-        value_types = {'close': Decimal,
-                       'low': Decimal,
+        value_types = {'close': config.floats,
+                       'low': config.floats,
                        'usd_volume': int,
-                       'open': Decimal,
+                       'open': config.floats,
                        'usd_market_cap': int,
-                       'high': Decimal,
+                       'high': config.floats,
                        'date': datetime}
 
         actual = self.coinmarketcap.historical(config.COIN,
@@ -170,7 +166,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
 
     def test_recently(self):
         actual = self.coinmarketcap.recently()
-        value_types = {'price_usd': Decimal,
+        value_types = {'price_usd': config.floats,
                        'mineable': bool,
                        'symbol': [str, unicode],
                        'usd_market_cap': [str, int, unicode],
@@ -192,11 +188,11 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_exchange(self):
         actual = self.coinmarketcap.exchange(config.EXCHANGE)
         value_types = {'market': str,
-                       'price_usd': Decimal,
+                       'price_usd': config.floats,
                        'rank': int,
                        'volume_24h_usd': int,
                        'name': str,
-                       'perc_volume': Decimal}
+                       'perc_volume': config.floats}
 
         self.assertIs(type(actual), list)
         for market in actual:
@@ -207,12 +203,12 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_exchanges(self):
         actual = self.coinmarketcap.exchanges()
         value_types = {'market': str,
-                       'price_usd': Decimal,
+                       'price_usd': config.floats,
                        'rank': int,
                        'volume_24h_usd': int,
                        'name': str,
-                       'perc_volume': Decimal,
-                       'perc_change': Decimal}
+                       'perc_volume': config.floats,
+                       'perc_change': config.floats}
 
         self.assertIs(type(actual), list)
         for exch in actual:
@@ -234,7 +230,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
         self.assertIs(type(actual), list)
 
     def test_graphs(self):
-        actual = self.coinmarketcap.graphs(config["COIN"])
+        actual = self.coinmarketcap.graphs(config.COIN)
         self.assertIs(type(actual), dict)
 
         for key, value in actual.items():
@@ -242,7 +238,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
             for timestamp in value:
                 self.assertIs(type(timestamp), list)
                 for _value in timestamp:
-                    self.assertIs(type(_value), int)
+                    self.assertIn(type(_value), (float, int))
 
 
 if __name__ == '__main__':
