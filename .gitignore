@@ -10,3 +10,6 @@ __pycache__/
 tmp/
 env/
 build/
+
+# Other files #
+prueba.py

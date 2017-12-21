@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name = 'pymarketcap',
-    version = '3.3.0',
+    version = '3.3.01',
     url = 'https://github.com/mondeja/pymarketcap',
     download_url = 'https://github.com/mondeja/pymarketcap/archive/master.zip',
     author = 'Alvaro Mondejar <mondejar1994@gmail.com>',
