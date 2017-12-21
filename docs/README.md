@@ -396,6 +396,7 @@ coinmarketcap.ranks('gainers', '1h')
 ```
 
 - **`GET https://graphs.coinmarketcap.com/global/marketcap-total/`**
+- **`GET https://graphs.coinmarketcap.com/global/altcoin-total/`
 
 ```python
 >>> coinmarketcap.graphs.global_cap(bitcoin=False)

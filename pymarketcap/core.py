@@ -656,6 +656,7 @@ class Pymarketcap(object):
 
     @staticmethod
     def _parse_start_end(start, end):
+        """Internal function to parse start and end datetimes"""
         return (
             str(int(start.timestamp())),
             str(int(end.timestamp()))
@@ -741,4 +742,3 @@ class Pymarketcap(object):
             url += "%s/%s/" % (start, end)
 
         return get(url).json()
-
