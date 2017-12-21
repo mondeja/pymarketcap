@@ -6,10 +6,7 @@ import os
 import unittest
 from decimal import Decimal
 
-try:
-    from pymarketcap import Pymarketcap
-except ImportError:
-    raise ImportError("You need to install pymarketcap before test it.")
+from pymarketcap import Pymarketcap
 
 
 """ ###########################################

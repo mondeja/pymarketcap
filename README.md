@@ -1,6 +1,5 @@
 <h1>pymarketcap</h1>
-
-[![PyPi Version](http://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap/)
+[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap)
 
 **pymarketcap** is an APACHE licensed library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and web. Consist of a scraper built on BeautifulSoup and an API wrapper. Only tested in Python3.
 

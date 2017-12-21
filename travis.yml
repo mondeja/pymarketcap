@@ -1,0 +1,10 @@
+language: python
+rvm:
+  - "2.7"
+  - "3.6"
+  - "nightly"
+install:
+  - pip install -r requirements.txt
+  - python setup.py install
+script:
+  python test/test.py
