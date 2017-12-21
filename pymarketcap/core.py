@@ -637,3 +637,36 @@ class Pymarketcap(object):
                 exchange_data['markets'] = []
 
         return response
+
+    #######   GRAPHS API METHODS   #######
+    def graphs(self, currency, start=None, end=None):
+        """Get graphs data of a currency.
+
+        Args:
+            currency (str): Currency to retrieve graphs data.
+            start (optional, datetime): Time to start retrieving
+                graphs data. If not provided get As default None
+            end (optional, datetime): Time to end retrieving
+                graphs data.
+
+        Returns (dict):
+            Dict info with next keys:
+            `
+                {"market_cap_by_available_supply": [...],
+                 "price_btc": [...],
+                 "price_usd": [...],
+                 "volume_usd": [...]
+                 }
+            `
+            and for each key, a list of lists where each one
+            has two values [<timestamp>, <value>]
+        """
+        if currency.isupper():
+            currency = self._correspondences[currency]
+
+        if start and end:
+            start = str()
+
+        url = self.graphs_api_url + "currencies/%s" % currency
+        return get(url).json()
+

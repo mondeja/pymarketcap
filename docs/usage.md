@@ -187,6 +187,7 @@ coinmarketcap.ranks('gainers', '1h')
       "name": "Bolivarcoin"
     },
 ...
+
 ```
 
 #### [Historical data](https://coinmarketcap.com/currencies/bitcoin/historical-data/)
@@ -366,5 +367,30 @@ coinmarketcap.ranks('gainers', '1h')
    'name': 'bithumb'},
  ...
 ]
+
+```
+
+#### [Graphs](https://graphs.coinmarketcap.com/currencies/bitcoin/)
+
+- **`GET https://graphs.coinmarketcap.com/currencies/<currency>/`**
+
+```python
+>>> coinmarketcap.graphs("BTC")
+
+# Admits `start` and `end` arguments in datetime objects
+
+{
+  "market_cap_by_available_supply": [
+      [1484866474000, 0],
+      [1484888076000, 1147246],
+      [1484909675000, 783275],
+      [1484936374000, 60713],
+      [1484957973000, 151578],
+      ...
+  ],
+  "price_btc": [...],
+  "price_usd": [...],
+  "volume_usd": [...]
+}
 
 ```

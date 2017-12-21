@@ -8,8 +8,8 @@ from decimal import Decimal
 
 from pymarketcap import Pymarketcap
 
-if sys.version_info[0] == 3:
-    unicode = str
+if sys.version_info[0] == 2:
+    str = unicode
 
 
 """ ###########################################
@@ -46,7 +46,7 @@ class TestApiCoinmarketcap(unittest.TestCase):
         actual = self.coinmarketcap.symbols
         self.assertIs(type(actual), list)
         self.assertEqual(len(actual) > 0, True)
-        self.assertIn(type(actual[0]), (str, unicode))
+        self.assertIs(type(actual[0]), str)
 
     def test_ticker(self):
         actual = self.coinmarketcap.ticker()
@@ -173,12 +173,12 @@ class TestScraperCoinmarketcap(unittest.TestCase):
         actual = self.coinmarketcap.recently()
         value_types = {'price_usd': Decimal,
                        'mineable': bool,
-                       'symbol': [str, unicode],
-                       'usd_market_cap': [str, int, unicode],
-                       'circulating_supply': [str, int, unicode],
-                       'volume_24h_usd': [str, int, unicode],
-                       'days_ago': [str, int, unicode],
-                       'name': [str, unicode]}
+                       'symbol': str,
+                       'usd_market_cap': [str, int],
+                       'circulating_supply': [str, int],
+                       'volume_24h_usd': [str, int],
+                       'days_ago': [str, int],
+                       'name': str}
         self.assertIs(type(actual), list)
         for c in actual:
             self.assertIs(type(c), dict)
@@ -222,7 +222,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                 if key in ('rank', 'volume_usd'):
                     self.assertIs(type(value), int)
                 elif key == 'name':
-                    self.assertIn(type(value), (str, unicode))
+                    self.assertIs(type(value), str)
                 elif key == 'markets':
                     self.assertIs(type(value), list)
                     for m in value:
@@ -233,6 +233,17 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_exchange_names(self):
         actual = self.coinmarketcap.exchange_names
         self.assertIs(type(actual), list)
+
+    def test_graphs(self):
+        actual = self.coinmarketcap.graphs(config.COIN)
+        self.assertIs(type(actual), dict)
+
+        for key, value in actual.items():
+            self.assertIs(type(value), list)
+            for timestamp in value:
+                self.assertIs(type(timestamp), list)
+                for _value in timestamp:
+                    self.assertIs(type(_value), int)
 
 
 if __name__ == '__main__':
