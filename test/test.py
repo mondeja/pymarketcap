@@ -109,7 +109,8 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                        '24h_volume_usd': int,
                        'percent_volume': Decimal,
                        'pair': str,
-                       'exchange': str}
+                       'exchange': str,
+                       'updated': bool}
 
         self.assertIs(type(actual), list)
         self.assertIs(len(actual) > 0, True)
