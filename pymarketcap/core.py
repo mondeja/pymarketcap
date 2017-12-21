@@ -230,10 +230,13 @@ class Pymarketcap(object):
                         pair = pair.replace(' *', '')
                 elif n == 5:
                     percent_volume = self.parse_float(nav.replace('%', ''))
+                elif n == 6:
+                    updated = nav == "Recently"
             market = {'exchange': exchange, 'pair': pair,
                       '24h_volume_usd': volume_24h,
                       'price_usd': price,
-                      'percent_volume': percent_volume}
+                      'percent_volume': percent_volume,
+                      "updated": updated}
             response.append(market)
 
         return response

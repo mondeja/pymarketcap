@@ -109,21 +109,24 @@ coinmarketcap.symbols
     "source": "Poloniex",
     "percent_volume": 29.72,
     "price_usd": 49.07,
-    "24h_volume_usd": 35779900
+    "24h_volume_usd": 35779900,
+    "updated": True
   },
   {
     "pair": "ETH/USD",
     "source": "GDAX",
     "percent_volume": 8.22,
     "price_usd": 49.99,
-    "24h_volume_usd": 9897980
+    "24h_volume_usd": 9897980,
+    "updated": False
   },
   {
     "pair": "ETH/USD",
     "source": "Bitfinex",
     "percent_volume": 7.98,
     "price_usd": 49.45,
-    "24h_volume_usd": 9606490
+    "24h_volume_usd": 9606490,
+    "updated": True
   },
 
  ...
