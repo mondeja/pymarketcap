@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 
 class CoinmarketcapError(HTTPError):
     """
-    Exception for catch invalid commands and other repsonses
+    Exception for catch invalid commands and other responses
     that don't match with 200 code responses.
 
     Args:
@@ -47,8 +47,7 @@ class Pymarketcap(object):
                 (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
 
         """
-        base_url, api_version = ("https://", "v1")
-        self.api_url = "%sapi.coinmarketcap.com/%s/" % (base_url, api_version)
+        self.api_url = "https://api.coinmarketcap.com/v1/"
         self.web_url = 'https://coinmarketcap.com/'
         self.graphs_api_url = "https://graphs.coinmarketcap.com/"
         self.parse_float = parse_float
