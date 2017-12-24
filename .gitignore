@@ -12,6 +12,7 @@ env/
 build/
 dist/
 scripts/
+pymarketcap.egg-info/
 
 # Other files #
 prueba.py

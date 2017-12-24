@@ -77,7 +77,7 @@ class Pymarketcap(object):
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
         currencies = get(url).json()
         for currency in currencies:
-            response[currency["symbol"]] = currency["name"]
+            response[currency["symbol"]] = currency["name"].replace(" ", "-")
         return response
 
     #######   API METHODS   #######
