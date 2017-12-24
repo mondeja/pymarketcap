@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap)
 
-**pymarketcap** is library for retrieve information from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a scraper built on BeautifulSoup and an API wrapper powered by requests. Only works in Python3.
+**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a scraper built on BeautifulSoup and an API wrapper powered by requests. Only works in Python3.
 
 ## Installation:
 
@@ -27,10 +27,12 @@ All methods are self explained in doctrings. Also, you can see all available met
 ```
 pip3 install -r dev-requirements.txt
 cd test
-python3 test.py --with-timer -v
 ```
 
-> Benchmarking results will be stored in `test/bench/results.json`
+- All tests with benchmarking: `python3 test.py --with-timer -v`
+- Only API tests without benchmarking: `nosetests units/test_api.py -v`
+
+> Benchmarking results for all tests will be stored in `test/bench/results.json`
 
 ## Contribute
 

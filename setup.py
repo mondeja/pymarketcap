@@ -11,7 +11,7 @@ setup(
     version = '3.3.11',
     url = 'https://github.com/mondeja/pymarketcap',
     download_url = 'https://github.com/mondeja/pymarketcap/archive/master.zip',
-    author = 'Alvaro Mondejar <mondejar1994@gmail.com>',
+    author = 'Alvaro Mondejar',
     author_email = 'mondejar1994@gmail.com',
     license = 'BSD License',
     packages = ['pymarketcap'],

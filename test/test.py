@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # Run:
-# Tests benchmarking: python3 test.py --with-timer -v
+# All tests benchmarking:
+#     python3 test.py --with-timer -v
+# Only API tests without benchmarking:
+#     nosetests units/test_api.py -v
 
 # Standard libraries
 import os
