@@ -16,12 +16,21 @@ or
 ```
 git clone https://github.com/mondeja/pymarketcap.git
 cd pymarketcap
-pip install requests bs4
+pip install -r requirements.txt
 python setup.py install
 ```
 
 ## Documentation:
 All methods are self explained in doctrings. You can see all available methods at [docs/README.md](https://github.com/mondeja/pymarketcap/blob/master/docs/usage.md):
+
+## Testing
+```
+pip3 install -r dev-requirements.txt
+cd test
+python3 test.py --with-timer -v
+```
+
+> Benchmarking results will be stored in `test/bench/results.json`
 
 ## Contribute
 
