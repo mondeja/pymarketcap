@@ -20,8 +20,8 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-## Documentation:
-All methods are self explained in doctrings. Also, you can see all available methods at [docs/README.md](https://github.com/mondeja/pymarketcap/blob/master/docs/README.md):
+## Documentation
+All methods are self explained in doctrings. Also, you can see all available methods in action at [wiki page](https://github.com/mondeja/pymarketcap/wiki).
 
 ## Testing
 ```
