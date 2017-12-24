@@ -284,7 +284,7 @@ class Pymarketcap(object):
                     _volume_24h = sub(r'\$|,', '', g.a.getText())
                     volume_24h = self.parse_int(_volume_24h)
                 elif n == 4:
-                    _price = sub(r'\$', '', g.a.getText())
+                    _price = sub(r'\$|,', '', g.a.getText())
                     price = self.parse_float(_price)
                 elif n == 5:
                     percent = self.parse_float(sub(r'%', '', g.string))
