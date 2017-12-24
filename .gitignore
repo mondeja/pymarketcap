@@ -10,8 +10,11 @@ __pycache__/
 tmp/
 env/
 build/
+dist/
 scripts/
 
 # Other files #
 prueba.py
 .env
+MANIFEST
+MANIFEST.in

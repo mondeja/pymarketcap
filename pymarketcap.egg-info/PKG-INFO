@@ -1,0 +1,118 @@
+Metadata-Version: 1.1
+Name: pymarketcap
+Version: 3.3.121
+Summary: Python3 API and web scraper for coinmarketcap.com.
+Home-page: https://github.com/mondeja/pymarketcap
+Author: Álvaro Mondéjar
+Author-email: mondejar1994@gmail.com
+License: BSD License
+Download-URL: https://github.com/mondeja/pymarketcap/archive/master.zip
+Description-Content-Type: UNKNOWN
+Description: <h1>pymarketcap</h1>
+        
+        [![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap)
+        
+        **pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a scraper built on BeautifulSoup and an API wrapper powered by requests. Only works in Python3.
+        
+        ## Installation:
+        
+        From source use:
+        ```
+        pip install https://github.com/mondeja/pymarketcap/archive/master.zip
+        ```
+        
+        or
+        
+        ```
+        git clone https://github.com/mondeja/pymarketcap.git
+        cd pymarketcap
+        pip install -r requirements.txt
+        python setup.py install
+        ```
+        
+        ## Documentation
+        All methods are self explained in doctrings. Also, you can see all available methods in action at [wiki page](https://github.com/mondeja/pymarketcap/wiki).
+        
+        ## Testing
+        ```
+        pip3 install -r dev-requirements.txt
+        cd test
+        ```
+        
+        - All tests with benchmarking: `python3 test.py --with-timer -v`
+        - Only API tests without benchmarking: `nosetests units/test_api.py -v`
+        
+        > Benchmarking results for all tests will be stored in `test/bench/results.json`
+        
+        ## Contribute
+        
+        - Issue Tracker: https://github.com/mondeja/pymarketcap/issues
+        - Source Code: https://github.com/mondeja/pymarketcap
+        
+        ### Development progress:
+        
+        |**Method**|**Developed**|**Documented**|**Tested**|
+        |:-------------------------|:-:|:-:|:-:|
+        |**API COMMANDS**                      |
+        |`symbols`                 | ✔ | ✔ | ✔ |
+        |`ticker`                  | ✔ | ✔ | ✔ |
+        |`stats`                   | ✔ | ✔ | ✔ |
+        |**SCRAPER COMMANDS**                  |
+        |`markets`                 | ✔ | ✔ | ✔ |
+        |`ranks`                   | ✔ | ✔ | ✔ |
+        |`historical`              | ✔ | ✔ | ✔ |
+        |`recently`                | ✔ | ✔ | ✔ |
+        |`exchange`                | ✔ | ✔ | ✔ |
+        |`exchanges`               | ✔ | ✔ | ✔ |
+        |`exchange_names`          | ✔ | ✔ | ✔ |
+        |`graphs.currency`         | ✔ | ✔ | ✔ |
+        |`graphs.global_cap`       | ✔ | ✔ | ✔ |
+        |`graphs.dominance`        | ✔ | ✔ | ✔ |
+        |`assets`                  | ✘ | ✘ | ✘ |
+        
+        ## Support
+        
+        If you are having issues, please let me know (mondejar1994@gmail.com).
+        
+        
+        ## License
+        
+        Copyright (c) 2017 Álvaro Mondéjar Rubio <mondejar1994@gmail.com>.
+        All rights reserved.
+        
+        Redistribution and use in source and binary forms are permitted
+        provided that the above copyright notice and this paragraph are
+        duplicated in all such forms and that any documentation, advertising
+        materials, and other materials related to such distribution and use
+        acknowledge that the software was developed by Álvaro Mondéjar Rubio. The
+        name of the Álvaro Mondéjar Rubio may not be used to endorse or promote
+        products derived from this software without specific prior written
+        permission.
+        
+        THIS SOFTWARE IS PROVIDED “AS IS” AND WITHOUT ANY EXPRESS OR IMPLIED
+        WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+        MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+        
+        ### Buy me a coffee?
+        
+        If you feel like buying me a coffee (or a beer?), donations are welcome:
+        
+        ```
+        BTC : 1LfUF4AcvH7Wd1wTc7Mmqobj4AypUbpvN5
+        ETH : 0x7428fE875226880DaD222c726F6340eec42Db567
+        STEEM: @mondeja
+        ```
+        
+Keywords: coinmarketcap,cryptocurrency,API,wrapper,scraper,json,BTC,Bitcoin
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Financial and Insurance Industry
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Topic :: Software Development :: Libraries :: Python Modules

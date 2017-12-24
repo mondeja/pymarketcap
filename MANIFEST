@@ -1,4 +1,6 @@
 COPYING
+dev-requirements.txt
+requirements.txt
 setup.py
 README.md
 pymarketcap/core.py

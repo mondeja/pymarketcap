@@ -1,0 +1,13 @@
+MANIFEST.in
+README.md
+dev-requirements.txt
+requirements.txt
+setup.py
+pymarketcap/__init__.py
+pymarketcap/core.py
+pymarketcap.egg-info/PKG-INFO
+pymarketcap.egg-info/SOURCES.txt
+pymarketcap.egg-info/dependency_links.txt
+pymarketcap.egg-info/requires.txt
+pymarketcap.egg-info/top_level.txt
+test/test.py
