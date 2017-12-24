@@ -12,7 +12,7 @@ from decimal import Decimal
 from requests import get
 from requests.compat import urljoin, urlencode
 from requests.exceptions import HTTPError
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 
 
 class CoinmarketcapError(HTTPError):
@@ -199,7 +199,10 @@ class Pymarketcap(object):
         req = get(url)
         status_code = req.status_code
         if status_code == 200:
-            return BeautifulSoup(req.text, "html.parser")
+            try:
+                return BeautifulSoup(req.text, "lxml")
+            except FeatureNotFound:
+                return BeautifulSoup(req.text, "html.parser")
         else:
             raise CoinmarketcapError(status_code, url)
 
