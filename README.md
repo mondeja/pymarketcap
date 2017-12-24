@@ -21,7 +21,7 @@ python setup.py install
 ```
 
 ## Documentation:
-All methods are self explained in doctrings. You can see all available methods at [docs/README.md](https://github.com/mondeja/pymarketcap/blob/master/docs/usage.md):
+All methods are self explained in doctrings. Also, you can see all available methods at [docs/README.md](https://github.com/mondeja/pymarketcap/blob/master/docs/README.md):
 
 ## Testing
 ```
