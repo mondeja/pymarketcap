@@ -44,9 +44,9 @@ class TestScraperCoinmarketcapFull(unittest.TestCase):
         print("Testing all endpoints schema:")
         for endpoint in web_endpoints + graphs_api_endpoints:
             if endpoint in web_endpoints:
-                _url = self.coinmarketcap.web_url + endpoint
+                _url = self.coinmarketcap.urls["web"] + endpoint
             else:
-                _url = self.coinmarketcap.graphs_api_url + endpoint
+                _url = self.coinmarketcap.urls["graphs_api"] + endpoint
             _status_code = get(_url).status_code
             print(_url)
             self.assertEqual(_status_code, 200)

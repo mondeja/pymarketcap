@@ -13,7 +13,7 @@ script:
   - cd test && nosetests units/test_scraper.py --with-timer -v
   # End2end
   - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then python end2end/test_api.py; fi
-  - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then python end2end/test_scraper.py; fi
+  - python end2end/test_scraper.py
 branches:
   only:
     - master

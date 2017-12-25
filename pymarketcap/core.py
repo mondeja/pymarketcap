@@ -35,9 +35,11 @@ class Pymarketcap(object):
     """
     def __init__(self, parse_float=Decimal,
                  parse_int=int, pair_separator="-"):
-        self.api_url = "https://api.coinmarketcap.com/v1/"
-        self.web_url = 'https://coinmarketcap.com/'
-        self.graphs_api_url = "https://graphs.coinmarketcap.com/"
+        self.urls = dict(
+            api="https://api.coinmarketcap.com/v1/",
+            web="https://coinmarketcap.com/",
+            graphs_api="https://graphs.coinmarketcap.com/"
+        )
         self.parse_float = parse_float
         self.parse_int = parse_int
         self.pair_separator = pair_separator
@@ -52,6 +54,7 @@ class Pymarketcap(object):
 
     @property
     def _graphs_interface(self):
+        """Sugar syntax for graphs API methods"""
         return {
             "currency": self.currency,
             "global_cap": self.global_cap,
@@ -61,10 +64,7 @@ class Pymarketcap(object):
     def _cache_symbols(self):
         """Internal function for load in cache al symbols
         in coinmarketcap with their respectives currency names"""
-        # Some coins doesn't correspond with names provided
-        # by coinmarketcap internal cache
         self._exceptional_coin_slugs = {
-            # Original name, correct name
             "42": "42-coin",
             "808": "808coin",
             "611": "sixeleven",
@@ -81,6 +81,12 @@ class Pymarketcap(object):
         for original, correct in self._exceptional_coin_slugs.items():
             response[original] = correct
         return response
+
+    def is_symbol(self, currency):
+        # Improve velocity (`if currency in self.symbols` is slower)
+        if currency.isupper() or currency in self._exceptional_coin_slugs.keys():
+            return True
+        return False
 
     #######   API METHODS   #######
 
@@ -107,10 +113,10 @@ class Pymarketcap(object):
         if not convert:
             convert = "USD"
 
-        url = urljoin(self.api_url, "ticker/")
+        url = urljoin(self.urls["api"], "ticker/")
 
         if currency:
-            if currency.isupper() or currency in self._exceptional_coin_slugs.keys():
+            if self.is_symbol(currency):
                 currency = self._correspondences[currency]
             url += "%s/" % currency
 
@@ -204,7 +210,7 @@ class Pymarketcap(object):
         Returns:
             dict: Global markets statistics
         """
-        url = urljoin(self.api_url, 'global/')
+        url = urljoin(self.urls["api"], 'global/')
         response = get(url).json(parse_int=self.parse_int,
                                  parse_float=self.parse_float)
         return response
@@ -245,10 +251,10 @@ class Pymarketcap(object):
         Returns:
             list: markets on wich provided currency is currently tradeable
         """
-        if currency.isupper():
+        if self.is_symbol(currency):
             currency = self._correspondences[currency]
 
-        url = urljoin(self.web_url, "currencies/%s/" % currency)
+        url = urljoin(self.urls["web"], "currencies/%s/" % currency)
         html = self._html(url)
 
         response = []
@@ -294,7 +300,7 @@ class Pymarketcap(object):
             temp: Temporal period obtaining gainers or losers,
                 1h, 24h or 7d
         """
-        url = urljoin(self.web_url, 'gainers-losers/')
+        url = urljoin(self.urls["web"], 'gainers-losers/')
         html = self._html(url)
 
         call = str(query) + '-' + str(temp)
@@ -390,10 +396,10 @@ class Pymarketcap(object):
         if not start: start = datetime(2008, 8, 18)
         if not end: end = datetime.now()
 
-        if currency.isupper():
+        if self.is_symbol(currency):
             currency = self._correspondences[currency]
 
-        url = self.web_url + 'currencies/' + currency + '/historical-data/'
+        url = self.urls["web"] + 'currencies/' + currency + '/historical-data/'
         url += '?start={}&end={}'.format(
             str(start.year) + str(start.month) + str(start.day),
             str(end.year) + str(end.month) + str(end.day)
@@ -463,7 +469,7 @@ class Pymarketcap(object):
         Returns:
             list: Recently added currencies
         """
-        url = urljoin(self.web_url, 'new/')
+        url = urljoin(self.urls["web"], 'new/')
 
         html = self._html(url)
 
@@ -559,7 +565,7 @@ class Pymarketcap(object):
         Returns:
             list: Data from all markets in a exchange
         """
-        url = urljoin(self.web_url, 'exchanges/%s/' % name)
+        url = urljoin(self.urls["web"], 'exchanges/%s/' % name)
         html = self._html(url)
 
         marks = html.find('table').find_all('tr')
@@ -608,7 +614,7 @@ class Pymarketcap(object):
         Returns:
             list: Markets by exchanges and volumes
         """
-        url = urljoin(self.web_url, 'exchanges/volume/24-hour/all/')
+        url = urljoin(self.urls["web"], 'exchanges/volume/24-hour/all/')
         html = self._html(url)
 
         exs = html.find('table').find_all('tr') # Exchanges
@@ -712,9 +718,9 @@ class Pymarketcap(object):
             and for each key, a list of lists where each one
             has two values [<timestamp>, <value>]
         """
-        if currency.isupper():
+        if self.is_symbol(currency):
             currency = self._correspondences[currency]
-        url = self.graphs_api_url + "currencies/%s/" % currency
+        url = self.urls["graphs_api"] + "currencies/%s/" % currency
 
         if start and end:
             start, end = self._parse_start_end(start, end)
@@ -738,7 +744,7 @@ class Pymarketcap(object):
         Returns (dict):
             List of lists with timestamp and values
         """
-        base_url = self.graphs_api_url
+        base_url = self.urls["graphs_api"]
         if bitcoin:
             endpoint = "global/marketcap-total/"
         else:
@@ -763,7 +769,7 @@ class Pymarketcap(object):
         Returns (dict): Altcoins dict and dominance percentage
             values with timestamps
         """
-        url = self.graphs_api_url + "global/dominance/"
+        url = self.urls["graphs_api"] + "global/dominance/"
 
         if start and end:
             start, end = self._parse_start_end(start, end)
