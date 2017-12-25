@@ -8,6 +8,7 @@
 #     nosetests units/test_api.py -v
 
 # Standard libraries
+import sys
 import os
 import json
 
@@ -50,9 +51,12 @@ def main():
     config = ConfigTest()
     results = run_tests(configure_plugins(), config)
 
-    if results:
+    if len(results) > 1:
         save_benchs(json.dumps(results, indent=4, sort_keys=True),
                     config)
+        return sys.exit(0)
+    return sys.exit(1)
+
 
 
 if __name__ == "__main__":

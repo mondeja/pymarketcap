@@ -17,7 +17,8 @@ from json import JSONDecodeError
 # Internal modules:
 from .errors import (
     CoinmarketcapHTTPError,
-    CoinmarketcapCurrencyNotFoundError
+    CoinmarketcapCurrencyNotFoundError,
+    CoinmarketcapTooManyRequestsError
 )
 
 class Pymarketcap(object):
@@ -158,10 +159,12 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        data = get(url)
+        req = get(url)
         try:
-            data = data.json()
+            data = req.json()
         except JSONDecodeError as error:
+            if req.status_code == 429: # Too many requests
+                raise CoinmarketcapTooManyRequestsError(429, "Too many requests")
             print(error)
             print(url)
             print(data)

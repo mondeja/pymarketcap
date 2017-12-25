@@ -9,10 +9,12 @@ class CoinmarketcapError(Exception):
     """Coinmarketcap base classs errors"""
     pass
 
+
+                    # HTTP Errors #
+
 class CoinmarketcapHTTPError(HTTPError, CoinmarketcapError):
     """
-    Exception for catch invalid commands and other responses
-    that don't match with 200 code responses.
+    Exception for catch 500s range code responses.
 
     Args:
        code (str): Exception error code.
@@ -23,6 +25,13 @@ class CoinmarketcapHTTPError(HTTPError, CoinmarketcapError):
         self.msg = msg
         super().__init__(code, msg)
 
+class CoinmarketcapTooManyRequestsError(CoinmarketcapHTTPError):
+    """Exception for catch 429 HTTP error codes"""
+    def __init__(self, code, msg):
+        super(CoinmarketcapHTTPError, self).__init__(code, msg)
+
+
+                    # Value Errors #
 class CoinmarketcapCurrencyNotFoundError(ValueError, CoinmarketcapError):
     """
     Exception for catch invalid currency parameters as

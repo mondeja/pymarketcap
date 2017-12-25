@@ -5,12 +5,13 @@
 import unittest
 from decimal import Decimal
 from tqdm import tqdm
+from time import sleep
+from pprint import pprint
 
 # Internal modules:
 from pymarketcap import Pymarketcap
 from pymarketcap import CoinmarketcapCurrencyNotFoundError
 
-from pprint import pprint
 
 
 class TestApiCoinmarketcapFull(unittest.TestCase):
@@ -41,6 +42,8 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
 
         print("Testing all currencies in coinmarketcap.com (%d)" \
             % len(self.coinmarketcap.symbols))
+
+        impatient_symbols = []
         for symbol in tqdm(self.coinmarketcap.symbols):
             try:
                 tick = self.coinmarketcap.ticker(symbol)
@@ -53,6 +56,11 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
                 currencies_not_found.append(                  # Notify me with all
                 	{error.currency: error.url}
                 )
+            except CoinmarketcapTooManyRequestsError:
+                print("Too many requests, sleeping 2 seconds")
+                impatient_symbols.append(symbol)
+                time.sleep(2)
+
 
 
         # Display all currencies not found
