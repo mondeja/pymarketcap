@@ -9,8 +9,8 @@ install:
 before_script:
   - pip install -r dev-requirements.txt
 script:
-  # Testing
-  - cd test && python test.py --with-timer -v  # Unittests
+  # Unittests
+  - cd test && nosetests units/test_scraper.py --with-timer -v
   # End2end
   - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then python end2end/test_api.py
   - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then python end2end/test_scraper.py
