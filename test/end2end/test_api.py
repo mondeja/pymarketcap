@@ -10,7 +10,10 @@ from pprint import pprint
 
 # Internal modules:
 from pymarketcap import Pymarketcap
-from pymarketcap import CoinmarketcapCurrencyNotFoundError
+from pymarketcap import (
+    CoinmarketcapCurrencyNotFoundError,
+    CoinmarketcapTooManyRequestsError
+)
 
 
 
@@ -44,23 +47,29 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
             % len(self.coinmarketcap.symbols))
 
         impatient_symbols = []
-        for symbol in tqdm(self.coinmarketcap.symbols):
-            try:
-                tick = self.coinmarketcap.ticker(symbol)
-                for key, value in tick.items():
-                    if type(value_types[key]) is list:
-                        self.assertIn(type(value), value_types[key])
-                    else:
-                        self.assertIs(type(value), value_types[key])
-            except CoinmarketcapCurrencyNotFoundError as error:  # Currency not found?
-                currencies_not_found.append(                  # Notify me with all
-                	{error.currency: error.url}
-                )
-            except CoinmarketcapTooManyRequestsError:
-                print("Too many requests, sleeping 2 seconds")
-                impatient_symbols.append(symbol)
-                time.sleep(2)
-
+        current_symbols = self.coinmarketcap.symbols
+        first_test = True
+        while impatient_symbols or first_test:
+            if impatient_symbols:
+                print("Testing symbols not tested...")
+                current_symbols = impatient_symbols
+            for symbol in tqdm(current_symbols):
+                try:
+                    tick = self.coinmarketcap.ticker(symbol)
+                    for key, value in tick.items():
+                        if type(value_types[key]) is list:
+                            self.assertIn(type(value), value_types[key])
+                        else:
+                            self.assertIs(type(value), value_types[key])
+                except CoinmarketcapCurrencyNotFoundError as error:  # Currency not found?
+                    currencies_not_found.append(                  # Notify me with all
+                    	{error.currency: error.url}
+                    )
+                except CoinmarketcapTooManyRequestsError:
+                    print("Too many requests, sleeping 2 seconds")
+                    impatient_symbols.append(symbol)
+                    time.sleep(2)
+            first_test = False
 
 
         # Display all currencies not found

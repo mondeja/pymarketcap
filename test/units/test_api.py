@@ -49,7 +49,3 @@ class TestApiCoinmarketcap(unittest.TestCase):
 
     def test_stats(self):
         actual = self.coinmarketcap.stats()
-
-
-if __name__ == "__main__":
-    unittest.main()

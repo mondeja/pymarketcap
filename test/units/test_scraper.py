@@ -176,7 +176,3 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_graphs_dominance(self):
         actual = self.coinmarketcap.graphs.dominance()
         self._assert_graphs_data_structure(actual)
-
-
-if __name__ == "__main__":
-    unittest.main()
