@@ -27,9 +27,9 @@ All methods are self explained in doctrings. Also, you can see all available met
 pip3 install -r dev-requirements.txt
 ```
 
-- All tests with benchmarking: `python3 test/test.py --with-timer -v`
+- All tests with benchmarking: `python3 tests/test.py --with-timer -v`
 
-> Benchmarking results for all unittests will be stored in `test/benchmarking.json`
+> Benchmarking results for all unittests will be stored in `tests/benchmarking.json`
 
 - API unittests without benchmarking: `cd tests && nosetests units/test_api.py -v`
 - Scraper unittest with benchmarking: `cd tests && nosetests units/test_scraper.py --with-timer -v`

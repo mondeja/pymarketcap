@@ -1,9 +1,0 @@
-COPYING
-dev-requirements.txt
-requirements.txt
-setup.py
-README.md
-pymarketcap/core.py
-pymarketcap/__init__.py
-pymarketcap/docs/README.md
-pymarketcap/docs/README.html

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 BASEDIR = os.path.dirname(__file__)
 
@@ -21,11 +21,11 @@ setup(
     author = 'Álvaro Mondéjar',
     author_email = 'mondejar1994@gmail.com',
     license = 'BSD License',
-    packages = ['pymarketcap'],
     description = 'Python3 API and web scraper for coinmarketcap.com.',
     long_description = DESC,
     keywords = ['coinmarketcap', 'cryptocurrency', 'API', 'wrapper', 'scraper', 'json', 'BTC', 'Bitcoin'],
     install_requires = REQ,
+    packages=find_packages(exclude=("tests")),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
