@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""Pymarketcap errors module"""
+
 from requests.exceptions import HTTPError
 
 class CoinmarketcapError(Exception):
+    """Coinmarketcap base classs errors"""
     pass
 
 class CoinmarketcapHTTPError(HTTPError, CoinmarketcapError):
@@ -34,5 +37,3 @@ class CoinmarketcapCurrencyNotFoundError(ValueError, CoinmarketcapError):
         self.curr_msg = "Currency %s not exists" % currency
         self.url_msg = "%s not found" % url
         super().__init__(self.curr_msg, self.url_msg)
-
-

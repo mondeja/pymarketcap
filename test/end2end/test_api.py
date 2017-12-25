@@ -61,6 +61,5 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
 
         self.assertEqual(len(currencies_not_found), 0)
 
-
 if __name__ == "__main__":
     unittest.main()

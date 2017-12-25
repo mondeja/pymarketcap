@@ -21,20 +21,19 @@ from .errors import (
 )
 
 class Pymarketcap(object):
+    """Main class for retrieve data from coinmarketcap.com
+
+    Args:
+        parse_float (any, optional): Parser used by json.loads()
+            for retrieve float type data. As default, decimal.Decimal
+        parse_int (any, optional): Parser used by json.loads()
+            for retrieve int type data. As default, int
+        pair_separator (str, optional): Separator between base and
+            quote pair in responses. As default "-"
+            (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
+    """
     def __init__(self, parse_float=Decimal,
                  parse_int=int, pair_separator="-"):
-        """Main class for retrieve data from coinmarketcap.com
-
-        Args:
-            parse_float (any, optional): Parser used by json.loads()
-                for retrieve float type data. As default, decimal.Decimal
-            parse_int (any, optional): Parser used by json.loads()
-                for retrieve int type data. As default, int
-            pair_separator (str, optional): Separator between base and
-                quote pair in responses. As default "-"
-                (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
-
-        """
         self.api_url = "https://api.coinmarketcap.com/v1/"
         self.web_url = 'https://coinmarketcap.com/'
         self.graphs_api_url = "https://graphs.coinmarketcap.com/"
@@ -61,11 +60,25 @@ class Pymarketcap(object):
     def _cache_symbols(self):
         """Internal function for load in cache al symbols
         in coinmarketcap with their respectives currency names"""
+        # Some coins doesn't correspond with names provided
+        # by coinmarketcap internal cache
+        self._exceptional_coin_slugs = {
+            # Original name, correct name
+            "42": "42-coin",
+            "808": "808coin",
+            "611": "sixeleven",
+            "300": "300-token",
+            "888": "octocoin",
+            "$$$": "money",
+            "BTBc": "bitbase",
+        }
         response = {}
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
         currencies = get(url).json()
         for currency in currencies:
             response[currency["symbol"]] = currency["slug"].replace(" ", "-")
+        for original, correct in self._exceptional_coin_slugs.items():
+            response[original] = correct
         return response
 
     #######   API METHODS   #######
@@ -96,7 +109,7 @@ class Pymarketcap(object):
         url = urljoin(self.api_url, "ticker/")
 
         if currency:
-            if currency.isupper():
+            if currency.isupper() or currency in self._exceptional_coin_slugs.keys():
                 currency = self._correspondences[currency]
             url += "%s/" % currency
 
@@ -145,7 +158,17 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        data = get(url).json()
+        data = get(url)
+        try:
+            data = data.json()
+        except JSONDecodeError as error:
+            print(error)
+            print(url)
+            print(data)
+            print("If you see this error report it to https://github.com/mondeja/pymarketcap/issues")
+            print(currency)
+            import sys
+            sys.exit(1)
 
         if currency:
             try:
@@ -159,6 +182,7 @@ class Pymarketcap(object):
                     else:
                         if msg == "id not found":
                             raise CoinmarketcapCurrencyNotFoundError(currency, url)
+
                         else:
                             raise Exception(data["error"])
                 else:
