@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# First, run unit tests
 CURRENT_DIR=${PWD##*/}
 if [ $CURRENT_DIR = "scripts" ]
 then
@@ -21,11 +20,14 @@ python3 test.py --with-timer -v
 tests_results_code=$?
 rm benchmarking.json  # Delete bench results
 
+echo $tests_results_code
 if [ $tests_results_code -eq 1 ] # Tests failed?
 then
   echo "Tests failed"
   exit 1
 fi
+
+exit 0
 
 # New version
 cd ..

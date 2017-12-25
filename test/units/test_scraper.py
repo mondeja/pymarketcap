@@ -3,6 +3,7 @@
 
 # Standard libraries:
 import unittest
+import time
 from decimal import Decimal
 
 # Internal modules:
@@ -22,6 +23,10 @@ class TestScraperCoinmarketcap(unittest.TestCase):
         super(TestScraperCoinmarketcap, self).__init__(*args, **kwargs)
         self.coinmarketcap = Pymarketcap()
         self.config = ConfigTest()
+
+    def tearDown(self):
+        # Prevent to many requests error in tests
+        time.sleep(.25)
 
     def test_markets(self):
         actual = self.coinmarketcap.markets(self.config.COIN)

@@ -65,9 +65,9 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
                     	{error.currency: error.url}
                     )
                 except CoinmarketcapTooManyRequestsError:
-                    print("Too many requests, sleeping 20 seconds...")
+                    print("Too many requests, sleeping 60 seconds...")
                     impatient_symbols.append(symbol)
-                    time.sleep(20)
+                    time.sleep(60)
                 time.sleep(.2)
             first_test = False
 
