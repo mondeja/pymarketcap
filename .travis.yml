@@ -1,15 +1,16 @@
 language: python
 python:
-- '3.5'
-- '3.6'
-- nightly
+  - '3.5'
+  - '3.6'
+  - nightly
 install:
-- pip install -r requirements.txt
-- python setup.py install
+  - pip install -r requirements.txt
+  - python setup.py install
 before_script:
-- pip install -r dev-requirements.txt
+  - pip install -r dev-requirements.txt
 script:
-- cd test && python test.py --with-timer -v
+  - cd test && python test.py --with-timer -v
+  - cd
 branches:
   only:
-  - master
+    - master

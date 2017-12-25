@@ -20,11 +20,6 @@ from .errors import (
     CoinmarketcapCurrencyNotFoundError
 )
 
-# Testing:
-from pprint import pprint
-import sys
-
-
 class Pymarketcap(object):
     def __init__(self, parse_float=Decimal,
                  parse_int=int, pair_separator="-"):
@@ -143,7 +138,6 @@ class Pymarketcap(object):
             }
 
             data = {}
-            pprint(raw_data)
             for key, value in raw_data.items():
                 try:
                     data[key] = value_types[key](value)
@@ -151,20 +145,7 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        print()
-        pprint(url)
-
-        data = get(url)
-        try:
-            data = data.json()
-        except JSONDecodeError as error:
-            print(error)
-            pprint(data.text)
-            sys.exit(1)
-
-
-        pprint(data)
-
+        data = get(url).json()
 
         if currency:
             try:
