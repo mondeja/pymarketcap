@@ -17,17 +17,12 @@ echo "Testing pymarketcap..."
 cd test
 python3 test.py --with-timer -v
 
-tests_results_code=$?
-rm benchmarking.json  # Delete bench results
-
-echo $tests_results_code
-if [ $tests_results_code -eq 1 ] # Tests failed?
+if [ $? -eq 1 ] # Tests failed?
 then
-  echo "Tests failed"
   exit 1
+else
+  rm benchmarking.json  # Delete bench results
 fi
-
-exit 0
 
 # New version
 cd ..
@@ -39,6 +34,7 @@ echo "New version $version"
 echo "Uploading to Pypi..."
 python3 setup.py sdist
 sudo twine upload dist/pymarketcap-$version.tar.gz
+
 if [ $? -eq 1 ] # Upload failed?
 then
   echo "Upload failed"

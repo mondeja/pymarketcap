@@ -50,8 +50,13 @@ def main():
     benchmarking results in a JSON file"""
     config = ConfigTest()
     results = run_tests(configure_plugins(), config)
+    errors = False
+    for test_name, result in results.items():
+        if result["status"] == "error":
+            errors = True
+            break
 
-    if len(results) > 1:
+    if not errors:
         save_benchs(json.dumps(results, indent=4, sort_keys=True),
                     config)
         return sys.exit(0)
