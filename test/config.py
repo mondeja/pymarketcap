@@ -18,6 +18,4 @@ class ConfigTest:
 
     # Store results from benchmarking
     BENCH_RESULTS_FILE = os.path.join(os.path.dirname(__file__),
-    	                              "bench", "results.json")
-
-
+                                      "benchmarking.json")

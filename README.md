@@ -31,7 +31,7 @@ cd test
 - All tests with benchmarking: `python3 test.py --with-timer -v`
 - Only API tests without benchmarking: `nosetests units/test_api.py -v`
 
-> Benchmarking results for all tests will be stored in `test/bench/results.json`
+> Benchmarking results for all tests will be stored in `test/benchmarking.json`
 
 ## Contribute
 

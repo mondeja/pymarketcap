@@ -11,25 +11,18 @@ from decimal import Decimal
 # Third party libraries
 from requests import get
 from requests.compat import urljoin, urlencode
-from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup, FeatureNotFound
+from json import JSONDecodeError
 
+# Internal modules:
+from .errors import (
+    CoinmarketcapHTTPError,
+    CoinmarketcapCurrencyNotFoundError
+)
 
-class CoinmarketcapError(HTTPError):
-    """
-    Exception for catch invalid commands and other responses
-    that don't match with 200 code responses.
-
-    Args:
-       code (str): Exception error code.
-       msg (str): Human readable string describing the exception.
-
-    """
-    def __init__(self, code, msg):
-        self.code = code
-        self.msg = msg
-
-        super(CoinmarketcapError, self).__init__(code, msg)
+# Testing:
+from pprint import pprint
+import sys
 
 
 class Pymarketcap(object):
@@ -77,7 +70,7 @@ class Pymarketcap(object):
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
         currencies = get(url).json()
         for currency in currencies:
-            response[currency["symbol"]] = currency["name"].replace(" ", "-")
+            response[currency["symbol"]] = currency["slug"].replace(" ", "-")
         return response
 
     #######   API METHODS   #######
@@ -150,6 +143,7 @@ class Pymarketcap(object):
             }
 
             data = {}
+            pprint(raw_data)
             for key, value in raw_data.items():
                 try:
                     data[key] = value_types[key](value)
@@ -157,10 +151,37 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        data = get(url).json()
+        print()
+        pprint(url)
+
+        data = get(url)
+        try:
+            data = data.json()
+        except JSONDecodeError as error:
+            print(error)
+            pprint(data.text)
+            sys.exit(1)
+
+
+        pprint(data)
+
 
         if currency:
-            response = parse_currency(data[0])
+            try:
+                response = parse_currency(data[0])
+            except KeyError as error:  # Id currency error?
+                if type(data) is dict:
+                    try:
+                        msg = data["error"]
+                    except KeyError:
+                        raise error
+                    else:
+                        if msg == "id not found":
+                            raise CoinmarketcapCurrencyNotFoundError(currency, url)
+                        else:
+                            raise Exception(data["error"])
+                else:
+                    raise error
         else:
             response = []
             for curr in data:
@@ -204,7 +225,7 @@ class Pymarketcap(object):
             except FeatureNotFound:
                 return BeautifulSoup(req.text, "html.parser")
         else:
-            raise CoinmarketcapError(status_code, url)
+            raise CoinmarketcapHTTPError(status_code, url)
 
     def markets(self, currency):
         """Get available coinmarketcap markets data.

@@ -15,7 +15,7 @@ with open(os.path.join(BASEDIR, "README.md"), encoding="utf-8") as f:
 
 setup(
     name = 'pymarketcap',
-    version = '3.3.122',
+    version = '3.3.123',
     url = 'https://github.com/mondeja/pymarketcap',
     download_url = 'https://github.com/mondeja/pymarketcap/archive/master.zip',
     author = 'Álvaro Mondéjar',
