@@ -4,13 +4,13 @@
 
 **pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a scraper built on BeautifulSoup and an API wrapper powered by requests. Only works in Python3.
 
-## Installation:
+## Install
 
 ```
 pip install pymarketcap
 ```
 
-or
+or install from source
 
 ```
 git clone https://github.com/mondeja/pymarketcap.git
@@ -28,9 +28,15 @@ pip3 install -r dev-requirements.txt
 ```
 
 - All tests with benchmarking: `python3 test/test.py --with-timer -v`
-- Only API tests without benchmarking: `cd tests && nosetests units/test_api.py -v`
 
-> Benchmarking results for all tests will be stored in `test/benchmarking.json`
+> Benchmarking results for all unittests will be stored in `test/benchmarking.json`
+
+- API unittests without benchmarking: `cd tests && nosetests units/test_api.py -v`
+- Scraper unittest with benchmarking: `cd tests && nosetests units/test_scraper.py --with-timer -v`
+- End to end API tests (takes a long time): `cd tests && python3 end2end/test_api.py`
+
+You can see last online builds with tests at [TravisCI](https://travis-ci.org/mondeja/pymarketcap).
+
 
 ## Contribute
 

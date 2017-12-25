@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # Standard libraries:
+import time
 import unittest
 from decimal import Decimal
 from tqdm import tqdm
-from time import sleep
 from pprint import pprint
 
 # Internal modules:
@@ -14,7 +14,6 @@ from pymarketcap import (
     CoinmarketcapCurrencyNotFoundError,
     CoinmarketcapTooManyRequestsError
 )
-
 
 
 class TestApiCoinmarketcapFull(unittest.TestCase):
