@@ -23,24 +23,6 @@ class TestScraperCoinmarketcap(unittest.TestCase):
         self.coinmarketcap = Pymarketcap()
         self.config = ConfigTest()
 
-    def test_endpoints(self):
-        from requests import get
-
-        endpoints = [
-            'currencies/%s/' % self.config.COIN_NAME,
-            'gainers-losers/',
-            'currencies/%s/historical-data/'\
-                 % self.config.COIN_NAME,
-            'new',
-            'exchanges/%s/' % self.config.EXCHANGE,
-            'exchanges/volume/24-hour/all/'
-                    ]
-        base_url = self.coinmarketcap.web_url
-
-        for e in endpoints:
-            _status_code = get(base_url + e).status_code
-            self.assertEqual(_status_code, 200)
-
     def test_markets(self):
         actual = self.coinmarketcap.markets(self.config.COIN)
         value_types = {'price_usd': Decimal,

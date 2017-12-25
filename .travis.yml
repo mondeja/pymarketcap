@@ -9,8 +9,11 @@ install:
 before_script:
   - pip install -r dev-requirements.txt
 script:
-  - cd test && python test.py --with-timer -v
-  - cd
+  # Testing
+  - cd test && python test.py --with-timer -v  # Unittests
+  # End2end
+  - python end2end/test_api.py
+  - python end2end/test_scraper.py
 branches:
   only:
     - master

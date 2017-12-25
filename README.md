@@ -25,11 +25,10 @@ All methods are self explained in doctrings. Also, you can see all available met
 ## Testing
 ```
 pip3 install -r dev-requirements.txt
-cd test
 ```
 
-- All tests with benchmarking: `python3 test.py --with-timer -v`
-- Only API tests without benchmarking: `nosetests units/test_api.py -v`
+- All tests with benchmarking: `python3 test/test.py --with-timer -v`
+- Only API tests without benchmarking: `cd tests && nosetests units/test_api.py -v`
 
 > Benchmarking results for all tests will be stored in `test/benchmarking.json`
 

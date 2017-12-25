@@ -2,117 +2,274 @@
 {
     "test_api.TestApiCoinmarketcap.test_stats": {
         "status": "success",
-        "time": 0.1135618200000863
+        "time": 0.16015440099999978
     },
     "test_api.TestApiCoinmarketcap.test_symbols": {
         "status": "success",
-        "time": 0.0001710789997559914
+        "time": 0.00037379500008682953
     },
     "test_api.TestApiCoinmarketcap.test_ticker": {
         "status": "success",
-        "time": 1.4350149779997992
-    },
-    "test_scraper.TestScraperCoinmarketcap.test_endpoints": {
-        "status": "success",
-        "time": 3.3458214480001516
+        "time": 0.8738913610000054
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchange": {
         "status": "success",
-        "time": 0.39902840299964737
+        "time": 0.8917364349999843
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchange_names": {
         "status": "success",
-        "time": 1.9650225870000213
+        "time": 2.552881119000176
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchanges": {
         "status": "success",
-        "time": 2.021954777999781
+        "time": 2.008605774999978
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_currency": {
         "status": "success",
-        "time": 0.7594182349998846
+        "time": 0.8924555969997527
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_dominance": {
         "status": "success",
-        "time": 0.9153329910000139
+        "time": 0.8888615580003716
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_global_cap": {
         "status": "success",
-        "time": 0.550826872000016
+        "time": 1.311166643999968
     },
     "test_scraper.TestScraperCoinmarketcap.test_historical": {
         "status": "success",
-        "time": 0.46573891099978937
+        "time": 0.824785950000205
     },
     "test_scraper.TestScraperCoinmarketcap.test_markets": {
         "status": "success",
-        "time": 1.278508365000107
+        "time": 0.7453222310000456
     },
     "test_scraper.TestScraperCoinmarketcap.test_ranks": {
         "status": "success",
-        "time": 2.6654449190000378
+        "time": 2.5339529500001845
     },
     "test_scraper.TestScraperCoinmarketcap.test_recently": {
         "status": "success",
-        "time": 0.5848210210001525
+        "time": 0.3381948280002689
     }
 }
 
 {
     "test_api.TestApiCoinmarketcap.test_stats": {
         "status": "success",
-        "time": 0.2756514249999782
+        "time": 0.1424770809999245
     },
     "test_api.TestApiCoinmarketcap.test_symbols": {
         "status": "success",
-        "time": 0.0003752990000975842
+        "time": 0.0003780769998229516
     },
     "test_api.TestApiCoinmarketcap.test_ticker": {
         "status": "success",
-        "time": 1.5534348279998085
-    },
-    "test_scraper.TestScraperCoinmarketcap.test_endpoints": {
-        "status": "success",
-        "time": 2.680593838000277
+        "time": 1.0994042550000813
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchange": {
         "status": "success",
-        "time": 0.30468069399967135
+        "time": 0.5719504659996346
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchange_names": {
         "status": "success",
-        "time": 1.9059271260002788
+        "time": 2.3125877769998624
     },
     "test_scraper.TestScraperCoinmarketcap.test_exchanges": {
         "status": "success",
-        "time": 1.9295410700001412
+        "time": 2.2864279010000246
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_currency": {
         "status": "success",
-        "time": 0.6516477279997162
+        "time": 0.4368297840001105
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_dominance": {
         "status": "success",
-        "time": 0.8697307729999011
+        "time": 0.23510456200028784
     },
     "test_scraper.TestScraperCoinmarketcap.test_graphs_global_cap": {
         "status": "success",
-        "time": 0.859820007000053
+        "time": 0.36536650300013207
     },
     "test_scraper.TestScraperCoinmarketcap.test_historical": {
         "status": "success",
-        "time": 0.46905986000001576
+        "time": 0.674762168000143
     },
     "test_scraper.TestScraperCoinmarketcap.test_markets": {
         "status": "success",
-        "time": 0.747891575000267
+        "time": 1.4964198329998908
     },
     "test_scraper.TestScraperCoinmarketcap.test_ranks": {
         "status": "success",
-        "time": 3.5691329759997643
+        "time": 2.967985231000057
     },
     "test_scraper.TestScraperCoinmarketcap.test_recently": {
         "status": "success",
-        "time": 0.5336065890001009
+        "time": 0.5667201009996461
+    }
+}
+
+{
+    "test_api.TestApiCoinmarketcap.test_stats": {
+        "status": "success",
+        "time": 0.11650050400021428
+    },
+    "test_api.TestApiCoinmarketcap.test_symbols": {
+        "status": "success",
+        "time": 0.00038451000000350177
+    },
+    "test_api.TestApiCoinmarketcap.test_ticker": {
+        "status": "success",
+        "time": 1.6305046599995876
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange": {
+        "status": "success",
+        "time": 0.5797015600001032
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange_names": {
+        "status": "success",
+        "time": 2.3494539860002988
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchanges": {
+        "status": "success",
+        "time": 1.9884647969997786
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_currency": {
+        "status": "success",
+        "time": 0.6512938959999701
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_dominance": {
+        "status": "success",
+        "time": 0.9383105920001071
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_global_cap": {
+        "status": "success",
+        "time": 0.748426094000024
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_historical": {
+        "status": "success",
+        "time": 0.563863733999824
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_markets": {
+        "status": "success",
+        "time": 1.4227359049996267
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_ranks": {
+        "status": "success",
+        "time": 3.022294287999557
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_recently": {
+        "status": "success",
+        "time": 0.3382810570001311
+    }
+}
+
+{
+    "test_api.TestApiCoinmarketcap.test_stats": {
+        "status": "success",
+        "time": 0.12577439799997592
+    },
+    "test_api.TestApiCoinmarketcap.test_symbols": {
+        "status": "success",
+        "time": 0.0003881490001731436
+    },
+    "test_api.TestApiCoinmarketcap.test_ticker": {
+        "status": "success",
+        "time": 0.8533663139996861
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange": {
+        "status": "success",
+        "time": 0.8000769120003497
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange_names": {
+        "status": "success",
+        "time": 2.3765002990003268
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchanges": {
+        "status": "success",
+        "time": 2.048985566999818
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_currency": {
+        "status": "success",
+        "time": 0.789022364000175
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_dominance": {
+        "status": "success",
+        "time": 0.8734654899999441
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_global_cap": {
+        "status": "success",
+        "time": 0.9514163050002935
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_historical": {
+        "status": "success",
+        "time": 0.9342560139998568
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_markets": {
+        "status": "success",
+        "time": 2.0641021460000957
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_ranks": {
+        "status": "success",
+        "time": 2.5220595720002166
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_recently": {
+        "status": "success",
+        "time": 0.34659904000000097
+    }
+}
+
+{
+    "test_api.TestApiCoinmarketcap.test_stats": {
+        "status": "success",
+        "time": 0.16464412999994238
+    },
+    "test_api.TestApiCoinmarketcap.test_symbols": {
+        "status": "success",
+        "time": 0.0003828809999504301
+    },
+    "test_api.TestApiCoinmarketcap.test_ticker": {
+        "status": "success",
+        "time": 1.4470811999999569
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange": {
+        "status": "success",
+        "time": 0.6993885199999568
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchange_names": {
+        "status": "success",
+        "time": 2.402475281000079
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_exchanges": {
+        "status": "success",
+        "time": 1.9909381759998723
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_currency": {
+        "status": "success",
+        "time": 0.9022355659999448
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_dominance": {
+        "status": "success",
+        "time": 0.90015228700031
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_graphs_global_cap": {
+        "status": "success",
+        "time": 0.6427403429997867
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_historical": {
+        "status": "success",
+        "time": 0.6577293060004195
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_markets": {
+        "status": "success",
+        "time": 0.7828489400003491
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_ranks": {
+        "status": "success",
+        "time": 3.001055969999925
+    },
+    "test_scraper.TestScraperCoinmarketcap.test_recently": {
+        "status": "success",
+        "time": 0.5586315370001103
     }
 }

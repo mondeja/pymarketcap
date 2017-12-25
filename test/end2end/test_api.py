@@ -5,7 +5,6 @@
 import unittest
 from decimal import Decimal
 from tqdm import tqdm
-from time import time
 
 # Internal modules:
 from pymarketcap import Pymarketcap
@@ -16,11 +15,10 @@ from pprint import pprint
 
 class TestApiCoinmarketcapFull(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(TestApiCoinmarketcapFull, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.coinmarketcap = Pymarketcap()
 
     def test_ticker(self):
-        start = int(time())
         currencies_not_found = []
 
         value_types = {
@@ -41,12 +39,12 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
             "last_updated": self.coinmarketcap.parse_int
         }
 
-
+        print("Testing all currencies in coinmarketcap.com (%d)" \
+            % len(self.coinmarketcap.symbols))
         for symbol in tqdm(self.coinmarketcap.symbols):
             try:
                 tick = self.coinmarketcap.ticker(symbol)
                 for key, value in tick.items():
-                    print(key, value)
                     if type(value_types[key]) is list:
                         self.assertIn(type(value), value_types[key])
                     else:
@@ -56,12 +54,13 @@ class TestApiCoinmarketcapFull(unittest.TestCase):
                 	{error.currency: error.url}
                 )
 
+
         # Display all currencies not found
         print("\nCurrencies not found:")
         pprint(currencies_not_found)
 
         self.assertEqual(len(currencies_not_found), 0)
 
-        end = time()
-        elapsed = end - start
 
+if __name__ == "__main__":
+    unittest.main()
