@@ -690,11 +690,19 @@ class Pymarketcap(object):
 
     @staticmethod
     def _parse_start_end(start, end):
-        """Internal function to parse start and end datetimes"""
+        """Internal function for parse start and end datetimes"""
         return (
             str(int(start.timestamp())),
             str(int(end.timestamp()))
         )
+
+    @staticmethod
+    def _add_start_end(url, start, end):
+        """Internal function for add start and end to url"""
+        start, end = self._parse_start_end(start, end)
+        return "%s/%s/" % (start, end)
+
+
 
     def currency(self, currency, start=None, end=None):
         """Get graphs data of a currency.
@@ -723,8 +731,7 @@ class Pymarketcap(object):
         url = self.urls["graphs_api"] + "currencies/%s/" % currency
 
         if start and end:
-            start, end = self._parse_start_end(start, end)
-            url += "%s/%s/" % (start, end)
+            url += self._add_start_end(url, start, end)
 
         return get(url).json()
 
@@ -752,8 +759,7 @@ class Pymarketcap(object):
         url = base_url + endpoint
 
         if start and end:
-            start, end = self._parse_start_end(start, end)
-            url += "%s/%s/" % (start, end)
+            url += self._add_start_end(url, start, end)
 
         return get(url).json()
 
@@ -772,7 +778,32 @@ class Pymarketcap(object):
         url = self.urls["graphs_api"] + "global/dominance/"
 
         if start and end:
-            start, end = self._parse_start_end(start, end)
-            url += "%s/%s/" % (start, end)
+            url += self._add_start_end(url, start, end)
 
         return get(url).json()
+
+    def download_logo(self, currency, size=64):
+        """Download currency logo
+
+        Args:
+            currency (str): Currency name of symbol to download
+            size (str): Size in pixels. Valid sizes are:
+                [8, 16, 32, 64, 128]
+        """
+        if self.is_symbol(currency):
+            currency = self._correspondences[currency]
+
+        url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
+        url = url_schema % (size, size, currency)
+        req = get(url, stream=True)
+        if req.status_code == 200:
+            filename = "%s.png" % currency
+            with open(filename, "wb") as image:
+                for chunk in req.iter_content(1024):
+                    image.write(chunk)
+            return filename
+        else:
+            raise CoinmarketcapHTTPError(req.status_code, "%s not found" % url)
+
+
+

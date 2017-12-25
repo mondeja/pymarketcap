@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard libraries:
+import os
 import unittest
 import time
 from decimal import Decimal
@@ -181,3 +182,9 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_graphs_dominance(self):
         actual = self.coinmarketcap.graphs.dominance()
         self._assert_graphs_data_structure(actual)
+
+    def test_download_logo(self):
+        filename = self.coinmarketcap.download_logo(self.config.COIN)
+        self.assertNotEqual(filename, None)
+        if filename:
+            os.remove(filename)
