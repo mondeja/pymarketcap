@@ -10,7 +10,7 @@
 pip install pymarketcap
 ```
 
-or install from source
+or install from source:
 
 ```
 git clone https://github.com/mondeja/pymarketcap.git

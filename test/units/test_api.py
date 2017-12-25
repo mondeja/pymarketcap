@@ -4,6 +4,7 @@
 # Standard libraries:
 import unittest
 from decimal import Decimal
+import time
 
 # Internal modules:
 from config import ConfigTest
@@ -21,6 +22,10 @@ class TestApiCoinmarketcap(unittest.TestCase):
         super(TestApiCoinmarketcap, self).__init__(*args, **kwargs)
         self.coinmarketcap = Pymarketcap()
         self.config = ConfigTest()
+
+    def tearDown(self):
+        # Prevent to many requests error in tests
+        time.sleep(.25)
 
     def test_symbols(self):
         actual = self.coinmarketcap.symbols
