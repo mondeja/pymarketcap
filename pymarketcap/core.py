@@ -784,7 +784,7 @@ class Pymarketcap(object):
 
         return get(url).json()
 
-    def download_logo(self, currency, size=64, filename=None):
+    def download_logo(self, currency, size=64, imagepath=None):
         """Download currency logo
 
         Args:
@@ -799,14 +799,14 @@ class Pymarketcap(object):
         url = url_schema % (size, size, currency)
         req = get(url, stream=True)
         if req.status_code == 200:
-            if not filename:
-                filename = "%s.png" % currency
+            if not imagepath:
+                imagepath = "%s.png" % currency
             else:
-                if filename[-4:] != ".png":
-                    raise ValueError("The filename param must be in .png format")
-            with open(filename, "wb") as image:
+                if imagepath[-4:] != ".png":
+                    raise ValueError("The imagepath param must be in .png format")
+            with open(imagepath, "wb") as image:
                 for chunk in req.iter_content(1024):
                     image.write(chunk)
-            return filename
+            return imagepath
         else:
             raise CoinmarketcapHTTPError(req.status_code, "%s not found" % url)
