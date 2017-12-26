@@ -41,12 +41,21 @@ class TestScraperCoinmarketcapFull(unittest.TestCase):
             "global/dominance/"
         ]
 
+        file_endpoints = [
+            "https://files.coinmarketcap.com/static/img/coins/64x64/bitcoin.png",
+            "https://files.coinmarketcap.com/generated/search/quick_search.json"
+        ]
+
+        endpoints = web_endpoints + graphs_api_endpoints + file_endpoints
+
         print("Testing all endpoints schema:")
-        for endpoint in web_endpoints + graphs_api_endpoints:
+        for endpoint in endpoints:
             if endpoint in web_endpoints:
                 _url = self.coinmarketcap.urls["web"] + endpoint
-            else:
+            elif endpoint in graphs_api_endpoints:
                 _url = self.coinmarketcap.urls["graphs_api"] + endpoint
+            else:
+                _url = endpoint
             _status_code = get(_url).status_code
             print(_url)
             self.assertEqual(_status_code, 200)

@@ -44,9 +44,12 @@ class Pymarketcap(object):
         self.parse_int = parse_int
         self.pair_separator = pair_separator
 
-        self._correspondences = self._cache_symbols()
-        self.symbols = list(self._correspondences.keys())
+        # Information attributes
+        self.correspondences = self._cache_symbols()
+        self.coins = list(self.correspondences.values())
+        self.symbols = list(self.correspondences.keys())
 
+        # Graphs API sugar syntax
         self.graphs = type("Graphs", (), self._graphs_interface)
 
 
@@ -117,7 +120,7 @@ class Pymarketcap(object):
 
         if currency:
             if self.is_symbol(currency):
-                currency = self._correspondences[currency]
+                currency = self.correspondences[currency]
             url += "%s/" % currency
 
         params = dict(convert=convert)
@@ -252,7 +255,7 @@ class Pymarketcap(object):
             list: markets on wich provided currency is currently tradeable
         """
         if self.is_symbol(currency):
-            currency = self._correspondences[currency]
+            currency = self.correspondences[currency]
 
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
         html = self._html(url)
@@ -397,7 +400,7 @@ class Pymarketcap(object):
         if not end: end = datetime.now()
 
         if self.is_symbol(currency):
-            currency = self._correspondences[currency]
+            currency = self.correspondences[currency]
 
         url = self.urls["web"] + 'currencies/' + currency + '/historical-data/'
         url += '?start={}&end={}'.format(
@@ -703,7 +706,6 @@ class Pymarketcap(object):
         return "%s/%s/" % (start, end)
 
 
-
     def currency(self, currency, start=None, end=None):
         """Get graphs data of a currency.
 
@@ -727,7 +729,7 @@ class Pymarketcap(object):
             has two values [<timestamp>, <value>]
         """
         if self.is_symbol(currency):
-            currency = self._correspondences[currency]
+            currency = self.correspondences[currency]
         url = self.urls["graphs_api"] + "currencies/%s/" % currency
 
         if start and end:
@@ -756,7 +758,7 @@ class Pymarketcap(object):
             endpoint = "global/marketcap-total/"
         else:
             endpoint = "global/marketcap-altcoin/"
-        url = base_url + endpoint
+        url = urljoin(base_url, endpoint)
 
         if start and end:
             url += self._add_start_end(url, start, end)
@@ -775,14 +777,14 @@ class Pymarketcap(object):
         Returns (dict): Altcoins dict and dominance percentage
             values with timestamps
         """
-        url = self.urls["graphs_api"] + "global/dominance/"
+        url = urljoin(self.urls["graphs_api"], "global/dominance/")
 
         if start and end:
             url += self._add_start_end(url, start, end)
 
         return get(url).json()
 
-    def download_logo(self, currency, size=64):
+    def download_logo(self, currency, size=64, filename=None):
         """Download currency logo
 
         Args:
@@ -791,19 +793,20 @@ class Pymarketcap(object):
                 [8, 16, 32, 64, 128]
         """
         if self.is_symbol(currency):
-            currency = self._correspondences[currency]
+            currency = self.correspondences[currency]
 
         url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
         url = url_schema % (size, size, currency)
         req = get(url, stream=True)
         if req.status_code == 200:
-            filename = "%s.png" % currency
+            if not filename:
+                filename = "%s.png" % currency
+            else:
+                if filename[-4:] != ".png":
+                    raise ValueError("The filename param must be in .png format")
             with open(filename, "wb") as image:
                 for chunk in req.iter_content(1024):
                     image.write(chunk)
             return filename
         else:
             raise CoinmarketcapHTTPError(req.status_code, "%s not found" % url)
-
-
-
