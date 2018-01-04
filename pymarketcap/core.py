@@ -6,7 +6,7 @@
 # Python standard library
 from datetime import datetime
 from re import sub
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 # Third party libraries
 from requests import get
@@ -500,8 +500,10 @@ class Pymarketcap(object):
                     if '$' in usd_market_cap:
                         usd_market_cap = sub(r'\$|,', '', usd_market_cap)
                 elif n == 4:
-                    _price_usd = c.getText().replace('\n', '')
-                    price_usd = self.parse_float(sub(r' |\$', '', _price_usd))
+                    try:
+                        price_usd = self.parse_float(sub(r' |\$|\n', '', c.getText()))
+                    except InvalidOperation:
+                        pass
                 elif n == 5:
                     circulating_supply = c.getText().replace('\n', '').replace(' ', '')
                     if '*' in circulating_supply:

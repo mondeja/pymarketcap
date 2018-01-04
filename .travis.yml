@@ -12,7 +12,6 @@ script:
   # Unittests
   - cd tests && nosetests units/test_scraper.py --with-timer -v
   # End2end
-  - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then python end2end/test_api.py; fi
   - python end2end/test_scraper.py
 after_success:
   - coveralls
