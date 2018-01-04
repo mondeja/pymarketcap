@@ -500,8 +500,9 @@ class Pymarketcap(object):
                     if '$' in usd_market_cap:
                         usd_market_cap = sub(r'\$|,', '', usd_market_cap)
                 elif n == 4:
+                    price_usd = c.getText()
                     try:
-                        price_usd = self.parse_float(sub(r' |\$|\n', '', c.getText()))
+                        price_usd = self.parse_float(sub(r' |\$|\n', '', price_usd))
                     except InvalidOperation:
                         pass
                 elif n == 5:
