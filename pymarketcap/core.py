@@ -591,7 +591,7 @@ class Pymarketcap(object):
                         '/', self.pair_separator
                     ))
                 elif n == 3:
-                    _volume_24h_usd = sub(r'\$|,', '', c.getText())
+                    _volume_24h_usd = sub(r'\$|,|\*| |\s', '', c.getText())
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
                 elif n == 4:
                     _price_usd = sub(r'\$| |\*', '', c.getText())
