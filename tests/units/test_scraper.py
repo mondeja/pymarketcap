@@ -97,7 +97,7 @@ class TestScraperCoinmarketcap(unittest.TestCase):
 
     def test_recently(self):
         actual = self.coinmarketcap.recently()
-        value_types = {'price_usd': Decimal,
+        value_types = {'price_usd': [Decimal, str],
                        'mineable': bool,
                        'symbol': str,
                        'usd_market_cap': [str, int],
