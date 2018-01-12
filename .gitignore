@@ -5,7 +5,7 @@
 .pylintrc
 
 # Directories #
-############
+###############
 __pycache__/
 tmp/
 env/
@@ -15,9 +15,16 @@ scripts/
 pymarketcap.egg-info/
 
 # Other files #
+###############
 prueba.py
 .env
 MANIFEST
 MANIFEST.in
 README.html
 NOTES.md
+
+# Cython branch #
+cy_branch/
+cysetup.py
+cycore.pyx
+cycore.c
