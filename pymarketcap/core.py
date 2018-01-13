@@ -9,7 +9,7 @@ from re import sub
 from decimal import Decimal, InvalidOperation
 
 # Third party libraries
-from requests import get
+from requests import Session
 from requests.compat import urljoin, urlencode
 from bs4 import BeautifulSoup, FeatureNotFound
 from json import JSONDecodeError
@@ -32,9 +32,12 @@ class Pymarketcap(object):
         pair_separator (str, optional): Separator between base and
             quote pair in responses. As default "-"
             (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
+        timeout (float, optional): Add timeout for get requests.
+            As default 20.
     """
     def __init__(self, parse_float=Decimal,
-                 parse_int=int, pair_separator="-"):
+                 parse_int=int, pair_separator="-",
+                 timeout=20):
         self.urls = dict(
             api="https://api.coinmarketcap.com/v1/",
             web="https://coinmarketcap.com/",
@@ -43,6 +46,9 @@ class Pymarketcap(object):
         self.parse_float = parse_float
         self.parse_int = parse_int
         self.pair_separator = pair_separator
+
+        self.session = Session()
+        self.timeout = timeout
 
         # Information attributes
         self.correspondences = self._cache_symbols()
@@ -78,7 +84,7 @@ class Pymarketcap(object):
         }
         response = {}
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
-        currencies = get(url).json()
+        currencies = self.session.get(url).json()
         for currency in currencies:
             response[currency["symbol"]] = currency["slug"].replace(" ", "-")
         for original, correct in self._exceptional_coin_slugs.items():
@@ -168,7 +174,7 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        req = get(url)
+        req = self.session.get(url, timeout=self.timeout)
         try:
             data = req.json()
         except JSONDecodeError as error:
@@ -214,15 +220,19 @@ class Pymarketcap(object):
             dict: Global markets statistics
         """
         url = urljoin(self.urls["api"], 'global/')
-        response = get(url).json(parse_int=self.parse_int,
-                                 parse_float=self.parse_float)
+        req = self.session.get(url, timeout=self.timeout)
+        if req.status_code == 200:
+            response = req.json(parse_int=self.parse_int,
+                            parse_float=self.parse_float)
+        else:
+            raise CoinmarketcapHTTPError(req.status_code,
+                                         "%s not found" % url)
         return response
 
 
     #######    WEB PARSER METHODS    #######
 
-    @staticmethod
-    def _html(url):
+    def _html(self, url):
         """Internal function for get plain html pages
 
         Args:
@@ -234,7 +244,7 @@ class Pymarketcap(object):
         Returns:
             str: Plain html parsed with BeautifulSoup html parser
         """
-        req = get(url)
+        req = self.session.get(url, timeout=self.timeout)
         status_code = req.status_code
         if status_code == 200:
             try:
@@ -258,7 +268,7 @@ class Pymarketcap(object):
             currency = self.correspondences[currency]
 
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
@@ -304,7 +314,7 @@ class Pymarketcap(object):
                 1h, 24h or 7d
         """
         url = urljoin(self.urls["web"], 'gainers-losers/')
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         call = str(query) + '-' + str(temp)
 
@@ -407,11 +417,11 @@ class Pymarketcap(object):
             str(start.year) + "%02d" % start.month + "%02d" % start.day,
             str(end.year) + "%02d" % end.month + "%02d" % end.day
         )
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
-        #print(marks[0])
+
         for m in marks:
             insert = True # Ignore all dates not in range
             _childs, childs = (m.contents, [])
@@ -474,7 +484,7 @@ class Pymarketcap(object):
         """
         url = urljoin(self.urls["web"], 'new/')
 
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
@@ -572,7 +582,7 @@ class Pymarketcap(object):
             list: Data from all markets in a exchange
         """
         url = urljoin(self.urls["web"], 'exchanges/%s/' % name)
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         marks = html.find('table').find_all('tr')
         response = []
@@ -621,7 +631,7 @@ class Pymarketcap(object):
             list: Markets by exchanges and volumes
         """
         url = urljoin(self.urls["web"], 'exchanges/volume/24-hour/all/')
-        html = Pymarketcap._html(url)
+        html = self._html(url)
 
         exs = html.find('table').find_all('tr') # Exchanges
         response = []
@@ -738,7 +748,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return get(url).json()
+        return self.session.get(url, timeout=self.timeout).json()
 
     def global_cap(self, bitcoin=True, start=None, end=None):
         """Get global market capitalization graphs, including
@@ -766,7 +776,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return get(url).json()
+        return self.session.get(url, timeout=self.timeout).json()
 
     def dominance(self, start=None, end=None):
         """Get currencies dominance percentage graph
@@ -785,7 +795,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return get(url).json()
+        return self.session.get(url, timeout=self.timeout).json()
 
     def download_logo(self, currency, size=64, imagepath=None):
         """Download currency logo
@@ -800,7 +810,7 @@ class Pymarketcap(object):
 
         url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
         url = url_schema % (size, size, currency)
-        req = get(url, stream=True)
+        req = self.session.get(url, stream=True, timeout=self.timeout)
         if req.status_code == 200:
             if not imagepath:
                 imagepath = "%s.png" % currency
