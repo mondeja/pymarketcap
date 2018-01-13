@@ -698,8 +698,8 @@ class Pymarketcap(object):
     def _parse_start_end(start, end):
         """Internal function for parse start and end datetimes"""
         return (
-            str(int(start.timestamp())),
-            str(int(end.timestamp()))
+            str(int(start.timestamp())*1000),
+            str(int(end.timestamp())*1000)
         )
 
     @staticmethod
