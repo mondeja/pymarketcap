@@ -258,7 +258,7 @@ class Pymarketcap(object):
             currency = self.correspondences[currency]
 
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
@@ -304,7 +304,7 @@ class Pymarketcap(object):
                 1h, 24h or 7d
         """
         url = urljoin(self.urls["web"], 'gainers-losers/')
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         call = str(query) + '-' + str(temp)
 
@@ -407,7 +407,7 @@ class Pymarketcap(object):
             str(start.year) + "%02d" % start.month + "%02d" % start.day,
             str(end.year) + "%02d" % end.month + "%02d" % end.day
         )
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
@@ -474,7 +474,7 @@ class Pymarketcap(object):
         """
         url = urljoin(self.urls["web"], 'new/')
 
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         response = []
         marks = html.find('tbody').find_all('tr')
@@ -572,7 +572,7 @@ class Pymarketcap(object):
             list: Data from all markets in a exchange
         """
         url = urljoin(self.urls["web"], 'exchanges/%s/' % name)
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         marks = html.find('table').find_all('tr')
         response = []
@@ -621,7 +621,7 @@ class Pymarketcap(object):
             list: Markets by exchanges and volumes
         """
         url = urljoin(self.urls["web"], 'exchanges/volume/24-hour/all/')
-        html = self._html(url)
+        html = Pymarketcap._html(url)
 
         exs = html.find('table').find_all('tr') # Exchanges
         response = []
@@ -698,14 +698,14 @@ class Pymarketcap(object):
     def _parse_start_end(start, end):
         """Internal function for parse start and end datetimes"""
         return (
-            str(int(start.timestamp())),
-            str(int(end.timestamp()))
+            str(int(start.timestamp())*1000),
+            str(int(end.timestamp())*1000)
         )
 
     @staticmethod
     def _add_start_end(url, start, end):
         """Internal function for add start and end to url"""
-        start, end = self._parse_start_end(start, end)
+        start, end = Pymarketcap._parse_start_end(start, end)
         return "%s/%s/" % (start, end)
 
 
@@ -736,7 +736,7 @@ class Pymarketcap(object):
         url = self.urls["graphs_api"] + "currencies/%s/" % currency
 
         if start and end:
-            url += self._add_start_end(url, start, end)
+            url += Pymarketcap._add_start_end(url, start, end)
 
         return get(url).json()
 
@@ -764,7 +764,7 @@ class Pymarketcap(object):
         url = urljoin(base_url, endpoint)
 
         if start and end:
-            url += self._add_start_end(url, start, end)
+            url += Pymarketcap._add_start_end(url, start, end)
 
         return get(url).json()
 
@@ -783,7 +783,7 @@ class Pymarketcap(object):
         url = urljoin(self.urls["graphs_api"], "global/dominance/")
 
         if start and end:
-            url += self._add_start_end(url, start, end)
+            url += Pymarketcap._add_start_end(url, start, end)
 
         return get(url).json()
 
