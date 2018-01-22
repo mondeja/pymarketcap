@@ -8,12 +8,12 @@ from datetime import datetime
 from re import sub
 from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
+from json import JSONDecodeError
 
 # Third party libraries
 from requests import Session
 from requests.compat import urljoin, urlencode
 from bs4 import BeautifulSoup, FeatureNotFound
-from json import JSONDecodeError
 
 # Internal modules:
 from .errors import (
@@ -184,7 +184,8 @@ class Pymarketcap(object):
             print(error)
             print(url)
             print(data)
-            print("If you see this error report it to https://github.com/mondeja/pymarketcap/issues")
+            print("If you see this error report it to \
+                https://github.com/mondeja/pymarketcap/issues")
             print(currency)
             import sys
             sys.exit(1)
@@ -224,7 +225,7 @@ class Pymarketcap(object):
         req = self.session.get(url, timeout=self.timeout)
         if req.status_code == 200:
             response = req.json(parse_int=self.parse_int,
-                            parse_float=self.parse_float)
+                                parse_float=self.parse_float)
         else:
             raise CoinmarketcapHTTPError(req.status_code,
                                          "%s not found" % url)
@@ -265,7 +266,6 @@ class Pymarketcap(object):
         Returns:
             list: markets on wich provided currency is currently tradeable
         """
-        import sys
         if self.is_symbol(currency):
             currency = self.correspondences[currency]
 
@@ -289,7 +289,7 @@ class Pymarketcap(object):
             exchange = pair_exc[0].getText()
             pair = pair_exc[1].getText()
 
-            _percent_volume = m.find("span",{"data-format-percentage": any_reg})
+            _percent_volume = m.find("span", {"data-format-percentage": any_reg})
             percent_volume = self.parse_float(sub("%", "", _percent_volume.getText()))
             updated = m.find(class_=updated_field_reg).getText() == "Recently"
 
