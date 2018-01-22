@@ -6,6 +6,7 @@
 # Python standard library
 from datetime import datetime
 from re import sub
+from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
 
 # Third party libraries
@@ -41,7 +42,7 @@ class Pymarketcap(object):
         self.urls = dict(
             api="https://api.coinmarketcap.com/v1/",
             web="https://coinmarketcap.com/",
-            graphs_api="https://graphs.coinmarketcap.com/"
+            graphs_api="https://graphs2.coinmarketcap.com/"
         )
         self.parse_float = parse_float
         self.parse_int = parse_int
@@ -86,7 +87,7 @@ class Pymarketcap(object):
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
         currencies = self.session.get(url).json()
         for currency in currencies:
-            response[currency["symbol"]] = currency["slug"].replace(" ", "-")
+            response[currency["symbol"]] = sub(r"\s", "-", currency["slug"])
         for original, correct in self._exceptional_coin_slugs.items():
             response[original] = correct
         return response
@@ -264,38 +265,34 @@ class Pymarketcap(object):
         Returns:
             list: markets on wich provided currency is currently tradeable
         """
+        import sys
         if self.is_symbol(currency):
             currency = self.correspondences[currency]
 
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
         html = self._html(url)
 
+        # Any value regex
+        any_reg = re_compile(r".*")
+        # Updated field regex
+        updated_field_reg = re_compile(r"text-right .*")
+
         response = []
-        marks = html.find('tbody').find_all('tr')
+        marks = html.find(id="markets-table").find("tbody").find_all('tr')
 
         for m in marks:
-            _volume_24h = m.find('span', {'class': 'volume'}).getText()
+            _volume_24h = m.find(class_="volume").getText()
             volume_24h = self.parse_int(sub(r'\D', '', _volume_24h))
-            _price = m.find('span', {'class': 'price'}).getText()
-            _price = sub(r'\$| |\*|,', '', _price)
-            price = self.parse_float(_price)
+            _price = m.find(class_="price").getText()
+            price = self.parse_float(sub(r'\$| |\*|,', '', _price))
+            pair_exc = m.find_all("a")
+            exchange = pair_exc[0].getText()
+            pair = pair_exc[1].getText()
 
-            _childs, childs = (m.contents, [])
-            for c in _childs:
-                if c != '\n':
-                    childs.append(c)
-            for n, c in enumerate(childs):
-                nav = c.string
-                if n == 1:
-                    exchange = str(nav)
-                elif n == 2:
-                    pair = str(c.getText()).replace('/', self.pair_separator)
-                    if pair[-1] == '*':
-                        pair = pair.replace(' *', '')
-                elif n == 5:
-                    percent_volume = self.parse_float(nav.replace('%', ''))
-                elif n == 6:
-                    updated = nav == "Recently"
+            _percent_volume = m.find("span",{"data-format-percentage": any_reg})
+            percent_volume = self.parse_float(sub("%", "", _percent_volume.getText()))
+            updated = m.find(class_=updated_field_reg).getText() == "Recently"
+
             market = {'exchange': exchange, 'pair': pair,
                       '24h_volume_usd': volume_24h,
                       'price_usd': price,

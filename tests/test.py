@@ -46,7 +46,7 @@ def save_benchs(results, config):
         benchs.write("\n%s\n" % str(results))
 
 def main():
-    """Run nosetests with timr plugin and store
+    """Run nosetests with timer plugin and store
     benchmarking results in a JSON file"""
     config = ConfigTest()
     results = run_tests(configure_plugins(), config)
@@ -61,7 +61,6 @@ def main():
                     config)
         return sys.exit(0)
     return sys.exit(1)
-
 
 
 if __name__ == "__main__":

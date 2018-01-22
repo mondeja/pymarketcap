@@ -17,6 +17,7 @@ pymarketcap.egg-info/
 # Other files #
 ###############
 prueba.py
+prueba2.py
 .env
 MANIFEST
 MANIFEST.in
@@ -28,3 +29,5 @@ cy_branch/
 cysetup.py
 cycore.pyx
 cycore.c
+data/
+exceptional_coin_slugs.json
