@@ -23,8 +23,9 @@ MANIFEST
 MANIFEST.in
 README.html
 NOTES.md
+benchmarking.json
 
-# Cython branch #
+# Cython experiment #
 cy_branch/
 cysetup.py
 cycore.pyx

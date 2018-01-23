@@ -8,7 +8,10 @@ from datetime import datetime
 from re import sub
 from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
-from json import JSONDecodeError
+try:
+    from json import JSONDecodeError
+except ImportError:
+    from simplejson import JSONDecodeError
 
 # Third party libraries
 from requests import Session
@@ -21,6 +24,9 @@ from .errors import (
     CoinmarketcapCurrencyNotFoundError,
     CoinmarketcapTooManyRequestsError
 )
+
+# Global variables
+ANY_REG = re_compile(r".*") # Any value regex
 
 class Pymarketcap(object):
     """Main class for retrieve data from coinmarketcap.com
@@ -184,8 +190,8 @@ class Pymarketcap(object):
             print(error)
             print(url)
             print(data)
-            print("If you see this error report it to \
-                https://github.com/mondeja/pymarketcap/issues")
+            print("If you see this error report it to " + \
+                "https://github.com/mondeja/pymarketcap/issues")
             print(currency)
             import sys
             sys.exit(1)
@@ -272,8 +278,6 @@ class Pymarketcap(object):
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
         html = self._html(url)
 
-        # Any value regex
-        any_reg = re_compile(r".*")
         # Updated field regex
         updated_field_reg = re_compile(r"text-right .*")
 
@@ -289,7 +293,7 @@ class Pymarketcap(object):
             exchange = pair_exc[0].getText()
             pair = pair_exc[1].getText()
 
-            _percent_volume = m.find("span", {"data-format-percentage": any_reg})
+            _percent_volume = m.find("span", {"data-format-percentage": ANY_REG})
             percent_volume = self.parse_float(sub("%", "", _percent_volume.getText()))
             updated = m.find(class_=updated_field_reg).getText() == "Recently"
 
@@ -313,29 +317,21 @@ class Pymarketcap(object):
         url = urljoin(self.urls["web"], 'gainers-losers/')
         html = self._html(url)
 
-        call = str(query) + '-' + str(temp)
+        call_reg = re_compile(query + '-' + temp)
+        percent_reg = re_compile("percent-" + temp)
 
         response = []
-        html_rank = html.find('div', {'id': call}).find_all('tr')
+        html_rank = html.find('div', {'id': call_reg}).find_all('tr')
 
         for curr in html_rank[1:]:
-            _childs, childs = (curr.contents, [])
-            for c in _childs:
-                if c != '\n':
-                    childs.append(c)
-            for n, g in enumerate(childs):
-                if n == 1:
-                    name = str(g.a.getText())
-                elif n == 2:
-                    symbol = str(g.string)
-                elif n == 3:
-                    _volume_24h = sub(r'\$|,', '', g.a.getText())
-                    volume_24h = self.parse_int(_volume_24h)
-                elif n == 4:
-                    _price = sub(r'\$|,', '', g.a.getText())
-                    price = self.parse_float(_price)
-                elif n == 5:
-                    percent = self.parse_float(sub(r'%', '', g.string))
+            name = curr.find(class_="currency-name").find("a").getText()
+            symbol = curr.find(class_="text-left").getText()
+            _volume_24h = sub(r"\$|,", "", curr.find(class_="volume").getText())
+            volume_24h = self.parse_int(_volume_24h)
+            _price = sub(r"\$|,", "", curr.find(class_="price").getText())
+            price = self.parse_float(_price)
+            _percent = sub(r"%", "", curr.find(class_=percent_reg).getText())
+            percent = self.parse_float(_percent)
             currency = {'symbol': symbol, 'name': name,
                         '24h_volume_usd': volume_24h,
                         'price_usd': price, 'percent_change': percent}
@@ -800,7 +796,7 @@ class Pymarketcap(object):
         Args:
             currency (str): Currency name of symbol to download
             size (str): Size in pixels. Valid sizes are:
-                [8, 16, 32, 64, 128]
+                [8, 16, 32, 64, 128, 200]
         """
         if self.is_symbol(currency):
             currency = self.correspondences[currency]
