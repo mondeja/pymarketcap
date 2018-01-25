@@ -41,10 +41,14 @@ class Pymarketcap(object):
             (ie: ``pair_separator="_"`` -> ``"BTC_USD"``)
         timeout (float, optional): Add timeout for get requests.
             As default 20.
+        proxies (dict, optional): Add proxies to be used for get requests.
+            See http://docs.python-requests.org/en/master/user/advanced/#proxies
+            for details. As default {}.
     """
     def __init__(self, parse_float=Decimal,
                  parse_int=int, pair_separator="-",
-                 timeout=20):
+                 timeout=20, proxies=None):
+        
         self.urls = dict(
             api="https://api.coinmarketcap.com/v1/",
             web="https://coinmarketcap.com/",
@@ -56,6 +60,8 @@ class Pymarketcap(object):
 
         self.session = Session()
         self.timeout = timeout
+
+        self.proxies = proxies or {}
 
         # Information attributes
         self.correspondences = self._cache_symbols()
@@ -91,7 +97,7 @@ class Pymarketcap(object):
         }
         response = {}
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
-        currencies = self.session.get(url).json()
+        currencies = self.session.get(url, proxies=self.proxies).json()
         for currency in currencies:
             response[currency["symbol"]] = sub(r"\s", "-", currency["slug"])
         for original, correct in self._exceptional_coin_slugs.items():
@@ -181,7 +187,7 @@ class Pymarketcap(object):
                     data[key] = None
             return data
 
-        req = self.session.get(url, timeout=self.timeout)
+        req = self.session.get(url, proxies=self.proxies, timeout=self.timeout)
         try:
             data = req.json()
         except JSONDecodeError as error:
@@ -228,7 +234,7 @@ class Pymarketcap(object):
             dict: Global markets statistics
         """
         url = urljoin(self.urls["api"], 'global/')
-        req = self.session.get(url, timeout=self.timeout)
+        req = self.session.get(url, proxies=self.proxies, timeout=self.timeout)
         if req.status_code == 200:
             response = req.json(parse_int=self.parse_int,
                                 parse_float=self.parse_float)
@@ -252,7 +258,7 @@ class Pymarketcap(object):
         Returns:
             str: Plain html parsed with BeautifulSoup html parser
         """
-        req = self.session.get(url, timeout=self.timeout)
+        req = self.session.get(url, proxies=self.proxies, timeout=self.timeout)
         status_code = req.status_code
         if status_code == 200:
             try:
@@ -741,7 +747,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return self.session.get(url, timeout=self.timeout).json()
+        return self.session.get(url, proxies=self.proxies, timeout=self.timeout).json()
 
     def global_cap(self, bitcoin=True, start=None, end=None):
         """Get global market capitalization graphs, including
@@ -769,7 +775,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return self.session.get(url, timeout=self.timeout).json()
+        return self.session.get(url, proxies=self.proxies, timeout=self.timeout).json()
 
     def dominance(self, start=None, end=None):
         """Get currencies dominance percentage graph
@@ -788,7 +794,7 @@ class Pymarketcap(object):
         if start and end:
             url += Pymarketcap._add_start_end(url, start, end)
 
-        return self.session.get(url, timeout=self.timeout).json()
+        return self.session.get(url, proxies=self.proxies, timeout=self.timeout).json()
 
     def download_logo(self, currency, size=64, imagepath=None):
         """Download currency logo
@@ -803,7 +809,7 @@ class Pymarketcap(object):
 
         url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
         url = url_schema % (size, size, currency)
-        req = self.session.get(url, stream=True, timeout=self.timeout)
+        req = self.session.get(url, proxies=self.proxies, stream=True, timeout=self.timeout)
         if req.status_code == 200:
             if not imagepath:
                 imagepath = "%s.png" % currency
