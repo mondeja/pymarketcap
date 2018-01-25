@@ -560,7 +560,7 @@ class Pymarketcap(object):
             list: All exchanges in coinmarketcap.
 
         """
-        exchanges = self.exchanges()
+        exchanges = self.exchanges(limit=None)
         response = []
         for exchange in exchanges:
             exch = exchange["name"]
@@ -688,7 +688,7 @@ class Pymarketcap(object):
                 except UnboundLocalError:
                     pass
                 else:
-                    if len(response) >= limit:
+                    if limit and len(response) >= limit:
                         break
                 # In this case is the exchange name
                 exchange_data = {}
