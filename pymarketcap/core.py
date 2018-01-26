@@ -11,7 +11,10 @@ from decimal import Decimal, InvalidOperation
 try:
     from json import JSONDecodeError
 except ImportError:
-    from simplejson import JSONDecodeError
+    try:
+        from simplejson import JSONDecodeError
+    except ImportError:
+        pass
 
 # Third party libraries
 from requests import Session
@@ -48,7 +51,6 @@ class Pymarketcap(object):
     def __init__(self, parse_float=Decimal,
                  parse_int=int, pair_separator="-",
                  timeout=20, proxies=None):
-        
         self.urls = dict(
             api="https://api.coinmarketcap.com/v1/",
             web="https://coinmarketcap.com/",
@@ -99,7 +101,7 @@ class Pymarketcap(object):
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
         currencies = self.session.get(url, proxies=self.proxies).json()
         for currency in currencies:
-            response[currency["symbol"]] = sub(r"\s", "-", currency["slug"])
+            response[currency["symbol"]] = currency["slug"].replace(" ", "")
         for original, correct in self._exceptional_coin_slugs.items():
             response[original] = correct
         return response
@@ -599,11 +601,12 @@ class Pymarketcap(object):
                 elif n == 2:
                     market = c.getText().replace('/', self.pair_separator)
                 elif n == 3:
-                    _volume_24h_usd = sub(r'\$|,|\*| |\s', '', c.getText())
+                    _volume_24h_usd = c.getText().replace(" ", "").replace("*", "")
+                    _volume_24h_usd = _volume_24h_usd.replace("$", "").replace(",", "")
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
                 elif n == 4:
-                    _price_usd = sub(r'\$| |\*', '', c.getText())
-                    price_usd = self.parse_float(_price_usd)
+                    _price_usd = c.getText().replace("$", "").replace("*", "")
+                    price_usd = self.parse_float(_price_usd.replace(" ", ""))
                 elif n == 5:
                     _perc_volume = c.getText().replace('%', '')
                     perc_volume = self.parse_float(_perc_volume)
@@ -659,7 +662,7 @@ class Pymarketcap(object):
                                 market = str(c.getText())
                             elif n == 3:
                                 volume_24h_usd = self.parse_int(
-                                    sub(r"\$|,", "", c.getText())
+                                    c.getText().replace('$', '').replace(',', '')
                                 )
                             elif n == 4:
                                 price_usd = self.parse_float(

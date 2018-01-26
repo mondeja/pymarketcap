@@ -24,7 +24,7 @@ class TestApiCoinmarketcap(unittest.TestCase):
         self.config = ConfigTest()
 
     def tearDown(self):
-        # Prevent to many requests error in tests
+        # Prevent TooManyRequestsError
         time.sleep(.25)
 
     def test_symbols(self):
