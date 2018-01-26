@@ -2,6 +2,7 @@ language: python
 os:
   - linux
 python:
+  - '3.3'
   - '3.6'
   - nightly
 install:
@@ -14,8 +15,6 @@ script:
   - cd tests && nosetests units/test_scraper.py --with-timer -v
   # End2end
   - python end2end/test_scraper.py
-after_success:
-  - coveralls
 branches:
   only:
     - master

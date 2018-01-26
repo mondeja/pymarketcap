@@ -292,15 +292,17 @@ class Pymarketcap(object):
 
         for m in marks:
             _volume_24h = m.find(class_="volume").getText()
-            volume_24h = self.parse_int(sub(r'\D', '', _volume_24h))
+            _volume_24h = _volume_24h.replace("*", "").replace(".", "").replace(",", "")
+            volume_24h = self.parse_int(_volume_24h.replace("$", "").replace("\n", ""))
             _price = m.find(class_="price").getText()
-            price = self.parse_float(sub(r'\$| |\*|,', '', _price))
+            _price = _price.replace("$", "").replace(" ", "").replace("*", "")
+            price = self.parse_float(_price.replace(",", ""))
             pair_exc = m.find_all("a")
             exchange = pair_exc[0].getText()
             pair = pair_exc[1].getText()
 
             _percent_volume = m.find("span", {"data-format-percentage": ANY_REG})
-            percent_volume = self.parse_float(sub("%", "", _percent_volume.getText()))
+            percent_volume = self.parse_float(_percent_volume.getText().replace("%", ""))
             updated = m.find(class_=updated_field_reg).getText() == "Recently"
 
             market = {'exchange': exchange, 'pair': pair,
@@ -332,11 +334,13 @@ class Pymarketcap(object):
         for curr in html_rank[1:]:
             name = curr.find(class_="currency-name").find("a").getText()
             symbol = curr.find(class_="text-left").getText()
-            _volume_24h = sub(r"\$|,", "", curr.find(class_="volume").getText())
+            _volume_24h = curr.find(class_="volume").getText()
+            _volume_24h = _volume_24h.replace("$", "").replace(",", "")
             volume_24h = self.parse_int(_volume_24h)
-            _price = sub(r"\$|,", "", curr.find(class_="price").getText())
+            _price = curr.find(class_="price").getText()
+            _price = _price.replace("$", "").replace(",", "")
             price = self.parse_float(_price)
-            _percent = sub(r"%", "", curr.find(class_=percent_reg).getText())
+            _percent = curr.find(class_=percent_reg).getText().replace("%", "")
             percent = self.parse_float(_percent)
             currency = {'symbol': symbol, 'name': name,
                         '24h_volume_usd': volume_24h,
@@ -363,8 +367,10 @@ class Pymarketcap(object):
         else:
             temps, queries = ([], [])
             for a in args:
-                if a in all_temps: temps.append(a)
-                elif a in all_queries: queries.append(a)
+                if a in all_temps:
+                    temps.append(a)
+                elif a in all_queries:
+                    queries.append(a)
                 else:
                     msg = '%s is not a valid argument' % a
                     raise AttributeError(msg)
@@ -382,7 +388,8 @@ class Pymarketcap(object):
                 rankings[t] = ranking
             if len(queries) > 1:
                 response[q] = rankings
-            else: response = rankings
+            else:
+                response = rankings
 
         return response
 
@@ -504,10 +511,8 @@ class Pymarketcap(object):
                     except ValueError:
                         pass
                 elif n == 3:
-                    _usd_market_cap = c.getText().replace('\n', '')
-                    usd_market_cap = str(_usd_market_cap.replace(' ', ''))
-                    if '$' in usd_market_cap:
-                        usd_market_cap = sub(r'\$|,', '', usd_market_cap)
+                    _usd_market_cap = c.getText().replace('\n', '').replace("$", "")
+                    usd_market_cap = _usd_market_cap.replace(' ', '').replace(",", "")
                 elif n == 4:
                     price_usd = c.getText()
                     try:
@@ -525,17 +530,13 @@ class Pymarketcap(object):
                         _circulating_supply = circulating_supply.replace(',', '')
                         circulating_supply = self.parse_int(_circulating_supply)
                 elif n == 6:
-                    _volume_24h_usd = c.getText().replace('\n', '')
-                    volume_24h_usd = sub(r'\$|,', '', _volume_24h_usd)
+                    _volume_24h_usd = c.getText().replace('\n', '').replace("$", "")
+                    volume_24h_usd = _volume_24h_usd.replace(",", "")
                     if volume_24h_usd != 'Low Vol':
                         try:
                             volume_24h_usd = self.parse_int(volume_24h_usd)
                         except ValueError:
-                            # Is a '?' value?
-                            if volume_24h_usd == '?':
-                                pass
-                            else:
-                                raise ValueError('volume_24h_usd ==', volume_24h_usd)
+                            pass
                 elif n == 7:
                     percent_change = c.getText().replace(' %', '')
                     if '?' not in percent_change:
@@ -594,11 +595,9 @@ class Pymarketcap(object):
                 if n == 0:
                     rank = self.parse_int(c.getText())
                 elif n == 1:
-                    name = str(c.getText())
+                    name = c.getText()
                 elif n == 2:
-                    market = str(c.getText().replace(
-                        '/', self.pair_separator
-                    ))
+                    market = c.getText().replace('/', self.pair_separator)
                 elif n == 3:
                     _volume_24h_usd = sub(r'\$|,|\*| |\s', '', c.getText())
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
@@ -660,7 +659,7 @@ class Pymarketcap(object):
                                 market = str(c.getText())
                             elif n == 3:
                                 volume_24h_usd = self.parse_int(
-                                    c.getText().replace('$', '').replace(',', '')
+                                    sub(r"\$|,", "", c.getText())
                                 )
                             elif n == 4:
                                 price_usd = self.parse_float(
