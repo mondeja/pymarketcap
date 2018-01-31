@@ -270,6 +270,15 @@ class Pymarketcap(object):
         else:
             raise CoinmarketcapHTTPError(status_code, url)
 
+    def _select(self, html, selector, attribute=None):
+        """Internal function to avoid redundant error checking code when
+        using CSS selectors."""
+        try:
+            el = html.select(selector)[0]
+            return el[attribute].strip() if attribute else el.getText().strip()
+        except (IndexError, KeyError):
+            return None
+
     def markets(self, currency):
         """Get available coinmarketcap markets data.
         It needs a currency as argument.
@@ -587,7 +596,15 @@ class Pymarketcap(object):
         html = self._html(url)
 
         marks = html.find('table').find_all('tr')
-        response = []
+        response = {
+            'markets': []
+        }
+
+
+        response['formatted_name'] = self._select(html, 'h1.text-large')
+        response['website'] = self._select(html, 'span[title=Website] + a', 'href')
+        response['twitter'] = self._select(html, 'img[alt=Twitter] + a', 'href')
+
         for m in marks[1:]:
             _childs, childs = (m.contents, [])
             for c in _childs:
@@ -616,7 +633,7 @@ class Pymarketcap(object):
                           'volume_24h_usd': volume_24h_usd,
                           'price_usd': price_usd,
                           'perc_volume': perc_volume}
-            response.append(indicators)
+            response['markets'].append(indicators)
 
         return response
 
@@ -699,6 +716,9 @@ class Pymarketcap(object):
                 # We create a dict where we will save the markets data
                 exchange_data['name'] = exchange
                 exchange_data['markets'] = []
+
+                exchange_data['formatted_name'] = self._select(
+                    e, '.volume-header a')
 
         return response
 

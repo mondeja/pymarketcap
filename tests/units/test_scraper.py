@@ -119,18 +119,28 @@ class TestScraperCoinmarketcap(unittest.TestCase):
 
     def test_exchange(self):
         actual = self.coinmarketcap.exchange(self.config.EXCHANGE)
-        value_types = {'market': str,
+
+        value_types= {'formatted_name': str,
+                      'website': str,
+                      'twitter': str,
+                      'markets': list}
+
+        markets_value_types = {'market': str,
                        'price_usd': Decimal,
                        'rank': int,
                        'volume_24h_usd': int,
                        'name': str,
                        'perc_volume': Decimal}
 
-        self.assertIs(type(actual), list)
-        for market in actual:
+        self.assertIs(type(actual), dict)
+
+        for key, value in actual.items():
+            self.assertIs(type(value), value_types[key])
+
+        for market in actual['markets']:
             self.assertIs(type(market), dict)
             for key, value in market.items():
-                self.assertIs(type(value), value_types[key])
+                self.assertIs(type(value), markets_value_types[key])
 
     def test_exchanges(self):
         actual = self.coinmarketcap.exchanges()
@@ -149,6 +159,8 @@ class TestScraperCoinmarketcap(unittest.TestCase):
                 if key in ('rank', 'volume_usd'):
                     self.assertIs(type(value), int)
                 elif key == 'name':
+                    self.assertIs(type(value), str)
+                elif key == 'formatted_name':
                     self.assertIs(type(value), str)
                 elif key == 'markets':
                     self.assertIs(type(value), list)
