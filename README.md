@@ -64,6 +64,12 @@ You can see last online builds with tests at [TravisCI](https://travis-ci.org/mo
 |`graphs.dominance`        | ✔ | ✔ | ✔ |
 |`assets`                  | ✘ | ✘ | ✘ |
 
+## TODO:
+- [] Create assets method.
+- [] Rewrite all tests with pytest providing more examples and separate benchmarking.
+- [] Create a more efficient partial or total reimplementation with C or Cython.
+- [] Create an asynchronous implementation.
+
 ## Support
 
 If you are having issues, please let me know (mondejar1994@gmail.com).

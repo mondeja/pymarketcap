@@ -120,7 +120,8 @@ class TestScraperCoinmarketcap(unittest.TestCase):
     def test_exchange(self):
         actual = self.coinmarketcap.exchange(self.config.EXCHANGE)
         actual_w_metadata = self.coinmarketcap.exchange(
-            self.config.EXCHANGE, include_metadata=True)
+            self.config.EXCHANGE, metadata=True
+        )
 
         value_types= {'formatted_name': str,
                       'website': str,

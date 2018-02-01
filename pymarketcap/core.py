@@ -566,7 +566,8 @@ class Pymarketcap(object):
 
     @property
     def exchange_names(self):
-        """Get all exchange names available currently in coinmarketcap.
+        """Get all exchange names available
+        currently in coinmarketcap.
 
         Returns:
             list: All exchanges in coinmarketcap.
@@ -580,7 +581,7 @@ class Pymarketcap(object):
                 response.append(exch)
         return response
 
-    def exchange(self, name, include_metadata=False):
+    def exchange(self, name, metadata=False):
         """Obtain data from a exchange passed as argument
 
         Example:
@@ -588,9 +589,12 @@ class Pymarketcap(object):
 
         Args:
             name (str): Exchange to retrieve data
+            metadata (bool): Include formatted name, website
+                and twitter links for the exchange. False as default
 
         Returns:
-            list: Data from all markets in a exchange
+            list/dict (if metadata == False/True):
+                Data from all markets in a exchange
         """
         url = urljoin(self.urls["web"], 'exchanges/%s/' % name)
         html = self._html(url)
@@ -599,7 +603,7 @@ class Pymarketcap(object):
 
         response = []
 
-        if include_metadata:
+        if metadata:
             response = {
                 'markets': []
             }
@@ -636,7 +640,7 @@ class Pymarketcap(object):
                           'volume_24h_usd': volume_24h_usd,
                           'price_usd': price_usd,
                           'perc_volume': perc_volume}
-            markets = response['markets'] if include_metadata else response
+            markets = response['markets'] if metadata else response
 
             markets.append(indicators)
 
