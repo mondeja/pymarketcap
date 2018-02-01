@@ -580,7 +580,7 @@ class Pymarketcap(object):
                 response.append(exch)
         return response
 
-    def exchange(self, name):
+    def exchange(self, name, include_metadata=False):
         """Obtain data from a exchange passed as argument
 
         Example:
@@ -596,14 +596,17 @@ class Pymarketcap(object):
         html = self._html(url)
 
         marks = html.find('table').find_all('tr')
-        response = {
-            'markets': []
-        }
 
+        response = []
 
-        response['formatted_name'] = self._select(html, 'h1.text-large')
-        response['website'] = self._select(html, 'span[title=Website] + a', 'href')
-        response['twitter'] = self._select(html, 'img[alt=Twitter] + a', 'href')
+        if include_metadata:
+            response = {
+                'markets': []
+            }
+
+            response['formatted_name'] = self._select(html, 'h1.text-large')
+            response['website'] = self._select(html, 'span[title=Website] + a', 'href')
+            response['twitter'] = self._select(html, 'img[alt=Twitter] + a', 'href')
 
         for m in marks[1:]:
             _childs, childs = (m.contents, [])
@@ -633,7 +636,9 @@ class Pymarketcap(object):
                           'volume_24h_usd': volume_24h_usd,
                           'price_usd': price_usd,
                           'perc_volume': perc_volume}
-            response['markets'].append(indicators)
+            markets = response['markets'] if include_metadata else response
+
+            markets.append(indicators)
 
         return response
 
