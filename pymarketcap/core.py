@@ -4,17 +4,19 @@
 """Pymarketcap core, web parser and API wrapper"""
 
 # Python standard library
+import sys
 from datetime import datetime
 from re import sub
 from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
 try:
-    from json import JSONDecodeError, loads
+    from json import loads
 except ImportError:
     try:
-        from simplejson import JSONDecodeError
+        from simplejson import loads
     except ImportError:
-        pass
+        print("You need json or simplejson module to use pymarketcap.")
+        sys.exit(1)
 
 # Third party libraries
 from requests import Session
