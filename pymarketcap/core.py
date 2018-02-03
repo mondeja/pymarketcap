@@ -115,15 +115,21 @@ class Pymarketcap(object):
             return True
         return False
 
+    @property
+    def total_currencies(self):
+        """Get the number of criptocurrencies listed currently"""
+        return len(self.ticker())
+
     #######   API METHODS   #######
 
-    def ticker(self, currency=None, convert=None, limit=None):
+    def ticker(self, currency=None, convert=None, limit=0):
         """Get currencies with other aditional data.
 
         Args:
             currency (str, optional): Specify a currency to return,
                 in this case the method returns a dict, otherwise
-                returns a list. As default, None.
+                returns a list. If you dont specify a currency,
+                returns data for all in coinmarketcap. As default, None.
             convert (str, optional): As default, None. Allow to
                 convert prices in response on one of next badges:
                 ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
@@ -131,7 +137,8 @@ class Pymarketcap(object):
                 "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
                 "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR", "USD"]
             limit (int, optional): Limit amount of coins on response.
-                Only works if ``currency == None``.
+                If limit == 0 returns all currencies in coinmarketcap.
+                As default 0.
 
         Returns:
             dict/list: If currency param is provided or not.
@@ -147,9 +154,7 @@ class Pymarketcap(object):
                 currency = self.correspondences[currency]
             url += "%s/" % currency
 
-        params = dict(convert=convert)
-        if limit:
-            params["limit"] = limit
+        params = dict(convert=convert, limit=limit)
 
         url += "?" + urlencode(params)
 
