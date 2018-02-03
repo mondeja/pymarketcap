@@ -9,7 +9,7 @@ from re import sub
 from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
 try:
-    from json import JSONDecodeError
+    from json import JSONDecodeError, loads
 except ImportError:
     try:
         from simplejson import JSONDecodeError
@@ -191,22 +191,10 @@ class Pymarketcap(object):
             return data
 
         req = self.session.get(url, proxies=self.proxies, timeout=self.timeout)
-        try:
-            data = req.json()
-        except JSONDecodeError as error:
-            if req.status_code == 429: # Too many requests
-                raise CoinmarketcapTooManyRequestsError(429, "Too many requests")
-            print(error)
-            print(url)
-            print(data)
-            print("If you see this error report it to " + \
-                "https://github.com/mondeja/pymarketcap/issues")
-            print(currency)
-            import sys
-            sys.exit(1)
 
         if currency:
             try:
+                data = req.json()
                 response = parse_currency(data[0])
             except KeyError as error:  # Id currency error?
                 if type(data) is dict:
@@ -223,9 +211,7 @@ class Pymarketcap(object):
                 else:
                     raise error
         else:
-            response = []
-            for curr in data:
-                response.append(parse_currency(curr))
+            response = loads(sub(r'"(\d+(?:\.\d+)?)"', r"\1", req.text))
 
         return response
 
