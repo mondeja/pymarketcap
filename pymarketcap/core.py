@@ -760,19 +760,19 @@ class Pymarketcap(object):
             {"low":{"timestamp": "...", "price": "..."},
             "high:{"timestamp": "...", "price": "..."}}
         """
-    if in_btc:
-        key = 'price_btc'
-    else:
-        key = 'price_usd'
+        if in_btc:
+            key = 'price_btc'
+        else:
+            key = 'price_usd'
 
-    if seconds_ago:
-        last_timestamp = max(self.currency('bitcoin')['price_usd'],key=operator.itemgetter(0))[0]
-        start = last_timestamp - (seconds_ago * 1000)
-        end = last_timestamp
+        if seconds_ago:
+            last_timestamp = max(self.currency('bitcoin')['price_usd'],key=operator.itemgetter(0))[0]
+            start = last_timestamp - (seconds_ago * 1000)
+            end = last_timestamp
 
-    max_value = max(self.currency(coin,start=start,end=end)[key],key=operator.itemgetter(1))
-    min_value = min(self.currency(coin,start=start,end=end)[key],key=operator.itemgetter(1))
-    return {"low":{"timestamp":min_value[0],"price":min_value[1]},"high":{"timestamp":max_value[0],"price":max_value[1]}}
+        max_value = max(self.currency(coin,start=start,end=end)[key],key=operator.itemgetter(1))
+        min_value = min(self.currency(coin,start=start,end=end)[key],key=operator.itemgetter(1))
+        return {"low":{"timestamp":min_value[0],"price":min_value[1]},"high":{"timestamp":max_value[0],"price":max_value[1]}}
 
     def currency(self, currency, start=None, end=None):
         """Get graphs data of a currency.
