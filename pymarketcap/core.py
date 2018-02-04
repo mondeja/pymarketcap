@@ -4,17 +4,19 @@
 """Pymarketcap core, web parser and API wrapper"""
 
 # Python standard library
+import sys
 from datetime import datetime
 from re import sub
 from re import compile as re_compile
 from decimal import Decimal, InvalidOperation
 try:
-    from json import JSONDecodeError
+    from json import loads
 except ImportError:
     try:
-        from simplejson import JSONDecodeError
+        from simplejson import loads
     except ImportError:
-        pass
+        print("You need json or simplejson module to use pymarketcap.")
+        sys.exit(1)
 
 # Third party libraries
 from requests import Session
@@ -106,21 +108,28 @@ class Pymarketcap(object):
             response[original] = correct
         return response
 
-    def is_symbol(self, currency):
-        # Improve velocity (`if currency in self.symbols` is slower)
+    def _is_symbol(self, currency):
+        """Internal function for check
+        if a currency string is a symbol or not"""
         if currency.isupper() or currency in self._exceptional_coin_slugs.keys():
             return True
         return False
 
+    @property
+    def total_currencies(self):
+        """Get the number of criptocurrencies listed currently"""
+        return len(self.ticker())
+
     #######   API METHODS   #######
 
-    def ticker(self, currency=None, convert=None, limit=None):
+    def ticker(self, currency=None, convert=None, limit=0):
         """Get currencies with other aditional data.
 
         Args:
             currency (str, optional): Specify a currency to return,
                 in this case the method returns a dict, otherwise
-                returns a list. As default, None.
+                returns a list. If you dont specify a currency,
+                returns data for all in coinmarketcap. As default, None.
             convert (str, optional): As default, None. Allow to
                 convert prices in response on one of next badges:
                 ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
@@ -128,7 +137,8 @@ class Pymarketcap(object):
                 "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
                 "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR", "USD"]
             limit (int, optional): Limit amount of coins on response.
-                Only works if ``currency == None``.
+                If limit == 0 returns all currencies in coinmarketcap.
+                As default 0.
 
         Returns:
             dict/list: If currency param is provided or not.
@@ -140,13 +150,11 @@ class Pymarketcap(object):
         url = urljoin(self.urls["api"], "ticker/")
 
         if currency:
-            if self.is_symbol(currency):
+            if self._is_symbol(currency):
                 currency = self.correspondences[currency]
             url += "%s/" % currency
 
-        params = dict(convert=convert)
-        if limit:
-            params["limit"] = limit
+        params = dict(convert=convert, limit=limit)
 
         url += "?" + urlencode(params)
 
@@ -190,22 +198,10 @@ class Pymarketcap(object):
             return data
 
         req = self.session.get(url, proxies=self.proxies, timeout=self.timeout)
-        try:
-            data = req.json()
-        except JSONDecodeError as error:
-            if req.status_code == 429: # Too many requests
-                raise CoinmarketcapTooManyRequestsError(429, "Too many requests")
-            print(error)
-            print(url)
-            print(data)
-            print("If you see this error report it to " + \
-                "https://github.com/mondeja/pymarketcap/issues")
-            print(currency)
-            import sys
-            sys.exit(1)
 
         if currency:
             try:
+                data = req.json()
                 response = parse_currency(data[0])
             except KeyError as error:  # Id currency error?
                 if type(data) is dict:
@@ -222,9 +218,7 @@ class Pymarketcap(object):
                 else:
                     raise error
         else:
-            response = []
-            for curr in data:
-                response.append(parse_currency(curr))
+            response = loads(sub(r'"(\d+(?:\.\d+)?)"', r"\1", req.text))
 
         return response
 
@@ -289,7 +283,7 @@ class Pymarketcap(object):
         Returns:
             list: markets on wich provided currency is currently tradeable
         """
-        if self.is_symbol(currency):
+        if self._is_symbol(currency):
             currency = self.correspondences[currency]
 
         url = urljoin(self.urls["web"], "currencies/%s/" % currency)
@@ -426,7 +420,7 @@ class Pymarketcap(object):
         if not start: start = datetime(2008, 8, 18)
         if not end: end = datetime.now()
 
-        if self.is_symbol(currency):
+        if self._is_symbol(currency):
             currency = self.correspondences[currency]
 
         url = self.urls["web"] + 'currencies/' + currency + '/historical-data/'
@@ -589,8 +583,9 @@ class Pymarketcap(object):
 
         Args:
             name (str): Exchange to retrieve data
-            metadata (bool): Include formatted name, website
-                and twitter links for the exchange. False as default
+            metadata (bool, optional): Include formatted name
+                and both website and twitter links for the exchange.
+                False as default
 
         Returns:
             list/dict (if metadata == False/True):
@@ -668,8 +663,8 @@ class Pymarketcap(object):
             except KeyError:
                 if 'Pair' not in str(e):
                     if 'Total' in str(e):
-                        _total = sub(r'\$|,|Total', '', e.getText())
-                        total = self.parse_int(_total)
+                        _total = e.getText().replace("$", "").replace(",", "")
+                        total = self.parse_int(_total.replace("Total", ""))
                         exchange_data['volume_usd'] = total
                     if 'View More' in str(e):
                         pass
@@ -726,8 +721,7 @@ class Pymarketcap(object):
                 exchange_data['name'] = exchange
                 exchange_data['markets'] = []
 
-                exchange_data['formatted_name'] = self._select(
-                    e, '.volume-header a')
+                exchange_data['formatted_name'] = self._select(e, '.volume-header a')
 
         return response
 
@@ -771,7 +765,7 @@ class Pymarketcap(object):
             and for each key, a list of lists where each one
             has two values [<timestamp>, <value>]
         """
-        if self.is_symbol(currency):
+        if self._is_symbol(currency):
             currency = self.correspondences[currency]
         url = self.urls["graphs_api"] + "currencies/%s/" % currency
 
@@ -835,7 +829,7 @@ class Pymarketcap(object):
             size (str): Size in pixels. Valid sizes are:
                 [8, 16, 32, 64, 128, 200]
         """
-        if self.is_symbol(currency):
+        if self._is_symbol(currency):
             currency = self.correspondences[currency]
 
         url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
