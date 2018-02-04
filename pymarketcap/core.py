@@ -625,6 +625,7 @@ class Pymarketcap(object):
                     volume_24h_usd = self.parse_int(_volume_24h_usd)
                 elif n == 4:
                     _price_usd = c.getText().replace("$", "").replace("*", "")
+                    _price_usd = _price_usd.replace(",", "")
                     price_usd = self.parse_float(_price_usd.replace(" ", ""))
                 elif n == 5:
                     _perc_volume = c.getText().replace('%', '')
