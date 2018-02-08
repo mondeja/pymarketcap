@@ -1,19 +1,16 @@
 language: python
-os:
-  - linux
 python:
-  - '3.3'
-  - '3.6'
+  - "3.5"
+  - "pypy3"
+  - "3.6"
+  - "nightly"
+  - "3.7-dev"
 install:
-  - pip install -r requirements.txt
-  - python setup.py install
+  - make install
 before_script:
-  - pip install -r dev-requirements.txt
+  - make dev-install
 script:
-  # Unittests
-  - cd tests && nosetests units/test_scraper.py --with-timer -v
-  # End2end
-  - python end2end/test_scraper.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
 branches:
   only:
     - master
