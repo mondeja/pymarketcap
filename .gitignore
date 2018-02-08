@@ -1,34 +1,18 @@
-# Compiled source #
-###################
-*.pyc
-.env
-.pylintrc
-
-# Directories #
-###############
-__pycache__/
-tmp/
-env/
+# Compiled files
+*.so
+*.c
 build/
-dist/
-scripts/
+__pycache__/
 pymarketcap.egg-info/
+dist/
 
-# Other files #
-###############
-prueba.py
-prueba2.py
-.env
-MANIFEST
-MANIFEST.in
-README.html
+# Local files
 NOTES.md
-benchmarking.json
 
-# Cython experiment #
-cy_branch/
-cysetup.py
-cycore.pyx
-cycore.c
-data/
-exceptional_coin_slugs.json
+# Local test development
+builder_checks.py
+proof.py
+.benchmarks/
+.pytest_cache/
+pytest_benchmark/
+.tox/

@@ -1,13 +1,22 @@
 <h1>pymarketcap</h1>
 
-[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap)
+[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap)
 
-**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a scraper built on BeautifulSoup and an API wrapper powered by requests. Only works in Python3.
+**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, on works in Python>=3.5.
+
+```diff
++ New version 3.9
+- Some breaking changes have been introduced since 3.3.9 version. The old version (3.3.158) is still hosted at Pypi and will be there for a short period of time but won't be longer supported. Please, update to the new version, is faster, more accurate and has new features!
+```
 
 ## Install
 
+### Dependencies
+You need to install [`cython`](http://cython.readthedocs.io/en/latest/src/quickstart/install.html), `gcc` compiler and [libcurl](https://curl.haxx.se/docs/install.html).
+
+### Commands
 ```
-pip install pymarketcap
+pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
 ```
 
 or install from source:
@@ -15,90 +24,29 @@ or install from source:
 ```
 git clone https://github.com/mondeja/pymarketcap.git
 cd pymarketcap
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 python setup.py install
 ```
 
 ## Documentation
-All methods are self explained in doctrings. Also, you can see all available methods in action at [wiki page](https://github.com/mondeja/pymarketcap/wiki).
+All methods are currently only self explained in doctrings.
 
-## Testing
-```
-pip3 install -r dev-requirements.txt
-```
+### [Testing and contributing](https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.md)
 
-- All tests with benchmarking: `python3 tests/test.py --with-timer -v`
+### [License](https://github.com/mondeja/pymarketcap/blob/master/LICENSE.txt)
 
-> Benchmarking results for all unittests will be stored in `tests/benchmarking.json`
-
-- API unittests without benchmarking: `cd tests && nosetests units/test_api.py -v`
-- Scraper unittest with benchmarking: `cd tests && nosetests units/test_scraper.py --with-timer -v`
-- End to end API tests (takes a long time): `cd tests && python3 end2end/test_api.py`
-
-You can see last online builds with tests at [TravisCI](https://travis-ci.org/mondeja/pymarketcap).
-
-
-## Contribute
-
+### Support
 - Issue Tracker: https://github.com/mondeja/pymarketcap/issues
-- Source Code: https://github.com/mondeja/pymarketcap
+- If you want contact me → mondejar1994@gmail.com
 
-### Development progress:
-
-|**Method**|**Developed**|**Documented**|**Tested**|
-|:-------------------------|:-:|:-:|:-:|
-|**API COMMANDS**                      |
-|`symbols`                 | ✔ | ✔ | ✔ |
-|`ticker`                  | ✔ | ✔ | ✔ |
-|`stats`                   | ✔ | ✔ | ✔ |
-|**SCRAPER COMMANDS**                  |
-|`markets`                 | ✔ | ✔ | ✔ |
-|`ranks`                   | ✔ | ✔ | ✔ |
-|`historical`              | ✔ | ✔ | ✔ |
-|`recently`                | ✔ | ✔ | ✔ |
-|`exchange`                | ✔ | ✔ | ✔ |
-|`exchanges`               | ✔ | ✔ | ✔ |
-|`exchange_names`          | ✔ | ✔ | ✔ |
-|`graphs.currency`         | ✔ | ✔ | ✔ |
-|`graphs.global_cap`       | ✔ | ✔ | ✔ |
-|`graphs.dominance`        | ✔ | ✔ | ✔ |
-|`assets`                  | ✘ | ✘ | ✘ |
-
-## TODO:
-- [ ] Create assets method.
-- [ ] Rewrite all tests with pytest providing more examples and separate benchmarking.
-- [ ] Create a more efficient partial or total reimplementation with C or Cython.
-- [ ] Create an asynchronous implementation.
-
-## Support
-
-If you are having issues, please let me know (mondejar1994@gmail.com).
-
-
-## License
-
-Copyright (c) 2017 Álvaro Mondéjar Rubio <mondejar1994@gmail.com>.
-All rights reserved.
-
-Redistribution and use in source and binary forms are permitted
-provided that the above copyright notice and this paragraph are
-duplicated in all such forms and that any documentation, advertising
-materials, and other materials related to such distribution and use
-acknowledge that the software was developed by Álvaro Mondéjar Rubio. The
-name of the Álvaro Mondéjar Rubio may not be used to endorse or promote
-products derived from this software without specific prior written
-permission.
-
-THIS SOFTWARE IS PROVIDED “AS IS” AND WITHOUT ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-### Buy me a coffee?
+#### Buy me a coffee?
 
 If you feel like buying me a coffee (or a beer?), donations are welcome:
 
 ```
-BTC : 1LfUF4AcvH7Wd1wTc7Mmqobj4AypUbpvN5
-ETH : 0x7428fE875226880DaD222c726F6340eec42Db567
+BTC: 1LnPPp7nEF7fHNMtHvVaEFNaHmPKji1uCo
+BCH: qp40gr5y9usdyqh62hac7umvcqe5n2nc9vpff4der5
+ETH: 0x3284674cC02d18395a00546ee77DBdaA391Aec23
+LTC: LXSXiczN1ZYyf3WoeawraL7G1d31vVWgXK
 STEEM: @mondeja
 ```
