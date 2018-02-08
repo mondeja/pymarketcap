@@ -5,7 +5,7 @@
 **pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, only works in Python≥3.5.
 
 ```diff
-+ New version 3.9
++ New version 3.9.0
 - Some breaking changes have been introduced since 3.9.0 version. The old version (3.3.158) is still hosted at Pypi and will be there for a short period of time but won't be longer supported. Please, update to the new version, is faster, more accurate and has new features!
 ```
 
@@ -33,7 +33,7 @@ All methods are currently only self explained in doctrings.
 
 ### [Testing and contributing](https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.md)
 
-#### [Changelog](https://github.com/mondeja/pymarketcap/blob/master/CHANGELOG.md)
+### [Changelog](https://github.com/mondeja/pymarketcap/blob/master/CHANGELOG.md)
 
 _____________________________
 

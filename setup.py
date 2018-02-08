@@ -32,7 +32,7 @@ if not built:
 
 LONG_DESC = "pymarketcap is library for retrieve data from www.coinmarketcap.com" \
           + " API and website. Consist of a cythonized scraper and API wrapper built" \
-          + " with curl C library. Actually, on works in Python>=3.3."
+          + " with curl C library. Actually, on works in Python>=3.5."
 
 with open(os.path.join(os.path.dirname(__file__), "requirements.txt")) as f:
     REQ = f.readlines()
@@ -64,7 +64,7 @@ try:
 
     setup(
         name="pymarketcap",
-        version = "3.9.0",
+        version = "3.9.001",
         url = "https://github.com/mondeja/pymarketcap",
         download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
         author = "Álvaro Mondéjar",

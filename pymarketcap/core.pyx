@@ -473,7 +473,6 @@ cdef class Pymarketcap:
             else:
                 raise NotImplementedError
         convert = convert.lower()
-        name = name.lower()
 
         currencies = re.findall(r'"market-name">(.+)</a>', res)
         pairs = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
@@ -496,13 +495,13 @@ cdef class Pymarketcap:
             try: vol = float(vol)
             except ValueError: vol = None
             markets.append({
-                    "currency": curr,
-                    "pair": pair,
-                    "vol_24h": vol,
-                    "price": float(price),
-                    "perc_volume": float(perc_vol),
-                    "updated": up == "Recently"
-                })
+                "currency": curr,
+                "pair": pair,
+                "vol_24h": vol,
+                "price": float(price),
+                "perc_volume": float(perc_vol),
+                "updated": up == "Recently"
+            })
         if convert == "btc":
             try: total_volume = float(perc_vols[0])
             except ValueError: total_volume = None
