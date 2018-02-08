@@ -62,11 +62,12 @@ pytest tests/test_scraper/test_historical.py::test_consistence
 - [ ] Write documentation and upload to read the docs.
 - [ ] Write a live demo for all methods.
 - [ ] Add `tokens` method covering https://coinmarketcap.com/tokens/ endpoint.
-- [ ] Write `CHANGELOG.md`.
+- [x] Write `CHANGELOG.md`.
+- [ ] Write again [`download_logo()` old method](https://github.com/mondeja/pymarketcap/commit/c8848d368435b03c51f1885857255446a1ed8889).
 
 _____________________________
 
-### Thanks to:
-- @badele
-- @mtschammer
-- @reteps
+#### How does pymarketcap works in depth?
+- Some pieces of code are precompiled before compile with Cython, so if you see missing parts on the source code before install (like the property method `ticker_badges`), understand that they aren't bugs.
+- The numerical values returned by the scraper are the real values with which coinmarketcap.com works, not the values displayed on their frontend (see source HTML code of the web).
+- Several methods are cached at instantiation time, so they can be obtained later without perform more HTTP requests.
