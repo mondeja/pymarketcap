@@ -12,16 +12,16 @@ install:
 
 dev-install:
 	pip3 install -r dev-requirements.txt
+	python3 setup.py install
 
 uninstall:
 	pip3 uninstall pymarketcap -y
 	make restore-sources
 
 clean:
-	rm -Rf .pytest_cache/ .tox/ build/
-	find . -type d -name "__pycache__" -exec rm -r {} +
-	rm pymarketcap/core.c pymarketcap/curl.c
-	if [ -f MANIFEST ]; then rm MANIFEST; fi
+	sudo rm -Rf .pytest_cache/ .tox/ build/
+	sudo find . -type d -name "__pycache__" -exec rm -r {} +
+	sudo rm pymarketcap/core.c pymarketcap/curl.c
 
 test:
 	pytest tests -vs

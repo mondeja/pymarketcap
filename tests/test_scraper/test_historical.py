@@ -46,7 +46,6 @@ def test_consistence():
     # Check dates order
     for i, tick in enumerate(res):
         assert len(tick.keys()) == 7  # Check number of keys
-        print(tick)
         if i < len(res)-1:
             assert res[i+1]["date"] < tick["date"]
 

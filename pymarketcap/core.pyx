@@ -9,13 +9,14 @@ from collections import OrderedDict
 # Internal Cython modules
 from pymarketcap.curl import get_to_memory
 
+# Internal Python modules
 from pymarketcap.errors import (
     CoinmarketcapHTTPError,
     CoinmarketcapHTTPError404,
     CoinmarketcapTooManyRequestsError
 )
 
-# HTTPErrors mapper
+# HTTP errors mapper
 http_errors_map = {
     "429": CoinmarketcapTooManyRequestsError,
     "404": CoinmarketcapHTTPError404,
@@ -23,6 +24,7 @@ http_errors_map = {
 
 http_error_numbers = [int(number) for number in http_errors_map.keys()]
 
+# Common RegEx
 PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
 cdef class Pymarketcap:
@@ -140,10 +142,7 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges that you can convert prices in ticker() method."""
-        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
+        return
 
     # ====================================================================
 
@@ -174,14 +173,6 @@ cdef class Pymarketcap:
             convert (str, optional): As default, "USD". Allow to
                 convert price, 24h volume and market cap in terms
                 of one of next badges:
-                   ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                    "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                    "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                    "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
-                   ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                    "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                    "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                    "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
 
         Returns:
             dict/list: If currency param is provided or not.
@@ -209,14 +200,6 @@ cdef class Pymarketcap:
     @property
     def currency_exchange_rates(self):
         """Get currency exchange rates against $ for the next currencies:
-            ["USD", "EUR", "CNY", "GBP", "CAD", "RUB", "HKD", "JPY", "AUD",
-             "BRL", "INR", "KRW", "MXN", "IDR", "CHF", "ETH", "CLP", "CZK",
-             "DKK", "HUF", "ILS", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-             "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
-            ["USD", "EUR", "CNY", "GBP", "CAD", "RUB", "HKD", "JPY", "AUD",
-             "BRL", "INR", "KRW", "MXN", "IDR", "CHF", "ETH", "CLP", "CZK",
-             "DKK", "HUF", "ILS", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-             "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
 
         Returns (dict):
             All currencies rates used internally by coinmarketcap to calculate

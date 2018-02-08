@@ -18,7 +18,7 @@ You can run tests with `pytest` command:
 pytest tests/test_scraper/test_historical.py::test_consistence
 ```
 
-> Also, you can use `make` for run tests, install, precompile/restore source code, build and clean the whole directory (see [`Makefile`](https://github.com/mondeja/pymarketcap/blob/master/Makefile)).
+> Also, if your system is Unix, you can use `make` for run tests, install, precompile/restore source code, build and clean the whole directory (see [`Makefile`](https://github.com/mondeja/pymarketcap/blob/master/Makefile)).
 
 ### Development progress:
 
