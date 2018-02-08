@@ -140,7 +140,10 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges that you can convert prices in ticker() method."""
-        return
+        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
+                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
+                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
 
     # ====================================================================
 
@@ -175,6 +178,10 @@ cdef class Pymarketcap:
                     "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
                     "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
                     "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
+                   ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
+                    "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
+                    "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+                    "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
 
         Returns:
             dict/list: If currency param is provided or not.
@@ -202,6 +209,10 @@ cdef class Pymarketcap:
     @property
     def currency_exchange_rates(self):
         """Get currency exchange rates against $ for the next currencies:
+            ["USD", "EUR", "CNY", "GBP", "CAD", "RUB", "HKD", "JPY", "AUD",
+             "BRL", "INR", "KRW", "MXN", "IDR", "CHF", "ETH", "CLP", "CZK",
+             "DKK", "HUF", "ILS", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+             "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"]
             ["USD", "EUR", "CNY", "GBP", "CAD", "RUB", "HKD", "JPY", "AUD",
              "BRL", "INR", "KRW", "MXN", "IDR", "CHF", "ETH", "CLP", "CZK",
              "DKK", "HUF", "ILS", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",

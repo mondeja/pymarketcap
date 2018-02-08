@@ -47,7 +47,7 @@ pytest tests/test_scraper/test_historical.py::test_consistence
 |`recently`                | ✔ | ✔ | ✔ |
 |`exchange`                | ✔ | ✔ | ✔ |
 |`exchanges`               | ✔ | ✔ | ✔ |
-|`tokens`                  | ✘ | ✘ | ✘ | ◀
+|`tokens`                  | ✘ | ✘ | ✘ |
 |**GRAPHS API METHODS**                |
 |`graphs.currency`         | ✔ | ✔ | ✔ |
 |`graphs.global_cap`       | ✔ | ✔ | ✔ |

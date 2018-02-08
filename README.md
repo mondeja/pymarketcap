@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap)
 
-**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, on works in Python ≥ 3.5.
+**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, only works in Python≥3.5.
 
 ```diff
 + New version 3.9
@@ -33,11 +33,15 @@ All methods are currently only self explained in doctrings.
 
 ### [Testing and contributing](https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.md)
 
+_____________________________
+
 ### [License](https://github.com/mondeja/pymarketcap/blob/master/LICENSE.txt)
 
 ### Support
 - Issue Tracker: https://github.com/mondeja/pymarketcap/issues
 - If you want contact me → mondejar1994@gmail.com
+
+_____________________________
 
 #### Buy me a coffee?
 

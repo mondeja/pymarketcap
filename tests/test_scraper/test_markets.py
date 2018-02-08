@@ -10,7 +10,7 @@ pym = Pymarketcap()
 all_currencies = list(pym.correspondences.keys())
 
 def teardown_function(function):
-    time.sleep(1)
+    time.sleep(1.5)
 
 class TypeTester:
     def _source(self, value): assert type(value) == str

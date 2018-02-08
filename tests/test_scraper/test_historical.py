@@ -11,7 +11,7 @@ pym = Pymarketcap()
 all_currencies = list(pym.correspondences.keys())
 
 def teardown_function():
-    time.sleep(1)
+    time.sleep(1.5)
 
 class TypeTester:
     def _date(self, value): assert type(value) == datetime
@@ -39,20 +39,16 @@ def test_types():
 
 def test_consistence():
     symbol = choice(all_currencies)
+    symbol = "TLE"
     print("(Currency: %s)" % symbol, end=" ")
     res = list(pym.historical(symbol))
 
     # Check dates order
     for i, tick in enumerate(res):
         assert len(tick.keys()) == 7  # Check number of keys
+        print(tick)
         if i < len(res)-1:
             assert res[i+1]["date"] < tick["date"]
-
-    # Check first tick date is yesterday
-    a_day = timedelta(days=1)
-    y = datetime.now() - a_day
-    yesterday = datetime(y.year, y.month, y.day)
-    assert res[0]["date"] == yesterday
 
 def test_start_end():
     month = timedelta(days=30)
