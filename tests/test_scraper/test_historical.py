@@ -28,7 +28,7 @@ def test_types():
     symbol = choice(all_currencies)
     print("(Currency: %s)" % symbol, end=" ")
     res = pym.historical(symbol)
-    assert hasattr(res, '__iter__') and not hasattr(res, '__len__')
+    assert type(res) == list
     for tick in res:
         assert type(tick) == dict
         for key, value in tick.items():

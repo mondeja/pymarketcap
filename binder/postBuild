@@ -1,4 +1,3 @@
 #!/bin/bash
 
-#pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
 python3 setup.py install

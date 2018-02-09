@@ -417,7 +417,7 @@ cdef class Pymarketcap:
 
         names = re.findall(r'<a href="/currencies/.+/">(.+)</a>', res)[6:]
         symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
-        added = re.findall(r'<td class="text-right">(\d+) .*</td>', res)
+        added = re.findall(r'<td class="text-right.*">(.+)</td>', res)
         mcap = re.findall(r'cap .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
         prices = re.findall(r'price" .*data-%s="(\d+\.*[\d|e|-|\+]*)"' % convert, res)
         supply = re.findall(r'data-supply="(\?|\d+\.*[\d|e|-|\+]*)"', res)
@@ -426,6 +426,8 @@ cdef class Pymarketcap:
             r'change .*data-%s="(\?|-*\d+\.*[\d|e|-|\+]*)"|<td class="text-right">(\?)</td>' \
             % convert, res
         )
+        for v in names, symbols, added, mcap, prices, supply, vol_24h, p_change:
+            print(len(v))
 
         for n, sym, add, mcp, pr, sup, vol, perc in zip(
                 names, symbols, added, mcap, prices, supply, vol_24h, p_change
@@ -441,7 +443,7 @@ cdef class Pymarketcap:
             yield {
                 "name": n,
                 "symbol": sym,
-                "days_ago": int(add),
+                "added": add,
                 "market_cap": market_cap,
                 "price": float(pr),
                 "circulating_supply": csupply,
