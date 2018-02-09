@@ -1,6 +1,6 @@
 <h1>pymarketcap</h1>
 
-[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mondeja/cymarketcap/master?filepath=doc%2Flive.ipynb)
+[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb)
 
 **pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, only works in Python≥3.5.
 
@@ -29,7 +29,7 @@ python setup.py install
 ```
 
 ## Documentation
-Check out [live documentation](https://mybinder.org/v2/gh/mondeja/cymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binder!
+Check out [live documentation](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binder!
 
 ### [Testing and contributing](https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.md)
 
