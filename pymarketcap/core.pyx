@@ -3,7 +3,6 @@ import re
 from json import loads
 from datetime import datetime, timedelta
 from time import time, sleep
-from operator import add, sub
 from collections import OrderedDict
 
 # Internal Cython modules
@@ -354,8 +353,8 @@ cdef class Pymarketcap:
                 first, in chronological order, otherwise returns
                 reversed list of periods. As default False
 
-        Returns (generator):
-            Historical dayly results for a currency
+        Returns (list):
+            Historical dayly OHLC for a currency.
         """
         cdef bytes url, _start, _end
         cdef long len_i, i, i2, i3
@@ -367,41 +366,39 @@ cdef class Pymarketcap:
         _start = b"%d" % start.year + b"%02d" % start.month + b"%02d" % start.day
         _end = b"%d" % end.year + b"%02d" % end.month + b"%02d" % end.day
         url += b"?start=%s" % _start + b"&" + b"end=%s" % _end
-        res = self._get(url)
+        res = self._get(url)[50000:]
 
-        dates = re.findall(r'<td class="text-left">(.+)</td>', res[60000:])
-        vol_marketcap = re.findall(r'cap [\w|-]+="(-|\d+\.*[\d+-e]*)"', res[60000:])
-        ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res[60000:])
+        dates = re.findall(r'<td class="text-left">(.+)</td>', res)
+        vol_marketcap = re.findall(r'cap [\w|-]+="(-|\d+\.*[\d+-e]*)"', res)
+        ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res)
 
         len_i = len(dates)
-        if revert:
-            i = len_i
-            i2 = len_i
-            i3 = len_i
-            op = sub
-        else:
-            i = 0
-            i2 = 0
-            i3 = 0
-            op = add
+        i = 0
+        i2 = 0
+        i3 = 0
 
+        response = []
         for _ in range(len_i):
             date = datetime.strptime(dates[i], '%b %d, %Y')
-            if date > start and date < end:
-                yield {
-                    "date": date,
-                    "open": float(ohlc[i3]),
-                    "high": float(ohlc[op(i3, 1)]),
-                    "low": float(ohlc[op(i3, 2)]),
-                    "close": float(ohlc[op(i3, 3)]),
-                    "volume": float(ohlc[i2]),
-                    "market_cap": float(ohlc[op(i2, 1)])
-                }
-                i = op(i, 1)
-                i2 = op(i2, 2)
-                i3 = op(i3, 4)
+            if date < start:
+                continue
             else:
-                break
+                if date <= end:
+                    response.append({
+                        "date": date,
+                        "open": float(ohlc[i3]),
+                        "high": float(ohlc[i3+1]),
+                        "low": float(ohlc[i3+2]),
+                        "close": float(ohlc[i3+3]),
+                        "volume": float(ohlc[i2]),
+                        "market_cap": float(ohlc[i2+1])
+                    })
+                else:
+                    break
+            i += 1
+            i2 += 2
+            i3 += 4
+        return list(reversed(response)) if revert else response
 
     def recently(self, convert="USD"):
         """Get recently added currencies along with other metadata.
