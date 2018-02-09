@@ -64,7 +64,7 @@ try:
 
     setup(
         name="pymarketcap",
-        version = "3.9.001",
+        version = "3.9.003",
         url = "https://github.com/mondeja/pymarketcap",
         download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
         author = "Álvaro Mondéjar",

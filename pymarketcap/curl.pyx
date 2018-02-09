@@ -3,6 +3,8 @@ from libc.string cimport memcpy
 from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from curl cimport *
 
+from pymarketcap.errors import CoinmarketcapHTTPError
+
 # https://curl.haxx.se/libcurl/c/getinmemory.html
 cdef struct MemoryStruct:
     char *memory
@@ -31,12 +33,12 @@ cdef class Response(object):
     def __cinit__(self, text):
         self.text = text
 
-cpdef Response request_to_memory(const char *url, long timeout):
+cpdef Response get_to_memory(const char *url, long timeout, bint debug):
     cdef CURLcode ret
     cdef long true = 1L
     version = curl_version()
     cdef CURL *curl = curl_easy_init()
-    cdef const char *user_agent = "Pymarketcap 3.9.001"
+    cdef const char *user_agent = "Pymarketcap 3.9.003"
     cdef const char *accept_encoding = "gzip, deflate"
     cdef char *raw_body
 
@@ -45,7 +47,8 @@ cpdef Response request_to_memory(const char *url, long timeout):
     chunk.size = 0
 
     if curl != NULL:
-        #curl_easy_setopt(curl, CURLOPT_VERBOSE, &true)
+        if debug:
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, &true)
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, &true)
         ret = curl_easy_setopt(curl, CURLOPT_URL, url)
         ret = curl_easy_setopt(curl, CURLOPT_TIMEOUT, <void *>timeout)
@@ -62,7 +65,7 @@ cpdef Response request_to_memory(const char *url, long timeout):
             raise RuntimeError
         ret = curl_easy_perform(curl)
         if ret != CURLE_OK:
-            raise RuntimeError #curl_easy_strerror(ret)))
+            raise CoinmarketcapHTTPError
 
         resp = Response(chunk.memory)
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &resp.status_code)
@@ -71,6 +74,3 @@ cpdef Response request_to_memory(const char *url, long timeout):
         PyMem_Free(chunk.memory)
 
         return resp
-
-cpdef Response get_to_memory(const char *url, long timeout):
-    return request_to_memory(url, timeout)

@@ -48,24 +48,3 @@ def test_consistence():
         assert len(tick.keys()) == 7  # Check number of keys
         if i < len(res)-1:
             assert res[i+1]["date"] < tick["date"]
-
-def test_start_end():
-    month = timedelta(days=30)
-    two_weeks = timedelta(days=14)
-
-    a_month_ago = datetime.now() - month
-    two_weeks_ago = datetime.now() - two_weeks
-
-    res = list(pym.historical("ETH",
-                              start=a_month_ago,
-                              end=two_weeks_ago))
-    assert res[-1]["date"].day == a_month_ago.day + 1
-    assert res[0]["date"].day == two_weeks_ago.day
-
-
-""" DEBUG METHOD UTILS:
-        print(len(dates),  len(dates)*2, len(dates)*4)
-        print(len(vol_marketcap), len(vol_marketcap)*2)
-        print(len(ohlc))
-        print(ohlc)
-"""

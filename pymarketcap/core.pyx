@@ -2,7 +2,7 @@
 import re
 from json import loads
 from datetime import datetime, timedelta
-from time import time
+from time import time, sleep
 from operator import add, sub
 from collections import OrderedDict
 
@@ -43,15 +43,18 @@ cdef class Pymarketcap:
     cdef readonly list converter_cache
     cdef readonly list exchange_names
     cdef readonly list exchange_slugs
+
     cdef public long timeout
     cdef public object graphs
+    cdef public bint debug
 
     cdef readonly dict exceptional_coin_slugs
     cdef readonly list exceptional_coin_slugs_keys
     cdef readonly list exceptional_coin_slugs_values
 
-    def __init__(self, timeout=20):
+    def __init__(self, timeout=20, debug=False):
         self.timeout = timeout
+        self.debug = debug
 
         self.graphs = type("Graphs", (), self._graphs_interface)
 
@@ -74,12 +77,16 @@ cdef class Pymarketcap:
 
     def _renew_cache(self):
         """Internal function to renew cached instance attributes."""
+        if self.debug:
+            print("Caching useful data...")
         self.correspondences = self._cache_symbols()
         self.symbols = list(self.correspondences.keys())
         self.coins = list(self.correspondences.values())
         self.total_currencies = self.ticker()[-1]["rank"]
+        sleep(1)
         self.currencies_to_convert = self._currencies_to_convert()
         self.converter_cache = [self.currency_exchange_rates, time()]
+        sleep(1)
         self.exchange_names = sorted(self._exchange_names())
         self.exchange_slugs = sorted(self._exchange_slugs())
 
@@ -97,16 +104,18 @@ cdef class Pymarketcap:
         """Internal function to make and HTTP GET request
         using the curl Cython bridge to C library."""
         cdef int status
-        req = get_to_memory(<char *>url, self.timeout)
+        req = get_to_memory(<char *>url, self.timeout, <bint>self.debug)
         status = req.status_code
         if status == 200:
             return req.text.decode()
         else:
-            msg = "Status code -> %d" % status
+            msg = "Status code -> %d | Url -> %s" % (status, url.decode())
             if status in http_error_numbers:
                 raise http_errors_map[str(status)](msg)
             else:
-                print(req.__dict__)
+                print("DEBUG: ")
+                print(req.text)
+                print(req.url)
                 raise CoinmarketcapHTTPError(msg)
 
     cpdef _is_symbol(self, unicode currency):
@@ -555,7 +564,7 @@ cdef class Pymarketcap:
             Exchanges with markets and other data included.
         """
         cdef int i
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")[50000:]
+        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")[45000:]
         convert = convert.lower()
 
         exchanges = re.findall(r'\. <a href="/exchanges/.+/">(.+)</a>', res)
@@ -600,6 +609,57 @@ cdef class Pymarketcap:
                 "markets": markets,
             })
 
+        return response
+
+    cpdef tokens(self, convert="USD"):
+        """Get data from platforms tokens
+
+        Args:
+            convert (str, optional): Convert "market_cap", "price"
+                and "volume_24h" values between "USD" and "BTC".
+                As default "USD".
+
+        Returns (list):
+            Platforms tokens data.
+        """
+        url = b"https://coinmarketcap.com/tokens/views/all/"
+        res = self._get(url)[40000:]
+        convert = convert.lower()
+
+        names = re.findall(r'currency-name-container" href="/currencies/.+/">(.+)</a>', res)
+        symbols = re.findall(r'currency-symbol"><a href="/currencies/.+/">(.+)</a>', res)
+        platforms = re.findall(r'platform-name"><a href="/currencies/[\w-]*/">(.*)</a>', res)
+        caps = re.findall(
+            r'market-cap .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
+        )
+        prices = re.findall(r'price" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
+        supplys = re.findall(r'data-supply="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"', res)
+        vols_24h = re.findall(
+            r'volume" .*data-%s="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"' % convert, res
+        )
+
+        response = []
+        for n, sym, plat, mcap, price, sup, vol in zip(
+            names, symbols, platforms, caps, prices, supplys, vols_24h
+            ):
+            if plat == "": plat = None
+            try: mcap = float(mcap)
+            except ValueError: mcap = None
+            try: price = float(price)
+            except ValueError: price = None
+            try: sup = float(sup)
+            except ValueError: sup = None
+            try: vol = float(vol)
+            except ValueError: vol = None
+            response.append({
+                "name": n,
+                "symbol": sym,
+                "platform": plat,
+                "market_cap": mcap,
+                "price": price,
+                "circulating_supply": sup,
+                "volume_24h": vol
+            })
         return response
 
     # ====================================================================
