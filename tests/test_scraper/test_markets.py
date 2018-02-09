@@ -3,14 +3,16 @@
 
 import time
 from random import choice
+from urllib.request import urlopen
+from re import findall as re_findall
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_currencies = list(pym.correspondences.keys())
+all_currencies = pym.coins
 
 def teardown_function(function):
-    time.sleep(1.5)
+    time.sleep(1)
 
 class TypeTester:
     def _source(self, value): assert type(value) == str
@@ -32,23 +34,33 @@ def assert_types(res):
                     value if type(value) != str else '"%s"' % value
                 ))
 
-def assert_consistence(res):
+def assert_number_of_markets(res, coin_slug):
+    req = urlopen("https://coinmarketcap.com/currencies/%s/" % coin_slug)
+    data = req.read()
+    req.close()
+    indexes = re_findall(r'<td class="text-right">(.+)</td>', data.decode())
+    assert len(res) == int(indexes[-1])
+
+def assert_consistence(res, coin_slug):
     for i, source in enumerate(res):
         assert len(source.keys()) == 6
         slash_count = 0
         assert source["pair"].count("/") == 1
         assert source["percent_volume"] <= 100
 
+    assert_number_of_markets(res, coin_slug)
+
 def test_without_convert():
-    symbol = choice(all_currencies)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.markets(symbol)
+    coin = choice(all_currencies)
+    coin = "granitecoin"
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.markets(coin)
     assert_types(res)
-    assert_consistence(res)
+    assert_consistence(res, coin)
 
 def test_with_convert():
-    symbol = choice(all_currencies)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.markets(symbol, convert="BTC")
+    coin = choice(all_currencies)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.markets(coin, convert="BTC")
     assert_types(res)
-    assert_consistence(res)
+    assert_consistence(res, coin)

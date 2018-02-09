@@ -11,7 +11,7 @@ pym = Pymarketcap()
 all_currencies = list(pym.correspondences.keys())
 
 def teardown_function():
-    time.sleep(1.5)
+    time.sleep(1)
 
 class TypeTester:
     def _date(self, value): assert type(value) == datetime

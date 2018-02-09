@@ -83,10 +83,10 @@ cdef class Pymarketcap:
         self.symbols = list(self.correspondences.keys())
         self.coins = list(self.correspondences.values())
         self.total_currencies = self.ticker()[-1]["rank"]
-        sleep(1)
+        sleep(.5)
         self.currencies_to_convert = self._currencies_to_convert()
         self.converter_cache = [self.currency_exchange_rates, time()]
-        sleep(1)
+        sleep(.5)
         self.exchange_names = sorted(self._exchange_names())
         self.exchange_slugs = sorted(self._exchange_slugs())
 
@@ -267,7 +267,7 @@ cdef class Pymarketcap:
 
         Args:
             currency (str): Currency to get market data
-            convert (str, optional): Currency to convert the returned
+            convert (str, optional): Currency to convert response
                 fields volume_24h and price between "USD" and "BTC".
                 As default "USD".
 
@@ -280,14 +280,17 @@ cdef class Pymarketcap:
 
         res = self._get(
             b"https://coinmarketcap.com/currencies/%s/" % currency.encode()
-        )[40000:]
+        )[20000:]
 
-        sources = re.findall(r'<a href="/exchanges/.+/">([\w\.]+)</a>', res)
+        sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
         markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
         volume_24h = re.findall(r'ume" data-%s="(\d+\.\d+)' % convert, res)
         price = re.findall(r'ice" data-%s="(\d+\.[\d|e|-]*[\d|e|-]*)' % convert, res)
-        perc_volume = re.findall(r'percentage data-format-value="(\d+\.+[\d|e|-]*[\d|e|-]*)">', res)
-        updated = re.findall(r'text-right\s.*"\s>(.+)</td>', res)
+        perc_volume = re.findall(r'percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
+        updated = re.findall(r'text-right\s.*">(.+)</td>', res)
+
+        for v in [sources, markets,volume_24h,price,perc_volume,updated]:
+            print(v, len(v))
 
         return [
             {
@@ -298,7 +301,7 @@ cdef class Pymarketcap:
                 "percent_volume": float(perc),
                 "updated": up == "Recently"
             } for src, mark, vol, price, perc, up in zip(sources, markets, volume_24h,
-                                                  price, perc_volume[1:], updated)
+                                                  price, perc_volume[2:], updated)
         ]
 
     cpdef ranks(self, convert="USD"):

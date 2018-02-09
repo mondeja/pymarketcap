@@ -14,7 +14,7 @@ currencies_to_convert = pym.currencies_to_convert
 currencies_to_convert.remove("USD")
 
 def teardown_function():
-    time.sleep(1.5)
+    time.sleep(1)
 
 def test_USD_to_USD():
     value = uniform(1, 1000)

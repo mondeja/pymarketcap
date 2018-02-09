@@ -9,7 +9,7 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def teardown_function():
-    time.sleep(1.5)
+    time.sleep(1)
 
 class TypeTester:
     def _name(self, value): assert type(value) == str

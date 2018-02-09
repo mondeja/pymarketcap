@@ -15,7 +15,7 @@ pym = Pymarketcap()
 all_exchanges = pym.exchange_slugs
 
 def teardown_function():
-    time.sleep(1.5)
+    time.sleep(1)
 
 class TypeTester:
     def _currency(self, value): assert type(value) == str
