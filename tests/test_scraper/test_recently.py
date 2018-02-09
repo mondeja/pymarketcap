@@ -14,7 +14,7 @@ def teardown_function():
 class TypeTester:
     def _name(self, value): assert type(value) == str
     def _symbol(self, value): assert type(value) == str
-    def _days_ago(self, value): assert type(value) == int
+    def _added(self, value): assert type(value) == str
     def _market_cap(self, value): assert type(value) in [float, type(None)]
     def _price(self, value): assert type(value) == float
     def _circulating_supply(self, value): assert type(value) in [float, type(None)]
@@ -39,12 +39,6 @@ def test_types():
 
 def test_consistence():
     res = list(pym.recently())
-
-    # Assert days ago in order
-    for i, currency in enumerate(res):
-        if i < len(res)-1:
-            assert res[i+1]["days_ago"] >= currency["days_ago"]
-
 
 def test_convert():
     res_btc = pym.recently(convert="BTC")

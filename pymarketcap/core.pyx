@@ -663,7 +663,7 @@ cdef class Pymarketcap:
 
     ######   GRAPHS API   #######
 
-    cpdef currency(self, unicode currency, start=None, end=None):
+    cpdef currency(self, unicode name, start=None, end=None):
         """Get graphs data of a currency.
 
         Args:
@@ -690,10 +690,10 @@ cdef class Pymarketcap:
             For each value, a list of lists where each one
             has two values [<timestamp>, <value>]
         """
-        if self._is_symbol(currency):
-            currency = self.correspondences[currency]
+        if self._is_symbol(name):
+            name = self.correspondences[name]
 
-        url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % currency.encode()
+        url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % name.encode()
 
         if start and end:
             url += b"%s/%s/" % (str(start).encode(), str(end).encode())

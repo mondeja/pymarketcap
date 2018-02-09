@@ -60,7 +60,7 @@ pytest tests/test_scraper/test_historical.py::test_consistence
 ## TODO:
 - [ ] Write a benchmarking suite for all methods with and without params.
 - [ ] Write documentation and upload to read the docs.
-- [ ] Write a live demo for all methods.
+- [x] Write a live documentation with demos for all methods.
 - [x] Add `tokens` method covering https://coinmarketcap.com/tokens/views/all/ endpoint.
 - [x] Write `CHANGELOG.md`.
 - [ ] Write again [`download_logo()` old method](https://github.com/mondeja/pymarketcap/commit/c8848d368435b03c51f1885857255446a1ed8889).
