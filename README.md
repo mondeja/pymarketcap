@@ -1,6 +1,6 @@
 <h1>pymarketcap</h1>
 
-[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap)
+[![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mondeja/pymarketcap/master)
 
 **pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, only works in Python≥3.5.
 
