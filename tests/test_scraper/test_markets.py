@@ -52,7 +52,6 @@ def assert_consistence(res, coin_slug):
 
 def test_without_convert():
     coin = choice(all_currencies)
-    coin = "granitecoin"
     print("(Currency: %s)" % coin, end=" ")
     res = pym.markets(coin)
     assert_types(res)
