@@ -416,8 +416,8 @@ cdef class Pymarketcap:
         res = self._get(url)
 
         names = re.findall(r'<a href="/currencies/.+/">(.+)</a>', res)[6:]
-        symbols = re.findall(r'<td class="text-left">(Today|\d+ days ago)</td>', res)
-        added = re.findall(r'<td class="text-right no-wrap">(.+)</td>', res)
+        symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
+        added = re.findall(r'<td class="text-right.*">(Today|\d+ days ago)</td>', res)
         mcap = re.findall(r'cap .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
         prices = re.findall(r'price" .*data-%s="(\d+\.*[\d|e|-|\+]*)"' % convert, res)
         supply = re.findall(r'data-supply="(\?|\d+\.*[\d|e|-|\+]*)"', res)
