@@ -11,8 +11,6 @@ except ImportError:   # Cython required
     print("Cython not found. You need to install Cython before pymarketcap.")
     sys.exit(1)
 
-PROJECT_NAME = "cymarketcap"
-
 # Precompiler
 from precompiler import run_builder, run_unbuilder
 
