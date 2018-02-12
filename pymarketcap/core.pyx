@@ -156,13 +156,19 @@ cdef class Pymarketcap:
 
     #######   API   #######
 
-    cpdef stats(self):
+    cpdef stats(self, convert="USD"):
         """ Get global cryptocurrencies statistics.
+
+        Args:
+            convert (str, optional): return 24h volume, and
+                market cap in terms of another currency.
+                See ticker_badges property to get valid values.
+                As default "USD".
 
         Returns:
             dict: Global markets statistics
         """
-        return loads(self._get(b"https://api.coinmarketcap.com/v1/global/"))
+        return loads(self._get(b"https://api.coinmarketcap.com/v1/global/?convert=%s" % convert.encode()))
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.

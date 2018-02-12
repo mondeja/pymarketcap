@@ -1,8 +1,4 @@
-## Contributing guidelines
-- Each new method developed needs to be accompanied with their respective complete unittest as is shown in `tests/` directory.
-- Each new pull request needs to be good performed. Plase, don't make a pull request with 4 commits for change a line in the code.
-
-### Testing
+## Testing
 You need to install `pytest` for run unittests and `tox` for run tests against different versions:
 ```
 pip3 install -r dev-requirements
@@ -19,6 +15,12 @@ pytest tests/test_scraper/test_historical.py::test_consistence
 ```
 
 > Also, if your system is Unix, you can use `make` for run tests, install, precompile/restore source code, build and clean the whole directory (see [`Makefile`](https://github.com/mondeja/pymarketcap/blob/master/Makefile)).
+
+___________________________
+
+## Contributing guidelines
+- Each new method developed needs to be accompanied with their respective complete unittest as is shown in `tests/` directory.
+- Each new pull request needs to be good performed. Plase, don't make a pull request with 4 commits for change a line in the code.
 
 ### Development progress:
 

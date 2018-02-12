@@ -4,32 +4,59 @@
 """Tests for stats() method"""
 
 import time
+from random import choice
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
+all_badges = pym.ticker_badges
+
+class TypeTester:
+    def _active_assets(self, value): assert type(value) == int
+    def _active_currencies(self, value): assert type(value) == int
+    def _active_markets(self, value): assert type(value) == int
+    def _bitcoin_percentage_of_market_cap(self, value): assert type(value) == float
+    def _last_updated(self, value): assert type(value) == int
+    def _total_24h_volume_usd(self, value): assert type(value) == float
+    def _total_market_cap_usd(self, value): assert type(value) == float
+
+tt = TypeTester()
+
 def teardown_function(function):
     time.sleep(3)
 
-def test_types():
-    res = pym.stats()
+def assert_types(res):
     assert type(res) == dict
-    assert len(res) == 7
     for key, value in res.items():
         assert type(key) == str
-        assert type(value) in (float, int)
+        if "_%s" % key in dir(tt):
+            eval("tt._{}({})".format(key, value))
+        else:
+            assert type(value) == float
 
-def test_keys():
+def test_types():
     res = pym.stats()
-    target_keys = (
-        "active_assets",
-        "active_currencies",
-        "total_24h_volume_usd",
-        "bitcoin_percentage_of_market_cap",
-        "active_markets",
-        "total_market_cap_usd"
-    )
-    for key in target_keys:
-        assert key in res.keys()
+    assert_types(res)
 
+def assert_consistence(res, with_convert=False):
+    if with_convert:
+        assert len(res) == 9
+    else:
+        assert len(res) == 7
 
+def test_consistence():
+    res = pym.stats()
+    assert_consistence(res)
+
+def test_convert():
+    badge = choice(all_badges)
+    res = pym.stats(convert=badge)
+
+    keys_with_badge = 0
+    for key in res:
+        if badge.lower() in key:
+            keys_with_badge += 1
+    assert keys_with_badge == 2
+
+    assert_types(res)
+    assert_consistence(res, with_convert=True)

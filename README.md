@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/mondeja/pymarketcap.svg?branch=master)](https://travis-ci.org/mondeja/pymarketcap) [![PyPI](https://img.shields.io/pypi/v/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![PyPI](https://img.shields.io/pypi/pyversions/pymarketcap.svg)](https://pypi.python.org/pypi/pymarketcap) [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb)
 
-**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with curl C library. Actually, only works in Python≥3.5.
+**pymarketcap** is library for retrieve data from [coinmarketcap](http://coinmarketcap.com/) API and website. Consist of a cythonized scraper and API wrapper built with libcurl. Actually, only works in Python≥3.5.
 
 ```diff
 + New version 3.9.0 (unstable)
-- Some breaking changes have been introduced since 3.9.0 version. The old version (3.3.158) is still hosted at Pypi and will be there for a short period of time but won't be longer supported. The new version stable will be 4.0.0. Please, update to the new version, is faster, more accurate and has new features!
+- Some breaking changes have been introduced since 3.9.0 version. The old version (3.3.158) is still hosted at Pypi and will be there for a short period of time but won't be longer supported. The new stable version will be 4.0.0. Please, update to the new version, is faster, more accurate and has new features!
 ```
 
 ## Install
@@ -29,7 +29,7 @@ python setup.py install
 ```
 
 ## Documentation
-Check out [live documentation](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binder!
+Check out [live documentation](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binderhub!
 
 ### [Testing and contributing](https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.md)
 
