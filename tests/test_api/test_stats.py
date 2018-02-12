@@ -7,7 +7,7 @@ import time
 from random import choice
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap(cache=False)
+pym = Pymarketcap()
 
 all_badges = pym.ticker_badges
 

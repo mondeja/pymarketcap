@@ -384,11 +384,6 @@ cdef class Pymarketcap:
         perc_volume = re.findall(r'percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
         updated = re.findall(r'text-right\s.*">(.+)</td>', res)
 
-
-        for v in [sources, markets, volume_24h, price, perc_volume, updated]:
-            #print(v)
-            print(len(v))
-
         return [
             {
                 "source": src,
