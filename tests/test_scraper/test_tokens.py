@@ -6,7 +6,7 @@ from re import findall as re_findall
 from urllib.request import urlopen
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap()
+pym = Pymarketcap(cache=False)
 
 def teardown_function():
     time.sleep(1)

@@ -60,8 +60,8 @@ ___________________________
 
 
 ## TODO:
-- [ ] Write a benchmarking suite for all methods with and without params.
-- [ ] Write documentation and upload to read the docs.
+- [x] Write a benchmarking suite for all methods with and without params.
+- [ ] Write documentation and upload to ReadTheDocs.
 - [x] Write a live documentation with demos for all methods.
 - [x] Add `tokens` method covering https://coinmarketcap.com/tokens/views/all/ endpoint.
 - [x] Write `CHANGELOG.md`.

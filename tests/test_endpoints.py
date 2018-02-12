@@ -37,7 +37,9 @@ def assert_up(ep):
     req.close()
 
 def test_endpoints():
-    for method, eps in tqdm(endpoints):
+    for i, (method, eps) in enumerate(tqdm(endpoints)):
+        if i == 0:
+            tqdm.write("tests/test_endpoints.py::test_endpoints")
         if type(eps) != list:
             eps = [eps]
         for ep in eps:

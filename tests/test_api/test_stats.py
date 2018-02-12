@@ -7,7 +7,7 @@ import time
 from random import choice
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap()
+pym = Pymarketcap(cache=False)
 
 all_badges = pym.ticker_badges
 
@@ -23,7 +23,7 @@ class TypeTester:
 tt = TypeTester()
 
 def teardown_function(function):
-    time.sleep(3)
+    time.sleep(1)
 
 def assert_types(res):
     assert type(res) == dict

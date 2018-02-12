@@ -15,7 +15,7 @@ pym = Pymarketcap()
 all_symbols = list(pym.correspondences.keys())
 
 def teardown_function():
-    time.sleep(3)
+    time.sleep(1)
 
 class TypeTester:
     def _id(self, value): assert type(value) == str

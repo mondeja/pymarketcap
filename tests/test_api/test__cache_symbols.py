@@ -9,7 +9,7 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def teardown_function(function):
-    time.sleep(2)
+    time.sleep(1)
 
 def test_types():
     res = pym._cache_symbols()

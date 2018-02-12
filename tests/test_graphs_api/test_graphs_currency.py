@@ -7,7 +7,7 @@ from random import choice
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_symbols = list(pym.correspondences.keys())
+all_symbols = pym.symbols
 
 def teardown_function(function):
     time.sleep(1)

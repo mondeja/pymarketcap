@@ -32,6 +32,11 @@ cdef class Pymarketcap:
     Args:
         timeout (int, optional): Set timeout value for get requests.
             As default 20.
+        debug: (bool, optional): Show low level data in get requests.
+            As default, False.
+        cache (bool, optional): Enable or disable cache at instantiation
+            time. ¡Warning -> some methods couldn't be called, use
+            this attribute with caution! As default, True.
     """
 
     cdef readonly dict correspondences
@@ -51,7 +56,7 @@ cdef class Pymarketcap:
     cdef readonly list exceptional_coin_slugs_keys
     cdef readonly list exceptional_coin_slugs_values
 
-    def __init__(self, timeout=20, debug=False):
+    def __init__(self, timeout=20, debug=False, cache=True):
         self.timeout = timeout
         self.debug = debug
 
@@ -70,7 +75,8 @@ cdef class Pymarketcap:
         self.exceptional_coin_slugs_keys = list(self.exceptional_coin_slugs.keys())
         self.exceptional_coin_slugs_values = list(self.exceptional_coin_slugs.values())
 
-        self._renew_cache()
+        if cache:
+            self._renew_cache()
 
     ######   RUNTIME INIT   #######
 

@@ -9,7 +9,7 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def teardown_function(function):
-    time.sleep(3)
+    time.sleep(1)
 
 
 ###   API METHODS   ###
@@ -48,12 +48,28 @@ def test_currencies_to_convert():
     for curr in currencies:
         assert type(curr) == str
 
+    # Test consistence
+    assert len(currencies) > 0
+
 def test_exchange_names():
     # Test types
     res = pym.exchange_names
+    assert type(res) == list
+    assert len(res) > 0
+    for exc in res:
+        assert type(exc) == str
+
+    # Test consistence
+    assert len(res) > 0
+    assert len(res) == len(pym._exchange_names())
+
+def test_exchange_slugs():
+    # Test types
+    res = pym.exchange_slugs
     assert type(res) == list
     for exc in res:
         assert type(exc) == str
 
     # Test consistence
-    assert len(res) == len(pym._exchange_names())
+    assert len(res) > 0
+    assert len(res) == len(pym._exchange_slugs())

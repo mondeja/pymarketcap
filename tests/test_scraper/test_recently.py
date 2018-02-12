@@ -6,7 +6,7 @@
 import time
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap()
+pym = Pymarketcap(cache=False)
 
 def teardown_function():
     time.sleep(1)
