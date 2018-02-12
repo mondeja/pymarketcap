@@ -132,9 +132,21 @@ class Builder:
             return stream.replace(original_func, "", 1)
 
         def currency_exchange_rates__doc__(stream):
-            searcher = re.compile(r"next currencies:(\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+)")
-            original_func = searcher.search(stream).group(1)
-            return stream.replace(original_func, "", 1)
+            output = []
+            matching = False
+            for line in stream.split("\n"):
+                if not matching:
+                    output.append(line)
+                if "Get currency exchange rates against $ for the next currencies" in line:
+                    matching = True
+                    continue
+
+                if matching:
+                    if "Returns (dict):" in line:
+                        matching = False
+                        output.append("\n%s" % line)
+                        continue
+            return "\n".join(output)
 
         stream = currency_exchange_rates__doc__(
             ticker__doc__badges(

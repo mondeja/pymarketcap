@@ -36,6 +36,7 @@ def assert_up(ep):
     assert req.getcode() != 404
     req.close()
 
+@pytest.mark.end2end
 def test_endpoints():
     for i, (method, eps) in enumerate(tqdm(endpoints)):
         if i == 0:

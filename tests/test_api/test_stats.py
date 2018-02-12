@@ -9,7 +9,7 @@ from random import choice
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_badges = pym.ticker_badges
+all_badges = list(pym.ticker_badges)
 
 class TypeTester:
     def _active_assets(self, value): assert type(value) == int

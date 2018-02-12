@@ -12,7 +12,6 @@ except ImportError:   # Cython required
     sys.exit(1)
 
 # Precompiler
-"""
 from precompiler import run_builder, run_unbuilder
 
 source = os.path.join(os.getcwd(), "pymarketcap", "core.pyx")
@@ -27,7 +26,6 @@ if not built:
     else:
         print("Error building pymarketcap.")
         sys.exit(1)
-"""
 
 LONG_DESC = "pymarketcap is library for retrieve data from www.coinmarketcap.com" \
           + " API and website. Consist of a cythonized scraper and API wrapper built" \
@@ -63,7 +61,7 @@ try:
 
     setup(
         name="pymarketcap",
-        version = "3.9.012",
+        version = "3.9.013",
         url = "https://github.com/mondeja/pymarketcap",
         download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
         author = "Álvaro Mondéjar",
