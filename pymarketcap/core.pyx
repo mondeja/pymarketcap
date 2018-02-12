@@ -220,6 +220,8 @@ cdef class Pymarketcap:
     @property
     def currency_exchange_rates(self):
         """Get currency exchange rates against $ for the next currencies:
+             "BCH", "XRP7D", "BCH7D", "XRP24H", "LTC7D", "BCH24H", "LTC24H", "ETH24H", "BTC24H",
+             "BTC7D", "ETH7D"]
 
         Returns (dict):
             All currencies rates used internally by coinmarketcap to calculate

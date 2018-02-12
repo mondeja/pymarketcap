@@ -17,3 +17,4 @@ proof.py
 .pytest_cache/
 pytest_benchmark/
 .tox/
+last_results.json
