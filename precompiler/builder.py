@@ -92,7 +92,7 @@ class Builder:
             original_func = searcher.search(stream).group()[:-1]
 
             # Format currencies list to indented list as string
-            currs_formatted = format_list_as_string(currencies, 9, 13, 11)
+            currs_formatted = format_list_as_string(currencies, 6, 13, 11)
 
             # Write currencies for exchange rates in currency_exchange_rates.__doc__
             output_func = original_func + "\n" + currs_formatted
@@ -132,7 +132,7 @@ class Builder:
             return stream.replace(original_func, "", 1)
 
         def currency_exchange_rates__doc__(stream):
-            searcher = re.compile(r"next currencies:(\n.+\n.+\n.+\n.+)")
+            searcher = re.compile(r"next currencies:(\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+)")
             original_func = searcher.search(stream).group(1)
             return stream.replace(original_func, "", 1)
 

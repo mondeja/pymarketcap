@@ -50,6 +50,7 @@ BENCHS = [
         "name": "stats", "kwargs": dict(convert="EUR")},
     {"setup": common_setup, "run": "cmc.convert(1, 'USD', 'EUR')", "name": "convert",
         "args": [1, "USD", "EUR"]},
+    {"setup": common_setup, "run": "cmc.currency('BTC')", "name": "currency", "args": ["BTC"]},
     {"setup": common_setup, "run": "cmc.markets('BTC')", "name": "markets", "args": ["BTC"]},
     {"setup": common_light_setup, "run": "cmc.ranks()", "name": "ranks"},
     {"setup": common_setup, "run": "cmc.historical('BTC')", "name": "historical",

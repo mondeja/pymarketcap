@@ -48,13 +48,3 @@ def _test_currencies_order(data):
 
 def test_consistence():
     _test_currencies_order(pym.ranks())
-
-
-def test_convert():
-    res_btc = pym.ranks(convert="BTC")
-
-    # Test types
-    _test_data_structure_types(res_btc)
-
-    # Test consistence
-    _test_currencies_order(res_btc)

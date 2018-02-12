@@ -59,12 +59,12 @@ ___________________________
 |`_cache_symbols`          | ✔ | ✔ | ✔ |
 
 ### Basic benchmarking
-You can test basically benchmarking of code running `python3 bench/main.py`. You can filter by name of benchmarks and change the number of repetitions for each one, run `python3 bench/main.py --help`.
+You can test basically benchmarking of code running `python3 bench/main.py`. You can filter by name of benchmarks,change the number of repetitions for each one or change file where store banchmarks results: run `python3 bench/main.py --help`.
 
 ## TODO:
 - [x] Write a benchmarking suite for all methods with and without params.
-- [ ] Write documentation and upload to ReadTheDocs.
-- [x] Write a live documentation with demos for all methods.
+- [ ] Write a static documentation and upload to ReadTheDocs.
+- [x] Write a [live documentation with demos for all methods]().
 - [x] Add `tokens` method covering https://coinmarketcap.com/tokens/views/all/ endpoint.
 - [x] Write `CHANGELOG.md`.
 - [ ] Write again [`download_logo()` old method](https://github.com/mondeja/pymarketcap/commit/c8848d368435b03c51f1885857255446a1ed8889).

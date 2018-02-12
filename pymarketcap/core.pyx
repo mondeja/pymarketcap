@@ -98,7 +98,7 @@ cdef class Pymarketcap:
     @property
     def _graphs_interface(self):
         return {
-            "currency": self.currency,
+            "currency": self._currency,
             "global_cap": self.global_cap,
             "dominance": self.dominance
         }
@@ -220,8 +220,6 @@ cdef class Pymarketcap:
     @property
     def currency_exchange_rates(self):
         """Get currency exchange rates against $ for the next currencies:
-             "BCH", "XRP7D", "BCH7D", "XRP24H", "LTC7D", "BCH24H", "LTC24H", "ETH24H", "BTC24H",
-             "BTC7D", "ETH7D"]
 
         Returns (dict):
             All currencies rates used internally by coinmarketcap to calculate
@@ -274,12 +272,96 @@ cdef class Pymarketcap:
                     raise ValueError(msg % param)
             raise NotImplementedError
 
-    cpdef markets(self, unicode currency, convert="USD"):
+    cpdef currency(self, unicode name, convert="USD"):
+        """Get currency metadata like total markets capitalization,
+        websites, source code link, if mineable...
+
+        Args:
+            currency (str): Currency to get metadata.
+            convert (str, optional): Currency to convert response
+                fields total_markets_cap, total_markets_volume_24h
+                and price between "USD" and "BTC". As default "USD".
+
+        Returns (dict):
+            Aditional general metadata not supported by other methods.
+        """
+        if self._is_symbol(name):
+            name = self.correspondences[name]
+        convert = convert.lower()
+
+        res = self._get(
+            b"https://coinmarketcap.com/currencies/%s/" % name.encode()
+        )[20000:]
+
+        # Total market capitalization and volume 24h
+        if convert == "usd":
+            _total_markets_cap = re.search(
+                r'data-currency-market-cap.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+            )
+            _total_markets_volume = re.search(
+                r'data-currency-volume.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+            )
+            _price = re.search(r'quote_price.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res)
+        else:
+            _total_markets_cap = re.search(
+                r'data-format-market-cap.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+            )
+            _total_markets_volume = re.search(
+                r'data-format-volume-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+            )
+            _price = re.search(
+                r'data-format-price-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+            )
+
+        vol_24h = _total_markets_volume.group(1)
+        try: total_cap = _total_markets_cap.group(1)
+        except AttributeError: total_cap = "?"
+        response = {"total_markets_cap": float(total_cap) if total_cap != "?" else None,
+                    "total_markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
+                    "price": float(_price.group(1)) if _price else None}
+
+        # Circulating, total and maximum supply
+        supply = re.findall(
+            r'data-format-supply.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+        response["circulating_supply"] = float(supply[0]) if supply[0] != "?" else None
+        if len(supply) > 1:
+            response["max_supply"] = float(supply[-1])
+        if len(supply) > 2:
+            response["total_supply"] = float(supply[1])
+
+        response["webs"] = re.findall(r'<a href="(.+)" target="_blank">Website\s*\d*</a>', res)
+
+        response["explorers"] = re.findall(
+            r'<a href="(.+)" target="_blank">Explorer\s*\d*</a>', res
+        )
+
+        source_code = re.search(r'<a href="(.+)" target="_blank">Source Code</a>', res)
+        response["source_code"] = source_code.group(1) if source_code else None
+
+        response["message_boards"] = re.findall(
+            r'<a href="(.+)" target="_blank">Message Board\s*\d*</a>', res
+        )
+
+        response["chats"] = re.findall(
+            r'<a href="(.+)" target="_blank">Chat\s*\d*</a>', res
+        )
+
+        response["mineable"] = True if re.search(r'label-warning">Mineable', res) else False
+
+        response["rank"] = int(re.search(r'Rank (\d+)</span>', res).group(1))
+
+        announcement = re.search(r'<a href="(.+)" target="_blank">Announcement</a>', res)
+        response["announcement"] = announcement.group(1) if announcement else None
+
+        return response
+
+    cpdef markets(self, unicode name, convert="USD"):
         """Get available coinmarketcap markets data.
         It needs a currency as argument.
 
         Args:
-            currency (str): Currency to get market data
+            currency (str): Currency to get market data.
             convert (str, optional): Currency to convert response
                 fields volume_24h and price between "USD" and "BTC".
                 As default "USD".
@@ -287,12 +369,12 @@ cdef class Pymarketcap:
         Returns:
             list: markets on wich provided currency is currently tradeable
         """
-        if self._is_symbol(currency):
-            currency = self.correspondences[currency]
+        if self._is_symbol(name):
+            name = self.correspondences[name]
         convert = convert.lower()
 
         res = self._get(
-            b"https://coinmarketcap.com/currencies/%s/" % currency.encode()
+            b"https://coinmarketcap.com/currencies/%s/" % name.encode()
         )[20000:]
 
         sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
@@ -301,6 +383,11 @@ cdef class Pymarketcap:
         price = re.findall(r'ice" .*data-%s="(\d+\.[\d|e|-]*[\d|e|-]*)' % convert, res)
         perc_volume = re.findall(r'percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
         updated = re.findall(r'text-right\s.*">(.+)</td>', res)
+
+
+        for v in [sources, markets, volume_24h, price, perc_volume, updated]:
+            #print(v)
+            print(len(v))
 
         return [
             {
@@ -314,7 +401,7 @@ cdef class Pymarketcap:
                                                   price, perc_volume[2:], updated)
         ]
 
-    cpdef ranks(self, convert="USD"):
+    cpdef ranks(self):
         """Returns gainers and losers for the periods 1h, 24h and 7d.
 
         Args:
@@ -326,14 +413,13 @@ cdef class Pymarketcap:
                 are the periods "1h", "24h" and "7d"
         """
         cdef int i = 30
-        convert = convert.lower()
         res = self._get(b"https://coinmarketcap.com/gainers-losers/")
 
         names = re.findall(r'<a href="/currencies/.+/">(.+)</a>.*', res)[6:]
         symbols = re.findall(r'<td class="text-left">(\w+)</td>', res)
-        volume_24h = re.findall(r'ume" .*data-%s="(\d+\.*[\d|e|-]*)"' % convert, res)
-        price = re.findall(r'ice" .*data-%s="(\d+\.*[\d|e|-]*)"' % convert, res)
-        percent_change = re.findall(r'right" .*data-%s="(-*\d+\.*[\d|e|-]*)"' % convert, res)
+        volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
+        price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
+        percent_change = re.findall(r'right" .*data-usd="(-*\d+\.*[\d|e|-]*)"', res)
 
         index_map = {
             "gainers": {"1h": 0, "7d": 30, "24h": 60},
@@ -677,7 +763,7 @@ cdef class Pymarketcap:
 
     ######   GRAPHS API   #######
 
-    cpdef currency(self, unicode name, start=None, end=None):
+    cpdef _currency(self, unicode name, start=None, end=None):
         """Get graphs data of a currency.
 
         Args:
