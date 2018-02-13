@@ -12,7 +12,7 @@
 ## Install
 
 ### Dependencies
-You need to install [`cython`](http://cython.readthedocs.io/en/latest/src/quickstart/install.html), `gcc` compiler and, optionally, [libcurl](https://curl.haxx.se/docs/install.html) (`urllib` will be used instead).
+You need to install [`cython`](http://cython.readthedocs.io/en/latest/src/quickstart/install.html), `gcc` compiler and, optionally, [libcurl](https://curl.haxx.se/docs/install.html) .
 
 #### Without libcurl
 ```
@@ -21,6 +21,8 @@ cd pymarketcap
 pip3 install Cython
 python setup.py install --no-curl
 ```
+
+> `urllib` will be used instead.
 
 #### With libcurl
 ```

@@ -10,6 +10,10 @@ install:
 	pip3 install -r requirements.txt
 	python3 setup.py install
 
+install-light:
+	pip3 install -r requirements.txt
+	python3 setup.py install --no-curl
+
 dev-install:
 	pip3 install -r dev-requirements.txt
 	python3 setup.py install

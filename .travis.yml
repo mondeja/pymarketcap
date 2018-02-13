@@ -6,9 +6,9 @@ python:
   - "nightly"
   - "3.7-dev"
 install:
-  - make install
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then make install-light; else make install; fi
 before_script:
-  - make dev-install
+  - pip install -r dev-requirements.txt
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
 branches:

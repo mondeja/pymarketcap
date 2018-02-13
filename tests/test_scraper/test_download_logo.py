@@ -16,6 +16,7 @@ def teardown_function():
     time.sleep(1)
 
 def test_consistence():
+	print("tests/test_scraper/test_download_logo.py::test_consistence")
     for size in tqdm([16, 32, 64, 128, 200]):
         attempts = 5
         _assert = True
