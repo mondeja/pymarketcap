@@ -390,8 +390,8 @@ cdef class Pymarketcap:
         sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
         markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
         volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
-        price = re.findall(r'ice" .*data-%s="(\d+\.[\d|e|-]*[\d|e|-]*)' % convert, res)
-        perc_volume = re.findall(r'percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
+        price = re.findall(r'"price" .*data-%s="(\d+\.[\d|e|-]*[\d|e|-]*)' % convert, res)
+        perc_volume = re.findall(r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
         updated = re.findall(r'text-right\s.*">(.+)</td>', res)
 
         return [
@@ -403,7 +403,7 @@ cdef class Pymarketcap:
                 "percent_volume": float(perc),
                 "updated": up == "Recently"
             } for src, mark, vol, price, perc, up in zip(sources, markets, volume_24h,
-                                                  price, perc_volume[1:], updated)
+                                                  price, perc_volume, updated)
         ]
 
     cpdef ranks(self):

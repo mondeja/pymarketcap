@@ -59,7 +59,7 @@ ___________________________
 |`_cache_symbols`          | ✔ | ✔ | ✔ |
 
 ### Basic benchmarking
-You can test basically benchmarking of code running `python3 bench/main.py`. You can filter by name of benchmarks,change the number of repetitions for each one or change file where store banchmarks results: run `python3 bench/main.py --help`.
+You can test basically benchmarking of code running `python3 bench/main.py`. You can filter by name of benchmarks, change the number of repetitions for each one or change file where store benchmarks results: run `python3 bench/main.py --help`.
 
 ## TODO:
 - [x] Write a benchmarking suite for all methods with and without params.
@@ -74,4 +74,4 @@ _____________________________
 #### How does pymarketcap works in depth?
 - Some pieces of code are precompiled before compile with Cython, so if you see missing parts on the source code before install (like the property method `ticker_badges`), understand that they aren't bugs. Run `make precompile-sources` to do manual code precompilation and `make restore-sources` for restore souce code to original state.
 - The numerical values returned by the scraper are the real values with which coinmarketcap.com works, not the values displayed on their frontend (see source HTML code of the web).
-- Several methods are cached at instantiation time, so they can be obtained later without perform more HTTP requests.
+- Several methods are cached at instantiation time, so they can be obtained later without perform more HTTP requests. You can avoid this behavoiur passing `cache=False` to `Pymarketcap` object, but this will cause that some methods will not work.
