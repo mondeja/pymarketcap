@@ -148,9 +148,17 @@ class Builder:
                         continue
             return "\n".join(output)
 
+        def restore_curl_import(stream):
+            return stream.replace("from pymarketcap.url import get_to_memory",
+                                  "from pymarketcap.curl import get_to_memory")
+
         stream = currency_exchange_rates__doc__(
             ticker__doc__badges(
-                return_ticker_badges(self.read_source())
+                return_ticker_badges(
+                    restore_curl_import(
+                        self.read_source()
+                    )
+                )
             )
         )
         self.write_source(stream)
@@ -168,6 +176,9 @@ class Builder:
 
         with open(source, "w") as f:
             f.write(reskip_tests(stream))
+
+        
+
 
         return True
 

@@ -85,11 +85,11 @@ cdef class Pymarketcap:
         if self.debug:
             print("Caching useful data...")
         self.correspondences = self._cache_symbols()
-        self.symbols = list(self.correspondences.keys())
-        self.coins = list(self.correspondences.values())
+        self.symbols = sorted(list(self.correspondences.keys()))
+        self.coins = sorted(list(self.correspondences.values()))
         self.total_currencies = self.ticker()[-1]["rank"]
         sleep(.5)
-        self.currencies_to_convert = self._currencies_to_convert()
+        self.currencies_to_convert = sorted(self._currencies_to_convert())
         self.converter_cache = [self.currency_exchange_rates, time()]
         sleep(.5)
         self.exchange_names = sorted(self._exchange_names())
@@ -226,7 +226,7 @@ cdef class Pymarketcap:
                 the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
-        rates = re.findall(r'data-(\w+)="(\d+\.*[\d|e|-]*)"', res[-4000:-2000])
+        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-4000:-2000])
         return {currency.upper(): float(rate) for currency, rate in rates}
 
     cpdef _currencies_to_convert(self):
@@ -238,7 +238,7 @@ cdef class Pymarketcap:
             All currencies that could be passed to convert() method.
         """
         res = self._get(b"https://coinmarketcap.com")
-        currencies = re.findall(r'data-(\w+)="\d', res[-4000:-2000])
+        currencies = re.findall(r'data-([a-z]+)="\d', res[-5000:-2000])
         return [currency.upper() for currency in currencies]
 
     cpdef convert(self, value, unicode currency_in, unicode currency_out):
