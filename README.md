@@ -12,21 +12,22 @@
 ## Install
 
 ### Dependencies
-You need to install [`cython`](http://cython.readthedocs.io/en/latest/src/quickstart/install.html), `gcc` compiler and [libcurl](https://curl.haxx.se/docs/install.html).
+You need to install [`cython`](http://cython.readthedocs.io/en/latest/src/quickstart/install.html), `gcc` compiler and, optionally, [libcurl](https://curl.haxx.se/docs/install.html) (`urllib` will be used instead).
 
-### Commands
+#### Without libcurl
+```
+git clone https://github.com/mondeja/pymarketcap.git
+cd pymarketcap
+pip3 install Cython
+python setup.py install --no-curl
+```
+
+#### With libcurl
 ```
 pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
 ```
 
-or install from source:
-
-```
-git clone https://github.com/mondeja/pymarketcap.git
-cd pymarketcap
-pip3 install -r requirements.txt
-python setup.py install
-```
+or from source as above wihout `--no-curl` flag:
 
 ## Documentation
 Check out [live documentation](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binderhub!
