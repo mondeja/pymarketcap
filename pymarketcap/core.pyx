@@ -393,7 +393,7 @@ cdef class Pymarketcap:
                 "percent_volume": float(perc),
                 "updated": up == "Recently"
             } for src, mark, vol, price, perc, up in zip(sources, markets, volume_24h,
-                                                  price, perc_volume[2:], updated)
+                                                  price, perc_volume[1:], updated)
         ]
 
     cpdef ranks(self):

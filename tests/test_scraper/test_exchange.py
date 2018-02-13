@@ -5,6 +5,7 @@ import time
 from random import choice
 from re import findall as re_findall
 from urllib.request import urlopen
+from urllib.error import HTTPError
 
 from tqdm import tqdm
 import pytest
@@ -85,9 +86,12 @@ def test_convert():
 
 def test_invalid():
     exc = "OkCoin Intl."
-    with pytest.raises(ValueError) as excinfo:
-        pym.exchange(exc)
-    assert '%s is not a valid exchange name.' % exc in str(excinfo.value)
+    try:
+        with pytest.raises(ValueError) as excinfo:
+            pym.exchange(exc)
+        assert '%s is not a valid exchange name.' % exc in str(excinfo.value)
+    except HTTPError:
+        pass
 
 @pytest.mark.end2end
 def test_end2end():

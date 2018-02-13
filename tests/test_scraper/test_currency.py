@@ -14,7 +14,7 @@ class TypeTester:
     def _source_code(self, value): assert type(value) in [str, type(None)]
     def _announcement(self, value): assert type(value) in [str, type(None)]
     def _explorers(self, value): assert type(value) == list
-    def _total_markets_volume_24h(self, value): assert type(value) == float
+    def _total_markets_volume_24h(self, value): assert type(value) in [float, type(None)]
     def _price(self, value): assert type(value) == float
     def _rank(self, value): assert type(value) == int
     def _total_markets_cap(self, value): assert type(value) in [float, type(None)]

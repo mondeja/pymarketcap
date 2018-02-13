@@ -3,13 +3,20 @@
 
 import os
 import sys
+import argparse
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
+from setuptools import Command
 try:
     from Cython.Build import cythonize
 except ImportError:   # Cython required
     print("Cython not found. You need to install Cython before pymarketcap.")
     sys.exit(1)
+
+COMPILE_CURL = True
+if "--no-curl" in sys.argv:
+    COMPILE_CURL = False
+    sys.argv.remove("--no-curl")
 
 # Precompiler
 from precompiler import run_builder, run_unbuilder
@@ -51,17 +58,36 @@ def declare_cython_extension(ext_name, libraries=None):
 
     return Extension(ext_name, [ext_path], libraries=libraries)
 
+package_data={'pymarketcap': ['core.pyx']},
+
 ext_modules = [
     declare_cython_extension("pymarketcap.core"),
-    declare_cython_extension("pymarketcap.curl", libraries=["curl"])
 ]
+if COMPILE_CURL:
+    ext_modules.append(
+        declare_cython_extension("pymarketcap.curl", libraries=["curl"])
+    )
+    package_data["pymarketcap"].extend(["curl.pxd", "curl.pyx"])
+else:
+    core_path = os.path.join(os.path.dirname(__file__), "pymarketcap", "core.pyx")
+    with open(core_path, "r") as f:
+        content = f.readlines()
+
+    output = []
+    for line in content:
+        if "from pymarketcap.curl import get_to_memory" in line:
+            line = line.replace("curl", "url")
+        output.append(line)
+
+    with open(core_path, "w") as f:
+        f.writelines(output)
 
 try:
     ext_modules = cythonize(ext_modules)
 
     setup(
         name="pymarketcap",
-        version = "3.9.013",
+        version = "3.9.014",
         url = "https://github.com/mondeja/pymarketcap",
         download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
         author = "Álvaro Mondéjar",
@@ -93,7 +119,7 @@ try:
             "Topic :: Software Development :: Libraries :: Python Modules",
         ],
         zip_safe = False,
-        package_data={'pymarketcap': ['*.pxd', '*.pyx']},
+        
         provides = ["setup_template_cython"],
     )
 except Exception as e:
