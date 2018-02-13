@@ -67,7 +67,7 @@ You can test basically benchmarking of code running `python3 bench/main.py`. You
 - [x] Write a [live documentation with demos for all methods]().
 - [x] Add `tokens` method covering https://coinmarketcap.com/tokens/views/all/ endpoint.
 - [x] Write `CHANGELOG.md`.
-- [ ] Write again [`download_logo()` old method](https://github.com/mondeja/pymarketcap/commit/c8848d368435b03c51f1885857255446a1ed8889).
+- [x] Write again `download_logo()` old method.
 
 _____________________________
 

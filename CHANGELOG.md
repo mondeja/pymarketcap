@@ -11,7 +11,6 @@
 - New method `convert()` for convert between currencies as coinmarketcap currencies calculator: https://coinmarketcap.com/calculator/
 - New method `tokens()` convering partially https://coinmarketcap.com/tokens/views/all/ endpoint.
 - New method `currency()` for get all metadata from a currency.
-- Old method `download_logo()` deprecated.
 
 ### 3.3.0
 - New method `download_logo()` that downloads images for all coins in coinmarketcap in various sizes.

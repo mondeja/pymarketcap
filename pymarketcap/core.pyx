@@ -4,6 +4,8 @@ from json import loads
 from datetime import datetime, timedelta
 from time import time, sleep
 from collections import OrderedDict
+from urllib.request import urlretrieve
+from urllib.error import HTTPError
 
 # Internal Cython modules
 from pymarketcap.curl import get_to_memory
@@ -153,11 +155,6 @@ cdef class Pymarketcap:
             response[original] = correct
         return response
 
-    @property
-    def ticker_badges(self):
-        """Badges that you can convert prices in ticker() method."""
-        return
-
     # ====================================================================
 
     #######   API   #######
@@ -175,6 +172,11 @@ cdef class Pymarketcap:
             dict: Global markets statistics
         """
         return loads(self._get(b"https://api.coinmarketcap.com/v1/global/?convert=%s" % convert.encode()))
+
+    @property
+    def ticker_badges(self):
+        """Badges that you can convert prices in ticker() method."""
+        return
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -861,3 +863,43 @@ cdef class Pymarketcap:
             url += b"%s/%s/" % (str(start).encode(), str(end).encode())
 
         return loads(self._get(url))
+
+    cpdef download_logo(self, unicode name, size=128, filename=None):
+        """Download a currency image logo
+
+        Args:
+            currency (str): Currency name or symbol to download.
+            size (int, optional): Size in pixels. Valid sizes are:
+                [16, 32, 64, 128, 200]. As default 128.
+            filename (str, optional): Filename for store the logo.
+                Must be in .png extension. As default None.
+
+        Returns (str):
+            Filename downloaded if all is correct.
+        """
+        if self._is_symbol(name):
+            try:
+                name = self.correspondences[name]
+            except KeyError:
+                if name not in list(self.correspondences.keys()):
+                    raise ValueError(
+                        "The currency %s is not valid. See 'symbols' instance attribute." % name
+                    )
+
+        url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
+        url = url_schema % (size, size, name)
+        if not filename:
+            filename = "%s_%dx%d.png" % (name, size, size)
+        try:
+            res = urlretrieve(url, filename)
+        except HTTPError as e:
+            if e.code == 403:
+                if name not in list(self.correspondences.values()):
+                    raise ValueError(
+                        "The currency %s is not valid. See 'coins' instance attribute." % name
+                    )
+            raise e
+        else:
+            return filename
+
+

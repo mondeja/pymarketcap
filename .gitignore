@@ -18,3 +18,4 @@ proof.py
 pytest_benchmark/
 .tox/
 last_results.json
+*.png
