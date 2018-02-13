@@ -58,7 +58,7 @@ def declare_cython_extension(ext_name, libraries=None):
 
     return Extension(ext_name, [ext_path], libraries=libraries)
 
-package_data={'pymarketcap': ['core.pyx']},
+
 
 ext_modules = [
     declare_cython_extension("pymarketcap.core"),
@@ -67,8 +67,9 @@ if COMPILE_CURL:
     ext_modules.append(
         declare_cython_extension("pymarketcap.curl", libraries=["curl"])
     )
-    package_data["pymarketcap"].extend(["curl.pxd", "curl.pyx"])
+    package_data={'pymarketcap': ["*.pyx", "*.pxd"]},
 else:
+    package_data={'pymarketcap': ['core.pyx']},
     core_path = os.path.join(os.path.dirname(__file__), "pymarketcap", "core.pyx")
     with open(core_path, "r") as f:
         content = f.readlines()
@@ -87,7 +88,7 @@ try:
 
     setup(
         name="pymarketcap",
-        version = "3.9.014",
+        version = "3.9.015",
         url = "https://github.com/mondeja/pymarketcap",
         download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
         author = "Álvaro Mondéjar",

@@ -27,7 +27,7 @@ python setup.py install --no-curl
 pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
 ```
 
-or from source as above wihout `--no-curl` flag:
+or from source as above wihout `--no-curl` flag.
 
 ## Documentation
 Check out [live documentation](https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Flive.ipynb) hosted at Binderhub!
