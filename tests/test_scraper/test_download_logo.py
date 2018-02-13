@@ -4,6 +4,7 @@
 import os
 import time
 from random import choice
+from urllib.error import HTTPError
 
 import pytest
 from tqdm import tqdm
@@ -17,15 +18,27 @@ def teardown_function():
 def test_consistence():
     print("\nTesting download_logo sizes...\n")
     for size in tqdm([16, 32, 64, 128, 200]):
-        symbol = choice(pym.symbols)
-        tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
-        res = pym.download_logo(symbol, size=size)
-        assert res == "%s_%dx%d.png" % (pym.correspondences[symbol], size, size)
-        time.sleep(.5)
+        attempts = 5
+        _assert = True
+        while attempts > 0:
+            symbol = choice(pym.symbols)
+            tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
+            try:
+                res = pym.download_logo(symbol, size=size)
+            except HTTPError:
+                attempts -= 1
+                if attempts == 0:
+                    _assert = False
+                    break
+            else:
+                break
+        if _assert:
+            assert res == "%s_%dx%d.png" % (pym.correspondences[symbol], size, size)
+            time.sleep(.5)
 
-        assert os.path.exists(res)
-        os.remove(res)
-        assert os.path.exists(res) == False
+            assert os.path.exists(res)
+            os.remove(res)
+            assert os.path.exists(res) == False
 
 def test_with_filename():
     coin = choice(pym.coins)
@@ -37,6 +50,7 @@ def test_with_filename():
     assert os.path.exists(res) == False
 
 def test_invalid():
+    # Invalid currencies
     map_coin_errmsg = {
         "OADVDOVASDYIV": "See 'symbols' instance attribute.",
         "aspifhaspfias": "See 'coins' instance attribute."
@@ -45,3 +59,17 @@ def test_invalid():
         with pytest.raises(ValueError) as excinfo:
             pym.download_logo(fakecoin)
         assert errmsg in str(excinfo)
+
+    # Invalid size
+    size = 250
+    with pytest.raises(ValueError) as excinfo:
+        pym.download_logo("BTC", size=size)
+    assert "%dx%d is not a valid size." % (size, size) in str(excinfo)
+
+    # Valid size that doesn't exist for a currency.
+    symbol = "BEST"
+    size = 200
+    with pytest.raises(ValueError) as excinfo:
+        pym.download_logo(symbol, size=size)
+    assert "currency doesn't allows to be downloaded with size %dx%d." \
+        % (size, size) in str(excinfo)

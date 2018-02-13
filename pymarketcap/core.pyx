@@ -898,8 +898,14 @@ cdef class Pymarketcap:
                     raise ValueError(
                         "The currency %s is not valid. See 'coins' instance attribute." % name
                     )
+                valid_sizes = [16, 32, 64, 128, 200]
+                if size in valid_sizes:
+                    raise ValueError(
+                        ("Seems that %s currency doesn't allows to be downloaded with " \
+                        + "size %dx%d. Try with another size.") % (name, size, size)
+                    )
+                else:
+                    raise ValueError("%dx%d is not a valid size." % (size, size))
             raise e
         else:
             return filename
-
-
