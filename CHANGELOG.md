@@ -8,7 +8,7 @@
 - `request`, `lxml` and `bs4` dependencies removed, only `cython`, `gcc` and `libcurl` required for compile the code.
 - A precompiler added for insert some code and documentation hardcoded before compile the program.
 - All the data now is taken from values provided for the code that builds coinmarketcap instead the values displayed in the frontend page, as before. Is possible to select between USD or BTC to returns these in most methods.
-- New method `convert()` for convert between currencies using exchange rates values used internally by coinmarketcap.
+- New method `convert()` for convert between currencies as coinmarketcap currencies calculator: https://coinmarketcap.com/calculator/
 - New method `tokens()` convering partially https://coinmarketcap.com/tokens/views/all/ endpoint.
 - New method `currency()` for get all metadata from a currency.
 - Old method `download_logo()` deprecated.

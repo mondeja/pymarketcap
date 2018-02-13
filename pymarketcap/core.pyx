@@ -196,7 +196,6 @@ cdef class Pymarketcap:
 
         Returns:
             dict/list: If currency param is provided or not.
-
         """
         cdef bytes url
         if not currency:
@@ -219,15 +218,22 @@ cdef class Pymarketcap:
 
     @property
     def currency_exchange_rates(self):
-        """Get currency exchange rates against $ for the next currencies:
+        """Get currency exchange rates against $ for all currencies
+        (fiat and crypto).
 
         Returns (dict):
             All currencies rates used internally by coinmarketcap to calculate
                 the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
-        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-4000:-2000])
-        return {currency.upper(): float(rate) for currency, rate in rates}
+        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-5000:-2000])
+        response = {currency.upper(): float(rate) for currency, rate in rates}
+        for currency in self.ticker():
+            try:
+                response[str(currency["symbol"])] = float(currency["price_usd"])
+            except TypeError:
+                continue
+        return response
 
     cpdef _currencies_to_convert(self):
         """Internal function for get currencies from and to convert
@@ -239,7 +245,9 @@ cdef class Pymarketcap:
         """
         res = self._get(b"https://coinmarketcap.com")
         currencies = re.findall(r'data-([a-z]+)="\d', res[-5000:-2000])
-        return [currency.upper() for currency in currencies]
+        response = [currency.upper() for currency in currencies]
+        response.extend([str(currency["symbol"]) for currency in self.ticker()])
+        return response
 
     cpdef convert(self, value, unicode currency_in, unicode currency_out):
         """Convert prices between currencies. Provides a value,

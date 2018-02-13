@@ -12,7 +12,6 @@ def run_builder(source):
 
     build_funcs = [
         "ticker_badges",
-        "currency_exchange_rates",
         "unskip_tests"
     ]
 

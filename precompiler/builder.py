@@ -81,28 +81,6 @@ class Builder:
         # Save result on source file
         self.write_source(result)
 
-    def currency_exchange_rates(self):
-        # Get currencies from coinmarketcap.com main page
-        currencies = recopiler.get_currency_exchange_rates_list()
-
-        def currency_exchange_rates__doc__(stream, currencies):
-            searcher = re.compile(r"\s{4}def currency_exchange_rates.*next currencies:\n",
-                              re.MULTILINE | re.DOTALL)
-
-            original_func = searcher.search(stream).group()[:-1]
-
-            # Format currencies list to indented list as string
-            currs_formatted = format_list_as_string(currencies, 6, 13, 11)
-
-            # Write currencies for exchange rates in currency_exchange_rates.__doc__
-            output_func = original_func + "\n" + currs_formatted
-            return stream.replace(original_func, output_func)
-
-        result = currency_exchange_rates__doc__(self.read_source(), currencies)
-
-        # Save result on source file
-        self.write_source(result)
-
     def unskip_tests(self):
         source = self.test_sources["test_ticker"]
         with open(source, "r") as f:
@@ -131,36 +109,18 @@ class Builder:
             original_func = searcher.search(stream).group(1)
             return stream.replace(original_func, "", 1)
 
-        def currency_exchange_rates__doc__(stream):
-            output = []
-            matching = False
-            for line in stream.split("\n"):
-                if not matching:
-                    output.append(line)
-                if "Get currency exchange rates against $ for the next currencies" in line:
-                    matching = True
-                    continue
-
-                if matching:
-                    if "Returns (dict):" in line:
-                        matching = False
-                        output.append("\n%s" % line)
-                        continue
-            return "\n".join(output)
-
         def restore_curl_import(stream):
             return stream.replace("from pymarketcap.url import get_to_memory",
                                   "from pymarketcap.curl import get_to_memory")
 
-        stream = currency_exchange_rates__doc__(
-            ticker__doc__badges(
-                return_ticker_badges(
-                    restore_curl_import(
-                        self.read_source()
-                    )
+        stream = ticker__doc__badges(
+            return_ticker_badges(
+                restore_curl_import(
+                    self.read_source()
                 )
             )
         )
+
         self.write_source(stream)
 
         def reskip_tests(stream):
@@ -176,9 +136,6 @@ class Builder:
 
         with open(source, "w") as f:
             f.write(reskip_tests(stream))
-
-        
-
 
         return True
 
