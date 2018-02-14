@@ -15,10 +15,3 @@ Pymarketcap's documentation
    Contributing and testing <contributing>
    reference
    changelog
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
