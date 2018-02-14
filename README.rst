@@ -8,7 +8,7 @@ pymarketcap
 
    </h1>
 
-|Build Status| |PyPI| |PyPI| |Binder|
+|Build Status| |PyPI| |PyPI| |Binder| |ReadTheDocs|
 
 **pymarketcap** is library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
@@ -95,3 +95,5 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: https://pypi.python.org/pypi/pymarketcap
 .. |Binder| image:: https://mybinder.org/badge.svg
    :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb
+.. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
+   :target: http://pymarketcap.readthedocs.io/?badge=latest
