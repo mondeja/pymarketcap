@@ -34,7 +34,6 @@ if not built:
 COMPILE_CURL = True        # Building on ReadTheDocs (very crazy):
 if "--no-curl" in sys.argv or os.environ.get('READTHEDOCS') == 'True':
     COMPILE_CURL = False
-    sys.argv.remove("--no-curl")
 
 def declare_cython_extension(ext_name, libraries=None):
     """Declare a Cython extension module for setuptools.
