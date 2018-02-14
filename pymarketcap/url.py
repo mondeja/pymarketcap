@@ -13,10 +13,10 @@ class Response:
         self.url = url
 
 def get_to_memory(url, timeout, debug):
-	req = urllib.request.Request(
-		url.decode(),
-		headers={"User-Agent": "Pymarketcap %s" % __version__}
-	)
+    req = urllib.request.Request(
+        url.decode(),
+        headers={"User-Agent": "Pymarketcap %s" % __version__}
+    )
     req = urlopen(req, timeout=timeout)
     data = req.read()
     res = Response(data, req.getcode(), url)
