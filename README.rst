@@ -8,7 +8,8 @@ pymarketcap
 
    </h1>
 
-|Build Status| |PyPI| |PyPI| |Binder| |ReadTheDocs|
+|Build Status| |PyPI| |PyPI Versions|
+|Binder| |ReadTheDocs|
 
 **pymarketcap** is library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
