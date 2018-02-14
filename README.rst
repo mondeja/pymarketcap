@@ -91,7 +91,7 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: https://travis-ci.org/mondeja/pymarketcap
 .. |PyPI| image:: https://img.shields.io/pypi/v/pymarketcap.svg
    :target: https://pypi.python.org/pypi/pymarketcap
-.. |PyPI| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
+.. |PyPI Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
    :target: https://pypi.python.org/pypi/pymarketcap
 .. |Binder| image:: https://mybinder.org/badge.svg
    :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb
