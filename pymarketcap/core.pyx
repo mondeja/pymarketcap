@@ -1,3 +1,6 @@
+
+"""API wraper and web scraper module."""
+
 # Standard Python modules
 import re
 from json import loads
@@ -29,26 +32,26 @@ http_error_numbers = [int(number) for number in http_errors_map.keys()]
 PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
 cdef class Pymarketcap:
-    """Main class for retrieve data from coinmarketcap.com
+    """Unique class for retrieve data from coinmarketcap.com
 
     Args:
         timeout (int, optional): Set timeout value for get requests.
-            As default 20.
+            As default ``20``.
         debug: (bool, optional): Show low level data in get requests.
-            As default, False.
+            As default, ``False``.
         cache (bool, optional): Enable or disable cache at instantiation
-            time. ¡Warning -> some methods couldn't be called, use
-            this attribute with caution! As default, True.
+            time. If disabled, some methods couldn't be called, use
+            this attribute with caution. As default, ``True``.
     """
 
     cdef readonly dict correspondences
-    cdef readonly list symbols
-    cdef readonly list coins
+    cdef readonly list _symbols
+    cdef readonly list _coins
     cdef readonly int total_currencies
     cdef readonly list currencies_to_convert
     cdef readonly list converter_cache
-    cdef readonly list exchange_names
-    cdef readonly list exchange_slugs
+    cdef readonly list _exchange_names
+    cdef readonly list _exchange_slugs
 
     cdef public long timeout
     cdef public object graphs
@@ -62,6 +65,7 @@ cdef class Pymarketcap:
         self.timeout = timeout
         self.debug = debug
 
+        #: object: Initialization of graphs internal interface
         self.graphs = type("Graphs", (), self._graphs_interface)
 
         self.exceptional_coin_slugs = {
@@ -86,23 +90,24 @@ cdef class Pymarketcap:
         """Internal function to renew cached instance attributes."""
         if self.debug:
             print("Caching useful data...")
+        #: dict: Correspondences between symbols and coins names
         self.correspondences = self._cache_symbols()
-        self.symbols = sorted(list(self.correspondences.keys()))
-        self.coins = sorted(list(self.correspondences.values()))
+        self._symbols = sorted(list(self.correspondences.keys()))
+        self._coins = sorted(list(self.correspondences.values()))
         self.total_currencies = self.ticker()[-1]["rank"]
         sleep(.5)
         self.currencies_to_convert = sorted(self._currencies_to_convert())
         self.converter_cache = [self.currency_exchange_rates, time()]
         sleep(.5)
-        self.exchange_names = sorted(self._exchange_names())
-        self.exchange_slugs = sorted(self._exchange_slugs())
+        self._exchange_names = sorted(self.__exchange_names())
+        self._exchange_slugs = sorted(self.__exchange_slugs())
 
     @property
     def _graphs_interface(self):
         return {
             "currency": self._currency,
-            "global_cap": self.global_cap,
-            "dominance": self.dominance
+            "global_cap": self._global_cap,
+            "dominance": self._dominance
         }
 
     ######   UTILS   #######
@@ -166,38 +171,60 @@ cdef class Pymarketcap:
             convert (str, optional): return 24h volume, and
                 market cap in terms of another currency.
                 See ticker_badges property to get valid values.
-                As default "USD".
+                As default ``"USD"``.
 
-        Returns:
-            dict: Global markets statistics
+        Returns (dict):
+            Global markets statistics
         """
-        return loads(self._get(b"https://api.coinmarketcap.com/v1/global/?convert=%s" % convert.encode()))
+        return loads(self._get(
+            b"https://api.coinmarketcap.com/v1/global/?convert=%s" % convert.encode()
+        ))
 
     @property
     def ticker_badges(self):
-        """Badges that you can convert prices in ticker() method."""
+        """Badges in wich you can convert prices in ``ticker()`` method."""
         return
+
+    @property
+    def symbols(self):
+        """Symbols of currencies (in capital letters).
+
+        Returns (list):
+            All currency symbols provided by coinmarketcap.
+        """
+        return self._symbols
+
+    @property
+    def coins(self):
+        """Coins not formatted names for all currencies
+        (in lowercase letters) used internally by urls.
+
+        Returns (list):
+            All currency coins names provided by coinmarketcap.
+        """
+        return self._coins
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
 
         Args:
-            currency (str, optional): Specify a currency to return,
-                in this case the method returns a dict, otherwise
+            currency (str, optional): Specify a currency to return data,
+                that can be a symbol or coin slug (see ``symbols`` and ``coins``
+                properties). In this case the method returns a dict, otherwise
                 returns a list. If you dont specify a currency,
-                returns data for all in coinmarketcap. As default, None.
+                returns data for all in coinmarketcap. As default, ``None``.
             limit (int, optional): Limit amount of coins on response.
-                if limit == 0, returns all coins in coinmarketcap.
-                Only works if currency == None. As default 0.
+                If ``limit == 0``, returns all coins in coinmarketcap.
+                Only works if ``currency == None``. As default ``0``.
             start (int, optional): Rank of first currency to retrieve.
                 The count starts at 0 for the first currency ranked.
-                Only works if currency == None. As default 0.
-            convert (str, optional): As default, "USD". Allow to
-                convert price, 24h volume and market cap in terms
-                of one of next badges:
+                Only works if ``currency == None``. As default ``0``.
+            convert (str, optional): Allows to convert prices, 24h volumes
+                and market capitalizations in terms of one of badges
+                returned by ``ticker_badges`` property. As default, ``"USD"``.
 
-        Returns:
-            dict/list: If currency param is provided or not.
+        Returns (dict/list):
+            The type depends if currency param is provided or not.
         """
         cdef bytes url
         if not currency:
@@ -220,12 +247,11 @@ cdef class Pymarketcap:
 
     @property
     def currency_exchange_rates(self):
-        """Get currency exchange rates against $ for all currencies
-        (fiat and crypto).
+        """Currency exchange rates against $ for all currencies (fiat + crypto).
 
         Returns (dict):
             All currencies rates used internally by coinmarketcap to calculate
-                the prices shown.
+            the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
         rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-5000:-2000])
@@ -240,7 +266,7 @@ cdef class Pymarketcap:
     cpdef _currencies_to_convert(self):
         """Internal function for get currencies from and to convert
             values in convert() method. Don't use this, but cached
-            currencies_to_convert instance attribute instead.
+            ``currencies_to_convert`` instance attribute instead.
 
         Returns (list):
             All currencies that could be passed to convert() method.
@@ -252,18 +278,18 @@ cdef class Pymarketcap:
         return response
 
     cpdef convert(self, value, unicode currency_in, unicode currency_out):
-        """Convert prices between currencies. Provides a value,
-            the currency of the value and the currency to convert it
-            and get the value in currency converted rate.
-            For see all available currencies to convert see
-                currencies_to_convert property.
+        """Convert prices between currencies. Provide a value, the currency
+        of the value and the currency to convert it and get the value in
+        currency converted rate. For see all available currencies to convert
+        see ``currencies_to_convert`` property.
 
         Args:
             value (int/float): Value to convert betweeen two currencies.
             currency_in (str): Currency in which is expressed the value passed.
             currency_out (str): Currency to convert.
 
-        Returns (float): Value expressed in currency_out parameter provided.
+        Returns (float):
+            Value expressed in currency_out parameter provided.
         """
         if time() - self.converter_cache[1] > 600:
             self.converter_cache[0] = self.currency_exchange_rates
@@ -289,8 +315,8 @@ cdef class Pymarketcap:
         Args:
             currency (str): Currency to get metadata.
             convert (str, optional): Currency to convert response
-                fields total_markets_cap, total_markets_volume_24h
-                and price between "USD" and "BTC". As default "USD".
+                fields ``total_markets_cap``, ``total_markets_volume_24h``
+                and ``price`` between USD and BTC. As default ``"USD"``.
 
         Returns (dict):
             Aditional general metadata not supported by other methods.
@@ -373,11 +399,11 @@ cdef class Pymarketcap:
         Args:
             currency (str): Currency to get market data.
             convert (str, optional): Currency to convert response
-                fields volume_24h and price between "USD" and "BTC".
-                As default "USD".
+                fields ``volume_24h`` and ``price`` between USD
+                and BTC. As default ``"USD"``.
 
-        Returns:
-            list: markets on wich provided currency is currently tradeable
+        Returns (list):
+            Markets on wich provided currency is currently tradeable.
         """
         if self._is_symbol(name):
             name = self.correspondences[name]
@@ -390,7 +416,7 @@ cdef class Pymarketcap:
         sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
         markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
         volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
-        price = re.findall(r'"price" .*data-%s="(\d+\.[\d|e|-]*[\d|e|-]*)' % convert, res)
+        price = re.findall(r'"price" .*data-%s="(\?|\d+\.*\d*e*[-|+]*\d*)' % convert, res)
         perc_volume = re.findall(r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
         updated = re.findall(r'text-right\s.*">(.+)</td>', res)
 
@@ -409,13 +435,9 @@ cdef class Pymarketcap:
     cpdef ranks(self):
         """Returns gainers and losers for the periods 1h, 24h and 7d.
 
-        Args:
-            convert (str, optional): Convert volume, price and percentages
-                between USD and BTC. As default "USD".
-
         Returns (dict):
             A dictionary with 2 keys (gainers and losers) whose values
-                are the periods "1h", "24h" and "7d"
+            are the periods "1h", "24h" and "7d".
         """
         cdef int i = 30
         res = self._get(b"https://coinmarketcap.com/gainers-losers/")
@@ -447,16 +469,15 @@ cdef class Pymarketcap:
         """Get historical data for a currency.
 
         Args:
-            currency (str): Currency to scrap historical data
+            currency (str): Currency to scrap historical data.
             start (date, optional): Time to start scraping
                 periods as datetime.datetime type.
-                As default datetime(2008, 8, 18)
+                As default ``datetime(2008, 8, 18)``.
             end (date, optional): Time to end scraping periods
-                as datetime.datetime type.
-                As default datetime.now()
-            revert (bool, optional): If False, return first date
+                as datetime.datetime type. As default ``datetime.now()``.
+            revert (bool, optional): If ``False``, return first date
                 first, in chronological order, otherwise returns
-                reversed list of periods. As default False
+                reversed list of periods. As default ``False``.
 
         Returns (list):
             Historical dayly OHLC for a currency.
@@ -511,7 +532,7 @@ cdef class Pymarketcap:
         Args:
             convert (str, optional): Convert market_caps, prices,
                 volumes and percent_changes between USD and BTC.
-                As default "USD".
+                As default ``"USD"``.
 
         Returns (generator):
             Recently added currencies data.
@@ -555,24 +576,19 @@ cdef class Pymarketcap:
             }
 
     cpdef exchange(self, unicode name, convert="USD"):
-        """Obtain data from a exchange passed as argument.
-            See exchanges_names instance attribute for obtain
-            all posibles values.
-
-        Example:
-            exchange('poloniex')
+        """Obtain data from a exchange passed as argument. See ``exchanges_slugs``
+        property for obtain all posibles values.
 
         Args:
-            name (str): Exchange to retrieve data. Check exchange_slugs
-                instance attribute for get all posible values for pass
-                to this parameter.
-            convert (str, optional): Convert prices and
-                24h volumes in return between USD and BTC.
-                As default "USD".
+            name (str): Exchange to retrieve data. Check ``exchange_slugs``
+                instance attribute for get all posible values passed
+                in this parameter.
+            convert (str, optional): Convert prices and 24h volumes in
+                return between USD and BTC. As default ``"USD"``.
 
         Returns (dict):
-            Data from a exchange. Keys: "name", "website",
-                "volume" (total), "social" and "markets".
+            Data from a exchange. Keys: ``"name"``, ``"website"``,
+            ``"volume"`` (total), ``"social"`` and ``"markets"``.
         """
         url = b"https://coinmarketcap.com/exchanges/%s/" % name.encode()
         try:
@@ -637,30 +653,44 @@ cdef class Pymarketcap:
             "markets": markets
         }
 
-    cpdef _exchange_names(self):
+    @property
+    def exchange_names(self):
+        """Get all exchange formatted names provided by coinmarketcap."""
+        return self._exchange_names
+
+    cpdef __exchange_names(self):
         """Internal function for get all exchange names
-            available currently in coinmarketcap. Check exchange_names
+            available currently in coinmarketcap. Check ``exchange_names``
             instance attribute for the cached method counterpart.
 
         Returns (list):
-            All exchanges in coinmarketcap.
+            All exchanges names formatted in coinmarketcap.
         """
         res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
         return re.findall('<a href="/exchanges/.+/">((?!View More).+)</a>', res)[5:]
 
-    def _exchange_slugs(self):
-        """Internal function for obtain all exchanges slugs."""
+    @property
+    def exchange_slugs(self):
+        """Get all exchange raw names provided by coinmarketcap."""
+        return self._exchange_slugs
+
+    cpdef __exchange_slugs(self):
+        """Internal function for obtain all exchanges slugs.
+
+        Returns (list):
+            All exchanges slugs from coinmarketcap.
+        """
         res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
         parsed = re.findall('<a href="/exchanges/(.+)/">', res)[5:]
         return list(OrderedDict.fromkeys(parsed)) # Remove duplicates without change order
 
-    def exchanges(self, convert="USD"):
-        """Get all the exchanges in coninmarketcap ranked by volumes
+    cpdef exchanges(self, convert="USD"):
+        """Get all the exchanges in coinmarketcap ranked by volumes
         along with other metadata.
 
         Args:
             convert (str, optional): Convert volumes and prices
-                between "USD" and "BTC". As default "USD".
+                between USD and BTC. As default ``"USD"``.
 
         Returns (list):
             Exchanges with markets and other data included.
@@ -717,9 +747,9 @@ cdef class Pymarketcap:
         """Get data from platforms tokens
 
         Args:
-            convert (str, optional): Convert "market_cap", "price"
-                and "volume_24h" values between "USD" and "BTC".
-                As default "USD".
+            convert (str, optional): Convert ``"market_cap"``,
+                ``"price"`` and ``"volume_24h"`` values between
+                USD and BTC. As default ``"USD"``.
 
         Returns (list):
             Platforms tokens data.
@@ -776,22 +806,16 @@ cdef class Pymarketcap:
             start (int, optional): Time to start retrieving
                 graphs data in microseconds unix timestamps.
                 Only works with times provided by the times
-                returned in graphs functions. As default None.
+                returned in graphs functions. As default ``None``.
             end (optional, datetime): Time to end retrieving
                 graphs data in microseconds unix timestamps.
                 Only works with times provided by the times
-                returned in graphs functions. As default None.
+                returned in graphs functions. As default ``None``.
 
         Returns (dict):
-            Dict info with next keys:
-            `
-                {"market_cap_by_available_supply": [...],
-                 "price_btc": [...],
-                 "price_usd": [...],
-                 "volume_usd": [...],
-                 "price_platform": [...],
-                 }
-            `
+            Dict info with next keys: ``"market_cap_by_available_supply"``,
+            ``"price_btc"``, ``"price_usd"``, ``"price_usd"``,
+            ``"volume_usd":`` and ``"price_platform"``.
             For each value, a list of lists where each one
             has two values [<timestamp>, <value>]
         """
@@ -805,31 +829,27 @@ cdef class Pymarketcap:
 
         return loads(self._get(url))
 
-    cpdef global_cap(self, bitcoin=True, start=None, end=None):
+    cpdef _global_cap(self, bitcoin=True, start=None, end=None):
         """Get global market capitalization graphs, including
-        or excluding Bitcoin
+        or excluding Bitcoin.
 
         Args:
             bitcoin (bool, optional): Indicates if Bitcoin will
                 be includedin global market capitalization graph.
-                As default True.
+                As default ``True``.
             start (int, optional): Time to start retrieving
                 graphs data in microseconds unix timestamps.
                 Only works with times provided by the times
-                returned in graphs functions. As default None.
+                returned in graphs functions. As default ``None``.
             end (optional, datetime): Time to end retrieving
                 graphs data in microseconds unix timestamps.
                 Only works with times provided by the times
-                returned in graphs functions. As default None.
+                returned in graphs functions. As default ``None``.
 
         Returns (dict):
             Whose values are lists of lists with timestamp and values,
-                a data structure with the form:
-                    `
-                        {'market_cap_by_available_supply': [...],
-                         'volume_usd': [...]
-                        }
-                    `
+            a data structure with the keys: ``"volume_usd"`` and
+            ``"market_cap_by_available_supply"``.
         """
         if bitcoin:
             url = b"https://graphs2.coinmarketcap.com/global/marketcap-total/"
@@ -841,7 +861,7 @@ cdef class Pymarketcap:
 
         return loads(self._get(url))
 
-    cpdef dominance(self, start=None, end=None):
+    cpdef _dominance(self, start=None, end=None):
         """Get currencies dominance percentage graph
 
         Args:
@@ -855,7 +875,7 @@ cdef class Pymarketcap:
                 returned in graphs functions. As default None.
 
         Returns (dict):
-            Altcoins dict and dominance percentage values with timestamps
+            Altcoins and dominance percentage values with timestamps.
         """
         url = b"https://graphs2.coinmarketcap.com/global/dominance/"
 
@@ -875,7 +895,7 @@ cdef class Pymarketcap:
                 Must be in .png extension. As default None.
 
         Returns (str):
-            Filename downloaded if all is correct.
+            Filename of downloaded file if all was correct.
         """
         if self._is_symbol(name):
             try:

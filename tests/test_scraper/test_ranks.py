@@ -16,10 +16,9 @@ class TypeTester:
     def _price(self, value): assert type(value) == float
     def _percent_change(self, value): assert type(value) == float
 
-
 tt = TypeTester()
 
-def _test_data_structure_types(data):
+def assert_types(data):
     assert type(data) == dict
     for rank, rdata in data.items():
         assert type(rank) == str
@@ -36,9 +35,9 @@ def _test_data_structure_types(data):
                     ))
 
 def test_types():
-    _test_data_structure_types(pym.ranks())
+    assert_types(pym.ranks())
 
-def _test_currencies_order(data):
+def assert_currencies_order(data):
     # Assert if currencies are in order
     for rank, rdata in data.items():
         for period, pdata in rdata.items():
@@ -47,4 +46,4 @@ def _test_currencies_order(data):
                     assert pdata[i+1]["percent_change"] >= currency["percent_change"]
 
 def test_consistence():
-    _test_currencies_order(pym.ranks())
+    assert_currencies_order(pym.ranks())

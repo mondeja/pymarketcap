@@ -4,6 +4,7 @@ from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from curl cimport *
 
 from pymarketcap.errors import CoinmarketcapHTTPError
+from pymarketcap import __version__
 
 # https://curl.haxx.se/libcurl/c/getinmemory.html
 cdef struct MemoryStruct:
@@ -38,7 +39,7 @@ cpdef Response get_to_memory(const char *url, long timeout, bint debug):
     cdef long true = 1L
     version = curl_version()
     cdef CURL *curl = curl_easy_init()
-    cdef const char *user_agent = "Pymarketcap 3.9.021"
+    cdef const char *user_agent = "Pymarketcap 3.9.022"
     cdef const char *accept_encoding = "gzip, deflate"
     cdef char *raw_body
 

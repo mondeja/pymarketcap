@@ -18,6 +18,28 @@ def test_correspondences():
     # Test consistence
     assert pym.correspondences == pym._cache_symbols()
 
+def test_symbols():
+    res = pym.symbols
+
+    # Test types
+    assert type(res) == list
+
+    # Test consistence
+    assert res == sorted(list(pym.correspondences.keys()))
+    assert len(res) > 0
+
+def test_coins():
+    res = pym.coins
+
+    # Test types
+    assert type(res) == list
+    for coin in res:
+        assert type(coin) == str
+
+    # Test consistence
+    assert res == sorted(list(pym.correspondences.values()))
+    assert len(res) > 0
+
 def test_total_currencies():
     # Test types
     res = pym.total_currencies
@@ -61,7 +83,7 @@ def test_exchange_names():
 
     # Test consistence
     assert len(res) > 0
-    assert len(res) == len(pym._exchange_names())
+    assert len(res) == len(pym.__exchange_names())
 
 def test_exchange_slugs():
     # Test types
@@ -72,4 +94,4 @@ def test_exchange_slugs():
 
     # Test consistence
     assert len(res) > 0
-    assert len(res) == len(pym._exchange_slugs())
+    assert len(res) == len(pym.__exchange_slugs())

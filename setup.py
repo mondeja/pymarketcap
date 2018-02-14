@@ -31,8 +31,8 @@ if not built:
 
 
 # ===========  Cython compilation  ===========
-COMPILE_CURL = True
-if "--no-curl" in sys.argv:
+COMPILE_CURL = True        # Building on ReadTheDocs (very crazy):
+if "--no-curl" in sys.argv or os.environ.get('READTHEDOCS') == 'True':
     COMPILE_CURL = False
     sys.argv.remove("--no-curl")
 
@@ -79,17 +79,18 @@ else:
 ext_modules = cythonize(ext_modules)
 
 
-# ===========  Package data  ===========
-LONG_DESC = "pymarketcap is library for retrieve data from www.coinmarketcap.com" \
+# ===========  Package metadata  ===========
+LONG_DESC = "pymarketcap is library for retrieve data from coinmarketcap.com" \
           + " API and website. Consist of a cythonized scraper and API wrapper built" \
-          + " with curl C library. Actually, on works in Python>=3.5."
+          + " with curl C library, but is possible to compile a lightweight version" \
+          + " with standard urllib library instead. Actually, only works in Python>=3.5."
 
 with open(os.path.join(os.path.dirname(__file__), "requirements.txt")) as f:
     REQ = f.readlines()
 
 setup(
     name="pymarketcap",
-    version = "3.9.021",
+    version = "3.9.022",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar",

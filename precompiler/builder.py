@@ -67,16 +67,7 @@ class Builder:
             output_func = original_func + badges_formatted
             return stream.replace(original_func, output_func)
 
-        stream = return_ticker_badges(self.read_source(), badges)
-
-        def ticker__doc__badges(stream, badges):
-            """Write badges list on ticker __doc__"""
-            badges_formatted = format_list_as_string(badges, 8, 20,
-                                                     indent_first_line=18)
-            stream = stream.replace("next badges:", "next badges:\n%s" % badges_formatted)
-            return stream
-
-        result = ticker__doc__badges(stream, badges)
+        result = return_ticker_badges(self.read_source(), badges)
 
         # Save result on source file
         self.write_source(result)
@@ -104,20 +95,13 @@ class Builder:
             original_func = searcher.search(stream).group(1)
             return stream.replace(original_func, "", 1)
 
-        def ticker__doc__badges(stream):
-            searcher = re.compile(r"next badges:(\n.+\n.+\n.+\n.+)")
-            original_func = searcher.search(stream).group(1)
-            return stream.replace(original_func, "", 1)
-
         def restore_curl_import(stream):
             return stream.replace("from pymarketcap.url import get_to_memory",
                                   "from pymarketcap.curl import get_to_memory")
 
-        stream = ticker__doc__badges(
-            return_ticker_badges(
-                restore_curl_import(
-                    self.read_source()
-                )
+        stream = return_ticker_badges(
+            restore_curl_import(
+                self.read_source()
             )
         )
 

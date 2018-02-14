@@ -23,9 +23,10 @@ uninstall:
 	make restore-sources
 
 clean:
-	sudo rm -Rf .pytest_cache/ .tox/ build/
+	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/
 	sudo find . -type d -name "__pycache__" -exec rm -r {} +
 	sudo rm pymarketcap/core.c pymarketcap/curl.c
+	sudo find . -type d -name "_build" -exec rm -r {} +
 
 test:
 	pytest tests -vs
@@ -39,3 +40,6 @@ precompile-sources:
 
 restore-sources:
 	python3 -c "from precompiler import run_unbuilder;run_unbuilder()"
+
+docs-html:
+	cd docs && make html && cd ..
