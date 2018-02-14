@@ -31,9 +31,11 @@ if not built:
 
 
 # ===========  Cython compilation  ===========
-COMPILE_CURL = True        # Building on ReadTheDocs (very crazy):
+COMPILE_CURL = True          # Building on ReadTheDocs (very crazy):
 if "--no-curl" in sys.argv or os.environ.get('READTHEDOCS') == 'True':
     COMPILE_CURL = False
+    if "--no-curl" in sys.argv:
+        sys.argv.remove("--no-curl")
 
 def declare_cython_extension(ext_name, libraries=None):
     """Declare a Cython extension module for setuptools.
