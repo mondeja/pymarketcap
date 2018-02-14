@@ -8,7 +8,7 @@ Changelog
 -  The data is obtained and processed by regular expressions instead of
    parsing the DOM tree.
 -  Core functionality of the wrapper rewritten for work with ``libcurl``
-   C library through a Cython bridge at compilation time.
+   C library through a Cython bridge at compilation time. Also, you can use the wrapper with ``urrlib`` standard library only installing by ``pytohn setup.py install --no-curl``.
 -  Tests now performed with ``pytest`` instead of standard library
    ``unittest``.
 -  ``request``, ``lxml`` and ``bs4`` dependencies removed, only
@@ -17,7 +17,7 @@ Changelog
    before compile the program.
 -  All the data now is taken from values provided for the code that
    builds coinmarketcap instead the values displayed in the frontend
-   page, as before. Is possible to select between USD or BTC to returns
+   page, as before. Is possible select between USD or BTC to returns
    these in most methods.
 -  New method ``convert()`` for convert between currencies as
    coinmarketcap currencies calculator:

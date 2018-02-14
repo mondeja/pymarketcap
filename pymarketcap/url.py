@@ -4,7 +4,7 @@
 from pymarketcap import __version__
 
 from urllib.error import HTTPError
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 
 class Response:
     def __init__(self, text, status_code, url):
@@ -13,7 +13,7 @@ class Response:
         self.url = url
 
 def get_to_memory(url, timeout, debug):
-    req = urllib.request.Request(
+    req = Request(
         url.decode(),
         headers={"User-Agent": "Pymarketcap %s" % __version__}
     )
