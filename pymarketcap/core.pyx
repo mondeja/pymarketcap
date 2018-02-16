@@ -254,7 +254,7 @@ cdef class Pymarketcap:
             the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
-        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-5000:-2000])
+        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000])
         response = {currency.upper(): float(rate) for currency, rate in rates}
         for currency in self.ticker():
             try:
@@ -272,7 +272,7 @@ cdef class Pymarketcap:
             All currencies that could be passed to convert() method.
         """
         res = self._get(b"https://coinmarketcap.com")
-        currencies = re.findall(r'data-([a-z]+)="\d', res[-5000:-2000])
+        currencies = re.findall(r'data-([a-z]+)="\d', res[-10000:-2000])
         response = [currency.upper() for currency in currencies]
         response.extend([str(currency["symbol"]) for currency in self.ticker()])
         return response
@@ -642,7 +642,7 @@ cdef class Pymarketcap:
 
         return {
             "name": formatted_name,
-            "web": web.group(1) if web else None,
+            "website": web.group(1) if web else None,
             "volume": total_volume,
             "social": {
                 "twitter": {

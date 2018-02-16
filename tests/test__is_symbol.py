@@ -11,7 +11,7 @@ all_symbols = list(pym.correspondences.keys())
 all_slugs = list(pym.correspondences.values())
 
 def teardown_function(function):
-    time.sleep(3)
+    time.sleep(2)
 
 def test_types():
     symbol = choice(all_symbols)

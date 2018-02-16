@@ -32,7 +32,7 @@ def assert_types(res):
     assert type(res) == dict
 
     assert type(res["name"]) == str
-    assert type(res["web"]) == str
+    assert type(res["website"]) == str
     assert type(res["volume"]) in [float, type(None)]
     assert type(res["social"]) == dict
 
@@ -65,8 +65,8 @@ def assert_number_of_markets(exc, markets):
 def assert_consistence(res, exc):
     assert len(res["name"]) > 0
     assert res["name"] != None
-    assert len(res["web"]) > 0
-    assert res["web"] != None
+    assert len(res["website"]) > 0
+    assert res["website"] != None
     assert_number_of_markets(exc, res["markets"])
 
 def test_consistence():

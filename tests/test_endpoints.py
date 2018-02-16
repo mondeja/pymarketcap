@@ -46,4 +46,4 @@ def test_endpoints():
         for ep in eps:
             tqdm.write("%18s() --> %s" % (method, ep))
             assert_up(ep)
-            time.sleep(2)
+            time.sleep(1)
