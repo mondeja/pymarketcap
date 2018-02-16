@@ -10,6 +10,7 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 all_badges = list(pym.ticker_badges)
+all_badges.remove("USD")
 
 class TypeTester:
     def _active_assets(self, value): assert type(value) == int
