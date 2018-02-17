@@ -1,13 +1,14 @@
 language: python
 
 os:
-  - osx
   - linux
 
 python:
   - "3.5"
   - "pypy3"
   - "3.6"
+  - "3.7-dev"
+
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then make install-light; else make install; fi
 before_script:
