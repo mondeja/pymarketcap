@@ -1,0 +1,18 @@
+environment:
+  matrix:
+    - PYTHON: C:\Python35-x64
+    - PYTHON: C:\Python36
+    - PYTHON: C:\Python36-x64
+
+install:
+  - echo Installed Pythons
+  - dir c:\Python*
+  - "%PYTHON%\\python -m pip install -r dev-requirements.txt"
+  - "%PYTHON%\\python setup.py install"
+
+build: off
+
+test_script:
+  - cd ..
+  - dir
+  - "if %PYTHON%==C:\\Python35-x64 (%PYTHON%\\python -m pytest pymarketcap/tests -vs --end2end) else (%PYTHON%\\python -m pytest pymarketcap/tests -vs)"

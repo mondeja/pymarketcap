@@ -8,8 +8,8 @@ pymarketcap
 
    </h1>
 
-|Build Status| |PyPI| |PyPI Versions|
-|Binder| |ReadTheDocs|
+|Build Status| |AppVeyor|
+|Binder| |ReadTheDocs| |PyPI| |PyPI Versions|
 
 **pymarketcap** is library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
@@ -41,6 +41,8 @@ Without libcurl
     python setup.py install --no-curl
 
 ``urllib`` will be used instead.
+
+In Windows this is the default behaviour, although ``--no-curl`` flag it's specified. If you want try to install with ``curl`` in Windows use ``python setup.py install ``--force-curl``.
 
 With libcurl
 ^^^^^^^^^^^^
@@ -98,3 +100,5 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
    :target: http://pymarketcap.readthedocs.io/?badge=latest
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true
+   :target: https://ci.appveyor.com/project/mondeja/pymarketcap

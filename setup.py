@@ -31,8 +31,18 @@ if not built:
 
 
 # ===========  Cython compilation  ===========
-COMPILE_CURL = True          # Building on ReadTheDocs (very crazy):
-if "--no-curl" in sys.argv or os.environ.get('READTHEDOCS') == 'True':
+
+COMPILE_CURL = True
+
+# Windows
+if sys.platform.startswith('win32') and "--force-curl" not in sys.argv:
+    COMPILE_CURL = False
+
+if "--force-curl" in sys.argv:
+    sys.argv.remove("--no-curl")
+
+                          # Building on ReadTheDocs (very crazy):
+if "--no-curl" in sys.argv or os.environ.get("READTHEDOCS") == "True":
     COMPILE_CURL = False
     if "--no-curl" in sys.argv:
         sys.argv.remove("--no-curl")
@@ -91,7 +101,7 @@ with open(os.path.join(os.path.dirname(__file__), "requirements.txt")) as f:
 
 setup(
     name="pymarketcap",
-    version = "3.9.102",
+    version = "3.9.103",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",
@@ -102,7 +112,6 @@ setup(
     keywords = ["coinmarketcap", "cryptocurrency", "API", "wrapper",
                 "scraper", "json", "BTC", "Bitcoin", "C", "Curl", "Cython"],
     install_requires = REQ,
-    setup_requires = ["cython"],
     packages = find_packages(exclude=["precompiler"]),
     ext_modules=ext_modules,
     classifiers=[

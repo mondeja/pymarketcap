@@ -31,8 +31,7 @@ def run_unbuilder():
     try:
         response = builder.unbuild()
     except Exception as e:
-        print("Error restoring pymarketcap source code:")
-        print(e)
+        print("Error restoring pymarketcap source code.")
         return False
     print("Pymarketcap source code restored successfully.")
     return response

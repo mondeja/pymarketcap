@@ -25,7 +25,7 @@ def test_consistence():
             tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
             try:
                 res = pym.download_logo(symbol, size=size)
-            except HTTPError:
+            except (HTTPError, ValueError):
                 attempts -= 1
                 _assert = False
                 if attempts == 0:
