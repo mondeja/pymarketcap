@@ -15,10 +15,10 @@ before_script:
   - pip install -r dev-requirements.txt
   - echo $TRAVIS_PYTHON_VERSION
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == pypy3 || $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == pypy3 || $TRAVIS_PYTHON_VERSION == 3.6 ]]; then travis_wait 20 make test-end2end; else make test; fi
 branches:
   only:
     - master
 
 # No-curl version testing running in PYTHON3.5
-# End2end tests running in PYTHON3.5 and PYTHON3.6
+# End2end tests running in Pypy3 and PYTHON3.6

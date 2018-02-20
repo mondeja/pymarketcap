@@ -42,7 +42,7 @@ Without libcurl
 
 ``urllib`` will be used instead.
 
-In Windows this is the default behaviour, although ``--no-curl`` flag it's specified. If you want try to install with ``curl`` in Windows use ``python setup.py install ``--force-curl``.
+In Windows this is the default behaviour, although ``--no-curl`` flag it's specified. If you want try to install with ``curl`` in Windows use ``python setup.py install --force-curl``.
 
 With libcurl
 ^^^^^^^^^^^^
