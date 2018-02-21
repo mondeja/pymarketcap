@@ -884,7 +884,7 @@ cdef class Pymarketcap:
 
         return loads(self._get(url))
 
-    cpdef download_logo(self, unicode name, size=128, filename=None):
+    cpdef download_logo(self, unicode name, size=64, filename=None):
         """Download a currency image logo
 
         Args:

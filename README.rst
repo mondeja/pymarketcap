@@ -9,7 +9,7 @@ pymarketcap
    </h1>
 
 |Build Status| |AppVeyor|
-|Binder| |ReadTheDocs| |PyPI| |PyPI Versions|
+|Binder| |ReadTheDocs| |PyPI| |PyPI Versions| |LICENSE|
 
 **pymarketcap** is library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
@@ -102,3 +102,5 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: http://pymarketcap.readthedocs.io/?badge=latest
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true
    :target: https://ci.appveyor.com/project/mondeja/pymarketcap
+.. |LICENSE| image:: https://img.shields.io/pypi/l/pymarketcap.svg
+   :target: https://github.com/mondeja/pymarketcap/blob/master/LICENSE
