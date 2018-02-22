@@ -18,7 +18,7 @@ def teardown_function():
 def test_consistence():
     print("tests/test_scraper/test_download_logo.py::test_consistence")
     for size in tqdm([16, 32, 64, 128, 200]):
-        attempts = 5
+        attempts = 10
         _assert = True
         while attempts > 0:
             symbol = choice(pym.symbols)
@@ -39,15 +39,6 @@ def test_consistence():
             assert os.path.exists(res)
             os.remove(res)
             assert os.path.exists(res) == False
-
-def test_with_filename():
-    coin = choice(pym.coins)
-    filename = "%s.png" % coin
-    res = pym.download_logo(coin, filename=filename)
-
-    assert os.path.exists(res)
-    os.remove(res)
-    assert os.path.exists(res) == False
 
 def test_invalid():
     # Invalid currencies
