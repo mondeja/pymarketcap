@@ -3,13 +3,8 @@
 
 """Tests for ticker() method"""
 
-import time
-
 from pymarketcap import Pymarketcap
 pym = Pymarketcap(cache=False)
-
-def teardown_function():
-    time.sleep(1)
 
 class TypeTester:
     def _name(self, value): assert type(value) == str

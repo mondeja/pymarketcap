@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from random import choice, uniform
 from operator import lt, gt, eq
 
@@ -12,9 +11,6 @@ pym = Pymarketcap()
 
 currencies_to_convert = pym.currencies_to_convert
 currencies_to_convert.remove("USD")
-
-def teardown_function():
-    time.sleep(1)
 
 def test_USD_to_USD():
     value = uniform(1, 1000)

@@ -12,20 +12,13 @@ import pytest
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_symbols = list(pym.correspondences.keys())
-
 def teardown_function():
     time.sleep(1)
 
 class TypeTester:
     def _id(self, value): assert type(value) == str
     def _name(self, value): assert type(value) == str
-    def _symbol(self, value):
-        int_symbols = [1337, 42, 888, 808, 611, 300]
-        _type = str
-        if value in int_symbols:
-            _type = int
-        assert type(value) == _type
+    def _symbol(self, value): assert type(value) == str
     def _rank(self, value): assert type(value) == int
     def _price_usd(self, value): assert type(value) in [float, type(None)]
     def _price_btc(self, value): assert type(value) in [float, type(None)]
@@ -71,7 +64,7 @@ class TestWithParams:
         assert len(res) == 385
 
     def test_currency(self):
-        symbol = choice(all_symbols)
+        symbol = choice(pym.symbols)
         res = pym.ticker(symbol)
         print("(Currency: %s)" % symbol, end=" ")
 
@@ -94,7 +87,7 @@ class TestWithParams:
             symbol = None
             badge = choice(pym.ticker_badges)
             if currency:
-                symbol = choice(all_symbols)
+                symbol = choice(pym.symbols)
                 print("(Currency: %s - Badge: %s)" % (symbol, badge), end=" | ")
             else:
                 print("(Badge: %s)" % badge, end=" ")

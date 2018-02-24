@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from datetime import datetime, timedelta
 from random import choice
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-all_currencies = list(pym.correspondences.keys())
-
-def teardown_function():
-    time.sleep(1)
 
 class TypeTester:
     def _date(self, value): assert type(value) == datetime
@@ -25,7 +19,7 @@ class TypeTester:
 tt = TypeTester()
 
 def test_types():
-    symbol = choice(all_currencies)
+    symbol = choice(pym.coins)
     print("(Currency: %s)" % symbol, end=" ")
     res = pym.historical(symbol)
     assert type(res) == list
@@ -38,7 +32,7 @@ def test_types():
             ))
 
 def test_consistence():
-    symbol = choice(all_currencies)
+    symbol = choice(pym.coins)
     symbol = "TLE"
     print("(Currency: %s)" % symbol, end=" ")
     res = list(pym.historical(symbol))

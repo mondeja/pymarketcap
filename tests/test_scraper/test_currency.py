@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from random import choice
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-def teardown_function():
-    time.sleep(1)
 
 class TypeTester:
     def _source_code(self, value): assert type(value) in [str, type(None)]

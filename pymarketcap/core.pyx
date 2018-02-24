@@ -43,8 +43,8 @@ cdef class Pymarketcap:
             time. If disabled, some methods couldn't be called, use
             this attribute with caution. As default, ``True``.
     """
-
     cdef readonly dict correspondences
+    cdef readonly dict ids_correspondences
     cdef readonly list _symbols
     cdef readonly list _coins
     cdef readonly int total_currencies
@@ -90,15 +90,18 @@ cdef class Pymarketcap:
         """Internal function to renew cached instance attributes."""
         if self.debug:
             print("Caching useful data...")
+
+        main_cache = self._cache_symbols_ids()
         #: dict: Correspondences between symbols and coins names
-        self.correspondences = self._cache_symbols()
+        self.correspondences = main_cache[0]
+        self.ids_correspondences = main_cache[1]
+
+        # Method properties:
         self._symbols = sorted(list(self.correspondences.keys()))
         self._coins = sorted(list(self.correspondences.values()))
         self.total_currencies = self.ticker()[-1]["rank"]
-        sleep(.5)
         self.currencies_to_convert = sorted(self._currencies_to_convert())
         self.converter_cache = [self.currency_exchange_rates, time()]
-        sleep(.5)
         self._exchange_names = sorted(self.__exchange_names())
         self._exchange_slugs = sorted(self.__exchange_slugs())
 
@@ -147,18 +150,20 @@ cdef class Pymarketcap:
             response = 1
         return response
 
-    cpdef _cache_symbols(self):
+    cpdef _cache_symbols_ids(self):
         """Internal function for load in cache al symbols
         in coinmarketcap with their respectives currency names."""
         cdef bytes url
         url = b"https://files.coinmarketcap.com/generated/search/quick_search.json"
         res = loads(self._get(url))
-        response = {}
+        symbols, ids = {}, {}
         for currency in res:
-            response[currency["symbol"]] = currency["slug"].replace(" ", "")
+            # Symbols and slugs
+            symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
+            ids[currency["symbol"]] = currency["id"]
         for original, correct in self.exceptional_coin_slugs.items():
-            response[original] = correct
-        return response
+            symbols[original] = correct
+        return (symbols, ids)
 
     # ====================================================================
 
@@ -227,19 +232,26 @@ cdef class Pymarketcap:
             The type depends if currency param is provided or not.
         """
         cdef bytes url
+        cdef short i, len_i
         if not currency:
             url = b"https://api.coinmarketcap.com/v1/ticker/?%s" % b"limit=%d" % limit
             url += b"&start=%d" % start
             url += b"&convert=%s" % convert.encode()
             res = self._get(url)
-            return loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))
+            response = loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))
+            len_i = len(response)
+            for i in range(len_i):
+                response[i]["symbol"] = str(response[i]["symbol"])
         else:
             if self._is_symbol(currency):
                 currency = self.correspondences[currency]
             url = b"https://api.coinmarketcap.com/v1/ticker/%s" % currency.encode()
             url += b"?convert=%s" % convert.encode()
             res = self._get(url)
-            return loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))[0]
+            response = loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))[0]
+            response["symbol"] = str(response["symbol"])
+        return response
+
 
     # ====================================================================
 
@@ -899,25 +911,23 @@ cdef class Pymarketcap:
         """
         if self._is_symbol(name):
             try:
-                name = self.correspondences[name]
+                _name = self.ids_correspondences[name]
             except KeyError:
-                if name not in list(self.correspondences.keys()):
+                if name not in list(self.ids_correspondences.keys()):
                     raise ValueError(
                         "The currency %s is not valid. See 'symbols' instance attribute." % name
                     )
+        else:
+            _name = name
 
-        url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%s.png"
-        url = url_schema % (size, size, name)
+        url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%d.png"
+        url = url_schema % (size, size, _name)
         if not filename:
-            filename = "%s_%dx%d.png" % (name, size, size)
+            filename = "%s_%dx%d.png" % (self.correspondences[name], size, size)
         try:
             res = urlretrieve(url, filename)
         except HTTPError as e:
             if e.code == 403:
-                if name not in list(self.correspondences.values()):
-                    raise ValueError(
-                        "The currency %s is not valid. See 'coins' instance attribute." % name
-                    )
                 valid_sizes = [16, 32, 64, 128, 200]
                 if size in valid_sizes:
                     raise ValueError(

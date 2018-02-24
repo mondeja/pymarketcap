@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from random import choice
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 all_symbols = pym.symbols
-
-def teardown_function(function):
-    time.sleep(1)
 
 def test_types():
     symbol = choice(all_symbols)

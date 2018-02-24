@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
-
 from pymarketcap import Pymarketcap
 pym = Pymarketcap(cache=False)
-
-def teardown_function(function):
-    time.sleep(1)
 
 def test_types():
     res = pym.graphs.dominance()

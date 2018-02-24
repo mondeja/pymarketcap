@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import time
+from time import sleep
 from random import choice
 from urllib.error import HTTPError
 
@@ -12,20 +12,18 @@ from tqdm import tqdm
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-def teardown_function():
-    time.sleep(1)
-
 def test_consistence():
     print("tests/test_scraper/test_download_logo.py::test_consistence")
     for size in tqdm([16, 32, 64, 128, 200]):
-        attempts = 10
+        attempts = 20
         _assert = True
         while attempts > 0:
             symbol = choice(pym.symbols)
             tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
             try:
                 res = pym.download_logo(symbol, size=size)
-            except (HTTPError, ValueError):
+            except ValueError as e:
+                print(e)
                 attempts -= 1
                 _assert = False
                 if attempts == 0:
@@ -34,22 +32,19 @@ def test_consistence():
                 break
         if _assert:
             assert res == "%s_%dx%d.png" % (pym.correspondences[symbol], size, size)
-            time.sleep(.5)
+            sleep(.5)
 
             assert os.path.exists(res)
             os.remove(res)
             assert os.path.exists(res) == False
+        else:
+            raise AssertionError("0 coins downloaded. Check it!")
 
 def test_invalid():
     # Invalid currencies
-    map_coin_errmsg = {
-        "OADVDOVASDYIV": "See 'symbols' instance attribute.",
-        "aspifhaspfias": "See 'coins' instance attribute."
-    }
-    for fakecoin, errmsg in map_coin_errmsg.items():
-        with pytest.raises(ValueError) as excinfo:
-            pym.download_logo(fakecoin)
-        assert errmsg in str(excinfo)
+    with pytest.raises(ValueError) as excinfo:
+        pym.download_logo("OADVDOVASDYIV")
+    assert "See 'symbols' instance attribute." in str(excinfo)
 
     # Invalid size
     size = 250

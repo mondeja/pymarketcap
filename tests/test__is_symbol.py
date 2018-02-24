@@ -1,41 +1,32 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from random import choice
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_symbols = list(pym.correspondences.keys())
-all_slugs = list(pym.correspondences.values())
-
-def teardown_function(function):
-    time.sleep(2)
-
 def test_types():
-    symbol = choice(all_symbols)
+    symbol = choice(pym.symbols)
     print("(Symbol: %s)" % symbol, end=" ")
     res = pym._is_symbol(symbol)
     assert type(res) == bool
 
-    slug = choice(all_slugs)
+    slug = choice(pym.coins)
     res = pym._is_symbol(slug)
     assert type(res) == bool
 
 def test_consistence():
-    existent_symbols = pym.correspondences.keys()
-
     # Symbol existent
-    symbol = choice(all_symbols)
+    symbol = choice(pym.symbols)
     print("(Symbol: %s)" % symbol, end=" ")
     res = pym._is_symbol(symbol)
-    assert res and symbol in existent_symbols
+    assert res and symbol in pym.symbols
 
     # Eceptional symbol existent
     symbol = None
     for symbol in pym.exceptional_coin_slugs_keys:
-        if symbol in existent_symbols:
+        if symbol in pym.symbols:
             break
     res = pym._is_symbol(symbol)
     assert res

@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from random import choice
 from urllib.request import urlopen
 from re import findall as re_findall
 
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-all_currencies = pym.coins
-
-def teardown_function(function):
-    time.sleep(1)
 
 class TypeTester:
     def _source(self, value): assert type(value) == str
@@ -51,14 +45,14 @@ def assert_consistence(res, coin_slug):
     assert_number_of_markets(res, coin_slug)
 
 def test_without_convert():
-    coin = choice(all_currencies)
+    coin = choice(pym.coins)
     print("(Currency: %s)" % coin, end=" ")
     res = pym.markets(coin)
     assert_types(res)
     assert_consistence(res, coin)
 
 def test_with_convert():
-    coin = choice(all_currencies)
+    coin = choice(pym.coins)
     print("(Currency: %s)" % coin, end=" ")
     res = pym.markets(coin, convert="BTC")
     assert_types(res)

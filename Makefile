@@ -19,7 +19,7 @@ dev-install:
 	python3 setup.py install
 
 uninstall:
-	pip3 uninstall pymarketcap -y
+	sudo pip3 uninstall pymarketcap -y
 	make restore-sources
 
 clean:

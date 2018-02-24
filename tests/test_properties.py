@@ -3,20 +3,35 @@
 
 """Test wrapper properties"""
 
-import time
-
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-def teardown_function(function):
-    time.sleep(1)
 
-
-###   API METHODS   ###
+###   API METHOD CACHERS   ###
 
 def test_correspondences():
+    res = pym.correspondences
+
+    # Test types
+    assert type(res) == dict
+    for key, value in res.items():
+        assert type(key) == str
+        assert type(value) == str
+
     # Test consistence
-    assert pym.correspondences == pym._cache_symbols()
+    assert res == pym._cache_symbols_ids()[0]
+
+def test_ids_correspondences():
+    res = pym.ids_correspondences
+
+    # Test types
+    assert type(res) == dict
+    for key, value in res.items():
+        assert type(key) == str
+        assert type(value) == int
+
+    # Test consistence
+    assert res == pym._cache_symbols_ids()[1]
 
 def test_symbols():
     res = pym.symbols
@@ -49,7 +64,7 @@ def test_total_currencies():
     assert res == len(pym.ticker())
 
 
-###   WEB SCRAPER METHODS   ###
+###   WEB SCRAPER METHOD CACHERS   ###
 
 def test_currency_exchange_rates():
     # Test types

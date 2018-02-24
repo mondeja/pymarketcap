@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
+from time import sleep
 from random import choice
 from urllib.request import urlopen
 from tqdm import tqdm
@@ -29,6 +29,7 @@ endpoints = [
     ("graphs.global_cap", ["https://graphs2.coinmarketcap.com/global/marketcap-total/",
                            "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"]),
     ("graphs.dominance",   "https://graphs2.coinmarketcap.com/global/dominance/"),
+    ("download_logo",      "https://files.coinmarketcap.com/static/img/coins/64x64/1.png")
 ]
 
 def assert_up(ep):
@@ -46,4 +47,4 @@ def test_endpoints():
         for ep in eps:
             tqdm.write("%18s() --> %s" % (method, ep))
             assert_up(ep)
-            time.sleep(1)
+            sleep(.1)
