@@ -55,9 +55,12 @@ cpdef currency(res, convert):
     vol_24h = _total_markets_volume.group(1)
     try: total_cap = _total_markets_cap.group(1)
     except AttributeError: total_cap = "?"
+    try: price = float(_price.group(1))
+    except ValueError: price = "?"
+
     response = {"total_markets_cap": float(total_cap) if total_cap != "?" else None,
                 "total_markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
-                "price": float(_price.group(1)) if _price else None}
+                "price": price if price != "?" else None}
 
     # Circulating, total and maximum supply
     supply = re.findall(

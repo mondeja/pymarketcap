@@ -3,7 +3,7 @@
 import logging
 
 # Parameters
-DEFAULT_TIMEOUT = 20
+DEFAULT_TIMEOUT = 15
 
 # Data
 exceptional_coin_slugs = {

@@ -184,7 +184,7 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_names = sorted(self.__exchange_names())
+            self._exchange_names = self.__exchange_names()
             return self._exchange_names
 
     cpdef __exchange_names(self):
@@ -205,7 +205,7 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_slugs = sorted(self.__exchange_slugs())
+            self._exchange_slugs = self.__exchange_slugs()
             return self._exchange_slugs
 
     cpdef __exchange_slugs(self):
