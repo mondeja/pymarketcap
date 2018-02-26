@@ -1,6 +1,11 @@
 pytest>=3.4.0
+pytest-asyncio>=0.8.0
 tox>=3.0.0rc1
 tqdm>=4.19.5
 tabulate>=0.8.2
 sphinx>=1.7.0
 cython>=0.27.3
+
+aiohttp>=3.0.2
+aiodns>=1.1.1
+cchardet>=2.1.1

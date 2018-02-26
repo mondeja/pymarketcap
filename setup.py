@@ -66,9 +66,10 @@ def declare_cython_extension(ext_name, libraries=None):
 
 ext_modules = [
     declare_cython_extension("pymarketcap.core"),
+    declare_cython_extension("pymarketcap.processer")
 ]
 
-package_data={"pymarketcap": ["core.pyx"]}
+package_data={"pymarketcap": ["core.pyx", "processer.pyx"]}
 
 if COMPILE_CURL:
     ext_modules.append(
@@ -83,6 +84,7 @@ else:
     for i, line in enumerate(content):
         if "from pymarketcap.curl import get_to_memory" in line:
             content[i] = line.replace("curl", "url")
+            break
 
     with open(core_path, "w") as f:
         f.writelines(content)
@@ -101,7 +103,7 @@ with open(os.path.join(os.path.dirname(__file__), "requirements.txt")) as f:
 
 setup(
     name="pymarketcap",
-    version = "3.9.107",
+    version = "3.9.111",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",

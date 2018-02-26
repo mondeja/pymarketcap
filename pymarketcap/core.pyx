@@ -4,16 +4,22 @@
 # Standard Python modules
 import re
 from json import loads
-from datetime import datetime, timedelta
-from time import time, sleep
+from datetime import datetime
+from time import time
 from collections import OrderedDict
 from urllib.request import urlretrieve
 from urllib.error import HTTPError
 
 # Internal Cython modules
 from pymarketcap.curl import get_to_memory
+from pymarketcap import processer
+_is_symbol = processer._is_symbol
 
 # Internal Python modules
+from pymarketcap.consts import (
+    DEFAULT_TIMEOUT,
+    exceptional_coin_slugs
+)
 from pymarketcap.errors import (
     CoinmarketcapHTTPError,
     CoinmarketcapHTTPError404,
@@ -43,13 +49,13 @@ cdef class Pymarketcap:
             time. If disabled, some methods couldn't be called, use
             this attribute with caution. As default, ``True``.
     """
-    cdef readonly dict correspondences
-    cdef readonly dict ids_correspondences
+    cdef readonly dict _correspondences
+    cdef readonly dict _ids_correspondences
     cdef readonly list _symbols
     cdef readonly list _coins
-    cdef readonly int total_currencies
-    cdef readonly list currencies_to_convert
-    cdef readonly list converter_cache
+    cdef readonly int  _total_currencies
+    cdef readonly list _currencies_to_convert
+    cdef readonly list _converter_cache
     cdef readonly list _exchange_names
     cdef readonly list _exchange_slugs
 
@@ -57,53 +63,14 @@ cdef class Pymarketcap:
     cdef public object graphs
     cdef public bint debug
 
-    cdef readonly dict exceptional_coin_slugs
-    cdef readonly list exceptional_coin_slugs_keys
-    cdef readonly list exceptional_coin_slugs_values
-
-    def __init__(self, timeout=20, debug=False, cache=True):
+    def __init__(self, timeout=DEFAULT_TIMEOUT, debug=False):
         self.timeout = timeout
         self.debug = debug
 
         #: object: Initialization of graphs internal interface
         self.graphs = type("Graphs", (), self._graphs_interface)
 
-        self.exceptional_coin_slugs = {
-            "42": "42-coin",
-            "808": "808coin",
-            "611": "sixeleven",
-            "300": "300-token",
-            "888": "octocoin",
-            "$$$": "money",
-            "BTBc": "bitbase",
-        }
-
-        self.exceptional_coin_slugs_keys = list(self.exceptional_coin_slugs.keys())
-        self.exceptional_coin_slugs_values = list(self.exceptional_coin_slugs.values())
-
-        if cache:
-            self._renew_cache()
-
-    ######   RUNTIME INIT   #######
-
-    def _renew_cache(self):
-        """Internal function to renew cached instance attributes."""
-        if self.debug:
-            print("Caching useful data...")
-
-        main_cache = self._cache_symbols_ids()
-        #: dict: Correspondences between symbols and coins names
-        self.correspondences = main_cache[0]
-        self.ids_correspondences = main_cache[1]
-
-        # Method properties:
-        self._symbols = sorted(list(self.correspondences.keys()))
-        self._coins = sorted(list(self.correspondences.values()))
-        self.total_currencies = self.ticker()[-1]["rank"]
-        self.currencies_to_convert = sorted(self._currencies_to_convert())
-        self.converter_cache = [self.currency_exchange_rates, time()]
-        self._exchange_names = sorted(self.__exchange_names())
-        self._exchange_slugs = sorted(self.__exchange_slugs())
+    ######   UTILS   #######
 
     @property
     def _graphs_interface(self):
@@ -113,11 +80,157 @@ cdef class Pymarketcap:
             "dominance": self._dominance
         }
 
-    ######   UTILS   #######
+    @property
+    def correspondences(self):
+        res = self._correspondences
+        if res:
+            return res
+        else:
+            main_cache = self._cache_symbols_ids()
+            self._correspondences = main_cache[0]
+            self._ids_correspondences = main_cache[1]
+            return self._correspondences
+
+    @property
+    def ids_correspondences(self):
+        res = self._ids_correspondences
+        if res:
+            return res
+        else:
+            main_cache = self._cache_symbols_ids()
+            self._correspondences = main_cache[0]
+            self._ids_correspondences = main_cache[1]
+            return self._ids_correspondences
+
+    cpdef _cache_symbols_ids(self):
+        """Internal function for load in cache al symbols
+        in coinmarketcap with their respectives currency names."""
+        cdef bytes url
+        url = b"https://files.coinmarketcap.com/generated/search/quick_search.json"
+        res = loads(self._get(url))
+        symbols, ids = {}, {}
+        for currency in res:
+            symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
+            ids[currency["symbol"]] = currency["id"]
+        for original, correct in exceptional_coin_slugs.items():
+            symbols[original] = correct
+        return (symbols, ids)
+
+    @property
+    def symbols(self):
+        """Symbols of currencies (in capital letters).
+
+        Returns (list):
+            All currency symbols provided by coinmarketcap.
+        """
+        res = self._symbols
+        if res:
+            return res
+        else:
+            self._symbols = sorted(list(self.correspondences.keys()))
+            return self._symbols
+
+    @property
+    def coins(self):
+        """Coins not formatted names for all currencies
+        (in lowercase letters) used internally by urls.
+
+        Returns (list):
+            All currency coins names provided by coinmarketcap.
+        """
+        res = self._coins
+        if res:
+            return res
+        else:
+            self._coins = sorted(list(self.correspondences.values()))
+            return self._coins
+
+    @property
+    def total_currencies(self):
+        res = self._total_currencies
+        if res:
+            return res
+        else:
+            self._total_currencies = self.ticker()[-1]["rank"]
+            return self._total_currencies
+
+    @property
+    def currencies_to_convert(self):
+        res = self._currencies_to_convert
+        if res:
+            return res
+        else:
+            self._currencies_to_convert = self.__currencies_to_convert()
+            return self._currencies_to_convert
+
+    cpdef __currencies_to_convert(self):
+        """Internal function for get currencies from and to convert
+            values in convert() method. Don't use this, but cached
+            ``currencies_to_convert`` instance attribute instead.
+
+        Returns (list):
+            All currencies that could be passed to convert() method.
+        """
+        res = self._get(b"https://coinmarketcap.com")
+        currencies = re.findall(r'data-([a-z]+)="\d', res[-10000:-2000])
+        response = [currency.upper() for currency in currencies]
+        response.extend([str(currency["symbol"]) for currency in self.ticker()])
+        return sorted(response)
+
+    @property
+    def exchange_names(self):
+        """Get all exchange formatted names provided by coinmarketcap."""
+        res = self._exchange_names
+        if res:
+            return res
+        else:
+            self._exchange_names = sorted(self.__exchange_names())
+            return self._exchange_names
+
+    cpdef __exchange_names(self):
+        """Internal function for get all exchange names
+            available currently in coinmarketcap. Check ``exchange_names``
+            instance attribute for the cached method counterpart.
+
+        Returns (list):
+            All exchanges names formatted in coinmarketcap.
+        """
+        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
+        return re.findall(r'<a href="/exchanges/.+/">((?!View More).+)</a>', res)[5:]
+
+    @property
+    def exchange_slugs(self):
+        """Get all exchange raw names provided by coinmarketcap."""
+        res = self._exchange_slugs
+        if res:
+            return res
+        else:
+            self._exchange_slugs = sorted(self.__exchange_slugs())
+            return self._exchange_slugs
+
+    cpdef __exchange_slugs(self):
+        """Internal function for obtain all exchanges slugs.
+
+        Returns (list):
+            All exchanges slugs from coinmarketcap.
+        """
+        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
+        parsed = re.findall(r'<a href="/exchanges/(.+)/">', res)[5:]
+        return list(OrderedDict.fromkeys(parsed)) # Remove duplicates without change order
+
+    @property
+    def converter_cache(self):
+        res = self._converter_cache
+        if res:
+            return res
+        else:
+            self._converter_cache = [self.currency_exchange_rates, time()]
+            return self._converter_cache
 
     cdef _get(self, char *url):
         """Internal function to make and HTTP GET request
-        using the curl Cython bridge to C library."""
+        using the curl Cython bridge to C library or urllib
+        standard library, depending on the installation."""
         cdef int status
         req = get_to_memory(<char *>url, self.timeout, <bint>self.debug)
         status = req.status_code
@@ -133,41 +246,9 @@ cdef class Pymarketcap:
                 print(req.url)
                 raise CoinmarketcapHTTPError(msg)
 
-    cpdef _is_symbol(self, unicode currency):
-        """Internal function for check
-        if a currency string may be a symbol or not.
-        This function is not strict, so if you pass
-        _is_symbol("OBASDFPAFFFOUASVBF") will returns True
-        but in this context we don't need to check if
-        the user has introduced a valid symbol.
-
-        Returns bint:
-            1 if True, 0 if False
-        """
-        cdef bint response
-        response = 0        # Is not strictly:
-        if currency.isupper() or currency in self.exceptional_coin_slugs_keys:
-            response = 1
-        return response
-
-    cpdef _cache_symbols_ids(self):
-        """Internal function for load in cache al symbols
-        in coinmarketcap with their respectives currency names."""
-        cdef bytes url
-        url = b"https://files.coinmarketcap.com/generated/search/quick_search.json"
-        res = loads(self._get(url))
-        symbols, ids = {}, {}
-        for currency in res:
-            # Symbols and slugs
-            symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
-            ids[currency["symbol"]] = currency["id"]
-        for original, correct in self.exceptional_coin_slugs.items():
-            symbols[original] = correct
-        return (symbols, ids)
-
     # ====================================================================
 
-    #######   API   #######
+                           #######   API   #######
 
     cpdef stats(self, convert="USD"):
         """ Get global cryptocurrencies statistics.
@@ -179,7 +260,7 @@ cdef class Pymarketcap:
                 As default ``"USD"``.
 
         Returns (dict):
-            Global markets statistics
+            Global markets statistics.
         """
         return loads(self._get(
             b"https://api.coinmarketcap.com/v1/global/?convert=%s" % convert.encode()
@@ -189,25 +270,6 @@ cdef class Pymarketcap:
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
         return
-
-    @property
-    def symbols(self):
-        """Symbols of currencies (in capital letters).
-
-        Returns (list):
-            All currency symbols provided by coinmarketcap.
-        """
-        return self._symbols
-
-    @property
-    def coins(self):
-        """Coins not formatted names for all currencies
-        (in lowercase letters) used internally by urls.
-
-        Returns (list):
-            All currency coins names provided by coinmarketcap.
-        """
-        return self._coins
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -243,7 +305,7 @@ cdef class Pymarketcap:
             for i in range(len_i):
                 response[i]["symbol"] = str(response[i]["symbol"])
         else:
-            if self._is_symbol(currency):
+            if _is_symbol(currency):
                 currency = self.correspondences[currency]
             url = b"https://api.coinmarketcap.com/v1/ticker/%s" % currency.encode()
             url += b"?convert=%s" % convert.encode()
@@ -255,7 +317,7 @@ cdef class Pymarketcap:
 
     # ====================================================================
 
-    #######    WEB SCRAPER    #######
+                       #######    WEB SCRAPER    #######
 
     @property
     def currency_exchange_rates(self):
@@ -270,23 +332,9 @@ cdef class Pymarketcap:
         response = {currency.upper(): float(rate) for currency, rate in rates}
         for currency in self.ticker():
             try:
-                response[str(currency["symbol"])] = float(currency["price_usd"])
+                response[currency["symbol"]] = float(currency["price_usd"])
             except TypeError:
                 continue
-        return response
-
-    cpdef _currencies_to_convert(self):
-        """Internal function for get currencies from and to convert
-            values in convert() method. Don't use this, but cached
-            ``currencies_to_convert`` instance attribute instead.
-
-        Returns (list):
-            All currencies that could be passed to convert() method.
-        """
-        res = self._get(b"https://coinmarketcap.com")
-        currencies = re.findall(r'data-([a-z]+)="\d', res[-10000:-2000])
-        response = [currency.upper() for currency in currencies]
-        response.extend([str(currency["symbol"]) for currency in self.ticker()])
         return response
 
     cpdef convert(self, value, unicode currency_in, unicode currency_out):
@@ -333,7 +381,7 @@ cdef class Pymarketcap:
         Returns (dict):
             Aditional general metadata not supported by other methods.
         """
-        if self._is_symbol(name):
+        if _is_symbol(name):
             name = self.correspondences[name]
         convert = convert.lower()
 
@@ -342,67 +390,7 @@ cdef class Pymarketcap:
         )[20000:]
 
         # Total market capitalization and volume 24h
-        if convert == "usd":
-            _total_markets_cap = re.search(
-                r'data-currency-market-cap.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-            )
-            _total_markets_volume = re.search(
-                r'data-currency-volume.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-            )
-            _price = re.search(r'quote_price.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res)
-        else:
-            _total_markets_cap = re.search(
-                r'data-format-market-cap.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-            )
-            _total_markets_volume = re.search(
-                r'data-format-volume-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-            )
-            _price = re.search(
-                r'data-format-price-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-            )
-
-        vol_24h = _total_markets_volume.group(1)
-        try: total_cap = _total_markets_cap.group(1)
-        except AttributeError: total_cap = "?"
-        response = {"total_markets_cap": float(total_cap) if total_cap != "?" else None,
-                    "total_markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
-                    "price": float(_price.group(1)) if _price else None}
-
-        # Circulating, total and maximum supply
-        supply = re.findall(
-            r'data-format-supply.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
-        )
-        response["circulating_supply"] = float(supply[0]) if supply[0] != "?" else None
-        if len(supply) > 1:
-            response["max_supply"] = float(supply[-1])
-        if len(supply) > 2:
-            response["total_supply"] = float(supply[1])
-
-        response["webs"] = re.findall(r'<a href="(.+)" target="_blank">Website\s*\d*</a>', res)
-
-        response["explorers"] = re.findall(
-            r'<a href="(.+)" target="_blank">Explorer\s*\d*</a>', res
-        )
-
-        source_code = re.search(r'<a href="(.+)" target="_blank">Source Code</a>', res)
-        response["source_code"] = source_code.group(1) if source_code else None
-
-        response["message_boards"] = re.findall(
-            r'<a href="(.+)" target="_blank">Message Board\s*\d*</a>', res
-        )
-
-        response["chats"] = re.findall(
-            r'<a href="(.+)" target="_blank">Chat\s*\d*</a>', res
-        )
-
-        response["mineable"] = True if re.search(r'label-warning">Mineable', res) else False
-
-        response["rank"] = int(re.search(r'Rank (\d+)</span>', res).group(1))
-
-        announcement = re.search(r'<a href="(.+)" target="_blank">Announcement</a>', res)
-        response["announcement"] = announcement.group(1) if announcement else None
-
-        return response
+        return processer.currency(res, convert)
 
     cpdef markets(self, unicode name, convert="USD"):
         """Get available coinmarketcap markets data.
@@ -417,7 +405,7 @@ cdef class Pymarketcap:
         Returns (list):
             Markets on wich provided currency is currently tradeable.
         """
-        if self._is_symbol(name):
+        if _is_symbol(name):
             name = self.correspondences[name]
         convert = convert.lower()
 
@@ -425,24 +413,7 @@ cdef class Pymarketcap:
             b"https://coinmarketcap.com/currencies/%s/" % name.encode()
         )[20000:]
 
-        sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
-        markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
-        volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
-        price = re.findall(r'"price" .*data-%s="(\?|\d+\.*\d*e*[-|+]*\d*)' % convert, res)
-        perc_volume = re.findall(r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
-        updated = re.findall(r'text-right\s.*">(.+)</td>', res)
-
-        return [
-            {
-                "source": src,
-                "pair": mark,
-                "volume_24h": float(vol),
-                "price": float(price),
-                "percent_volume": float(perc),
-                "updated": up == "Recently"
-            } for src, mark, vol, price, perc, up in zip(sources, markets, volume_24h,
-                                                  price, perc_volume, updated)
-        ]
+        return processer.markets(res, convert)
 
     cpdef ranks(self):
         """Returns gainers and losers for the periods 1h, 24h and 7d.
@@ -451,28 +422,9 @@ cdef class Pymarketcap:
             A dictionary with 2 keys (gainers and losers) whose values
             are the periods "1h", "24h" and "7d".
         """
-        cdef int i = 30
         res = self._get(b"https://coinmarketcap.com/gainers-losers/")
 
-        names = re.findall(r'<a href="/currencies/.+/">(.+)</a>.*', res)[6:]
-        symbols = re.findall(r'<td class="text-left">(\w+)</td>', res)
-        volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
-        price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
-        percent_change = re.findall(r'right" .*data-usd="(-*\d+\.*[\d|e|-]*)"', res)
-
-        index_map = {
-            "gainers": {"1h": 0, "7d": 30, "24h": 60},
-            "losers": {"1h": 90, "7d": 150, "24h": 120}
-        }
-
-        return {rank: {period: [{
-            "name": names[index_map[rank][period]],
-            "symbol": symbols[index_map[rank][period]],
-            "volume_24h": float(volume_24h[index_map[rank][period]]),
-            "price": float(price[index_map[rank][period]]),
-            "percent_change": float(percent_change[index_map[rank][period]])
-        } for _ in range(i)] \
-             for period in ["1h", "24h", "7d"] } for rank in ["gainers", "losers"]}
+        return processer.ranks(res)
 
     def historical(self, unicode currency,
                    start=datetime(2008, 8, 18),
@@ -495,9 +447,8 @@ cdef class Pymarketcap:
             Historical dayly OHLC for a currency.
         """
         cdef bytes url, _start, _end
-        cdef long len_i, i, i2, i3
 
-        if self._is_symbol(currency):
+        if _is_symbol(currency):
             currency = self.correspondences[currency]
 
         url = b"https://coinmarketcap.com/currencies/%s/historical-data/" % currency.encode()
@@ -506,37 +457,7 @@ cdef class Pymarketcap:
         url += b"?start=%s" % _start + b"&" + b"end=%s" % _end
         res = self._get(url)[50000:]
 
-        dates = re.findall(r'<td class="text-left">(.+)</td>', res)
-        vol_marketcap = re.findall(r'cap [\w|-]+="(-|\d+\.*[\d+-e]*)"', res)
-        ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res)
-
-        len_i = len(dates)
-        i = 0
-        i2 = 0
-        i3 = 0
-
-        response = []
-        for _ in range(len_i):
-            date = datetime.strptime(dates[i], '%b %d, %Y')
-            if date < start:
-                continue
-            else:
-                if date <= end:
-                    response.append({
-                        "date": date,
-                        "open": float(ohlc[i3]),
-                        "high": float(ohlc[i3+1]),
-                        "low": float(ohlc[i3+2]),
-                        "close": float(ohlc[i3+3]),
-                        "volume": float(ohlc[i2]),
-                        "market_cap": float(ohlc[i2+1])
-                    })
-                else:
-                    break
-            i += 1
-            i2 += 2
-            i3 += 4
-        return list(reversed(response)) if revert else response
+        return processer.historical(res, start, end, revert)
 
     def recently(self, convert="USD"):
         """Get recently added currencies along with other metadata.
@@ -546,46 +467,14 @@ cdef class Pymarketcap:
                 volumes and percent_changes between USD and BTC.
                 As default ``"USD"``.
 
-        Returns (generator):
+        Returns (list):
             Recently added currencies data.
         """
         convert = convert.lower()
         url = b"https://coinmarketcap.com/new/"
         res = self._get(url)
 
-        names = re.findall(r'<a href="/currencies/.+/">(.+)</a>', res)[6:]
-        symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
-        added = re.findall(r'<td class="text-right.*">(Today|\d+ days ago)</td>', res)
-        mcap = re.findall(r'cap .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
-        prices = re.findall(r'price" .*data-%s="(\d+\.*[\d|e|-|\+]*)"' % convert, res)
-        supply = re.findall(r'data-supply="(\?|\d+\.*[\d|e|-|\+]*)"', res)
-        vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
-        p_change = re.findall(
-            r'change .*data-%s="(\?|-*\d+\.*[\d|e|-|\+]*)"|<td class="text-right">(\?)</td>' \
-            % convert, res
-        )
-
-        for n, sym, add, mcp, pr, sup, vol, perc in zip(
-                names, symbols, added, mcap, prices, supply, vol_24h, p_change
-            ):
-            try: perc_change = float(perc[0])
-            except ValueError: perc_change = None
-            try: market_cap = float(mcp)
-            except ValueError: market_cap = None
-            try: csupply = float(sup)
-            except ValueError: csupply = None
-            try: volume_24h = float(vol)
-            except ValueError: volume_24h = None
-            yield {
-                "name": n,
-                "symbol": sym,
-                "added": add,
-                "market_cap": market_cap,
-                "price": float(pr),
-                "circulating_supply": csupply,
-                "volume_24h": volume_24h,
-                "percent_change": perc_change
-            }
+        return list(processer.recently(res, convert))
 
     cpdef exchange(self, unicode name, convert="USD"):
         """Obtain data from a exchange passed as argument. See ``exchanges_slugs``
@@ -602,99 +491,19 @@ cdef class Pymarketcap:
             Data from a exchange. Keys: ``"name"``, ``"website"``,
             ``"volume"`` (total), ``"social"`` and ``"markets"``.
         """
+        cdef bytes url
         url = b"https://coinmarketcap.com/exchanges/%s/" % name.encode()
         try:
             res = self._get(url)[20000:]
         except CoinmarketcapHTTPError404:
             if name not in self.exchange_slugs:
                 raise ValueError("%s is not a valid exchange name. See exchange_slugs" % name \
-                    + " instance attribute for get all valid exchanges.")
+                                 + " instance attribute for get all valid exchanges.")
             else:
                 raise NotImplementedError
         convert = convert.lower()
 
-        currencies = re.findall(r'"market-name">(.+)</a>', res)
-        pairs = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
-        vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
-        prices = re.findall(r'price" .*data-%s="(\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
-        perc_vols = re.findall(r'percentage data-format-value="(\d+\.*\d*e{0,1}-{0,1}\d*)"', res)
-        updated = re.findall(r'text-right\s.*"\s*>(.+)</td>', res)
-
-        twitter_username = re.search(r'target="_blank">(@.+)</a>', res)
-        twitter_link = re.findall(r'"(https://twitter.com/[^\s]+)"', res) \
-            if twitter_username else None
-
-        formatted_name = re.search(r'<h1 class="text-large">\s*(.+)\s*</h1>', res).group(1)
-        web = re.search(r'title="Website">.*href="\s*([^\s|"]+)', res)
-
-        markets = []
-        for curr, pair, vol, price, perc_vol, up in zip(
-            currencies, pairs, vol_24h, prices, perc_vols, updated
-            ):
-            try: vol = float(vol)
-            except ValueError: vol = None
-            markets.append({
-                "currency": curr,
-                "pair": pair,
-                "vol_24h": vol,
-                "price": float(price),
-                "perc_volume": float(perc_vol),
-                "updated": up == "Recently"
-            })
-        if convert == "btc":
-            try: total_volume = float(perc_vols[0])
-            except ValueError: total_volume = None
-        else:
-            try:
-                total_volume = float(
-                    re.search(r'currency-volume data-usd="(\d+\.*[\d|e|-|\+]*)">', res).group(1)
-                )
-            except (AttributeError, ValueError):
-                total_volume = None
-
-        return {
-            "name": formatted_name,
-            "website": web.group(1) if web else None,
-            "volume": total_volume,
-            "social": {
-                "twitter": {
-                    "link": twitter_link[0] if twitter_link else None,
-                    "username": twitter_username.group(1) if twitter_username else None
-                }
-            },
-            "markets": markets
-        }
-
-    @property
-    def exchange_names(self):
-        """Get all exchange formatted names provided by coinmarketcap."""
-        return self._exchange_names
-
-    cpdef __exchange_names(self):
-        """Internal function for get all exchange names
-            available currently in coinmarketcap. Check ``exchange_names``
-            instance attribute for the cached method counterpart.
-
-        Returns (list):
-            All exchanges names formatted in coinmarketcap.
-        """
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
-        return re.findall('<a href="/exchanges/.+/">((?!View More).+)</a>', res)[5:]
-
-    @property
-    def exchange_slugs(self):
-        """Get all exchange raw names provided by coinmarketcap."""
-        return self._exchange_slugs
-
-    cpdef __exchange_slugs(self):
-        """Internal function for obtain all exchanges slugs.
-
-        Returns (list):
-            All exchanges slugs from coinmarketcap.
-        """
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
-        parsed = re.findall('<a href="/exchanges/(.+)/">', res)[5:]
-        return list(OrderedDict.fromkeys(parsed)) # Remove duplicates without change order
+        return processer.exchange(res, convert)
 
     cpdef exchanges(self, convert="USD"):
         """Get all the exchanges in coinmarketcap ranked by volumes
@@ -707,53 +516,11 @@ cdef class Pymarketcap:
         Returns (list):
             Exchanges with markets and other data included.
         """
-        cdef int i
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")[45000:]
+        cdef bytes url
+        url = b"https://coinmarketcap.com/exchanges/volume/24-hour/all/"
+        res = self._get(url)[45000:]
         convert = convert.lower()
-
-        exchanges = re.findall(r'\. <a href="/exchanges/.+/">(.+)</a>', res)
-        indexes = re.findall(r'<td>(\d+)</td>', res)
-        currencies = re.findall(r'/currencies/.+/">(.+)</a>', res)[2:]
-        links_pairs = re.findall(r'<a href="(.*)" .*_blank">(%s)</a>' % PAIRS_REGEX, res)
-        volumes = re.findall(
-            r'class="text-right .*volume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
-        )
-        prices = re.findall(r'ice" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
-        perc_volumes = re.findall(r'"percent-volume">(\d+\.*\d*)</span>', res)
-
-        response = []
-        for exc in exchanges:
-            markets = []
-            for _ in indexes:
-                i = int(_)
-                try: vol = float(volumes[i-1])
-                except ValueError: vol = None
-                try: price = float(prices[i-1])
-                except ValueError: price = None
-
-                markets.append({
-                    "name": currencies[i-1],
-                    "web": links_pairs[i-1][0],
-                    "pair": links_pairs[i-1][1],
-                    "volume": vol,
-                    "price": price,
-                    "perc_volume": float(perc_volumes[i-1])
-                })
-
-                try:
-                    if indexes[i] == "1":
-                        indexes = indexes[i:]
-                        currencies = currencies[i:]
-                        break
-                except IndexError:
-                    break
-
-            response.append({
-                "name": exc,
-                "markets": markets,
-            })
-
-        return response
+        return processer.exchanges(res, convert)
 
     cpdef tokens(self, convert="USD"):
         """Get data from platforms tokens
@@ -770,41 +537,7 @@ cdef class Pymarketcap:
         res = self._get(url)[40000:]
         convert = convert.lower()
 
-        names = re.findall(r'currency-name-container" href="/currencies/.+/">(.+)</a>', res)
-        symbols = re.findall(r'currency-symbol"><a href="/currencies/.+/">(.+)</a>', res)
-        platforms = re.findall(r'platform-name"><a href="/currencies/[\w-]*/">(.*)</a>', res)
-        caps = re.findall(
-            r'market-cap .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
-        )
-        prices = re.findall(r'price" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
-        supplys = re.findall(r'data-supply="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"', res)
-        vols_24h = re.findall(
-            r'volume" .*data-%s="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"' % convert, res
-        )
-
-        response = []
-        for n, sym, plat, mcap, price, sup, vol in zip(
-            names, symbols, platforms, caps, prices, supplys, vols_24h
-            ):
-            if plat == "": plat = None
-            try: mcap = float(mcap)
-            except ValueError: mcap = None
-            try: price = float(price)
-            except ValueError: price = None
-            try: sup = float(sup)
-            except ValueError: sup = None
-            try: vol = float(vol)
-            except ValueError: vol = None
-            response.append({
-                "name": n,
-                "symbol": sym,
-                "platform": plat,
-                "market_cap": mcap,
-                "price": price,
-                "circulating_supply": sup,
-                "volume_24h": vol
-            })
-        return response
+        return processer.tokens(res, convert)
 
     # ====================================================================
 
@@ -815,31 +548,36 @@ cdef class Pymarketcap:
 
         Args:
             currency (str): Currency to retrieve graphs data.
-            start (int, optional): Time to start retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default ``None``.
-            end (optional, datetime): Time to end retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default ``None``.
+            start (datetime, optional): Time to start retrieving
+                graphs data in datetime. As default ``None``.
+            end (datetime, optional): Time to end retrieving
+                graphs data in datetime. As default ``None``.
 
         Returns (dict):
             Dict info with next keys: ``"market_cap_by_available_supply"``,
-            ``"price_btc"``, ``"price_usd"``, ``"price_usd"``,
-            ``"volume_usd":`` and ``"price_platform"``.
+            ``"price_btc"``, ``"price_usd"``, ``"volume_usd":``
+            and ``"price_platform"``.
             For each value, a list of lists where each one
-            has two values [<timestamp>, <value>]
+            has two values [<datetime>, <value>]
         """
-        if self._is_symbol(name):
+        if _is_symbol(name):
             name = self.correspondences[name]
 
         url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % name.encode()
+        res = loads(self._get(url))
 
-        if start and end:
-            url += b"%s/%s/" % (str(start).encode(), str(end).encode())
-
-        return loads(self._get(url))
+        response = {}
+        for key in list(res.keys()):
+            group = []
+            for _tmp, data in res[key]:
+                tmp = datetime.fromtimestamp(int(_tmp/1000))
+                try:
+                    if tmp > start and tmp <= end:
+                        group.append([tmp, data])
+                except TypeError:
+                    group.append([tmp, data])
+            response[key] = group
+        return response
 
     cpdef _global_cap(self, bitcoin=True, start=None, end=None):
         """Get global market capitalization graphs, including
@@ -909,7 +647,7 @@ cdef class Pymarketcap:
         Returns (str):
             Filename of downloaded file if all was correct.
         """
-        if self._is_symbol(name):
+        if _is_symbol(name):
             try:
                 _name = self.ids_correspondences[name]
             except KeyError:

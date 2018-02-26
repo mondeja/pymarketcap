@@ -1,0 +1,345 @@
+
+"""This module process all core scraper methods raw responses."""
+
+# Standard Python modules
+import re
+from datetime import datetime
+
+# Internal Python modules
+from pymarketcap.consts import (
+    exceptional_coin_slugs_keys
+)
+
+# General utilities
+
+cpdef _is_symbol(unicode currency):
+    """Internal function for check
+    if a currency string may be a symbol or not.
+    This function is not strict, so if you pass
+    _is_symbol("OBASDFPAFFFOUASVBF") will returns True
+    but in this context we don't need to check if
+    the user has introduced a valid symbol.
+
+    Returns bint:
+        1 if True, 0 if False
+    """
+    cdef bint response
+    response = 0
+    if currency.isupper() or currency in exceptional_coin_slugs_keys:
+        response = 1
+    return response
+
+# RegEx parsing
+PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
+
+cpdef currency(res, convert):
+    if convert == "usd":
+        _total_markets_cap = re.search(
+            r'data-currency-market-cap.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+        _total_markets_volume = re.search(
+            r'data-currency-volume.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+        _price = re.search(r'quote_price.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res)
+    else:
+        _total_markets_cap = re.search(
+            r'data-format-market-cap.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+        _total_markets_volume = re.search(
+            r'data-format-volume-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+        _price = re.search(
+            r'data-format-price-crypto.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+        )
+
+    vol_24h = _total_markets_volume.group(1)
+    try: total_cap = _total_markets_cap.group(1)
+    except AttributeError: total_cap = "?"
+    response = {"total_markets_cap": float(total_cap) if total_cap != "?" else None,
+                "total_markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
+                "price": float(_price.group(1)) if _price else None}
+
+    # Circulating, total and maximum supply
+    supply = re.findall(
+        r'data-format-supply.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
+    )
+    response["circulating_supply"] = float(supply[0]) if supply[0] != "?" else None
+    if len(supply) > 1:
+        response["max_supply"] = float(supply[-1])
+    if len(supply) > 2:
+        response["total_supply"] = float(supply[1])
+
+    response["webs"] = re.findall(r'<a href="(.+)" target="_blank">Website\s*\d*</a>', res)
+
+    response["explorers"] = re.findall(
+        r'<a href="(.+)" target="_blank">Explorer\s*\d*</a>', res
+    )
+
+    source_code = re.search(r'<a href="(.+)" target="_blank">Source Code</a>', res)
+    response["source_code"] = source_code.group(1) if source_code else None
+
+    response["message_boards"] = re.findall(
+        r'<a href="(.+)" target="_blank">Message Board\s*\d*</a>', res
+    )
+
+    response["chats"] = re.findall(
+        r'<a href="(.+)" target="_blank">Chat\s*\d*</a>', res
+    )
+
+    response["mineable"] = True if re.search(r'label-warning">Mineable', res) else False
+
+    response["rank"] = int(re.search(r'Rank (\d+)</span>', res).group(1))
+
+    announcement = re.search(r'<a href="(.+)" target="_blank">Announcement</a>', res)
+    response["announcement"] = announcement.group(1) if announcement else None
+
+    return response
+
+cpdef markets(res, convert):
+    sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
+    markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
+    volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
+    price = re.findall(r'"price" .*data-%s="(\?|\d+\.*\d*e*[-|+]*\d*)' % convert, res)
+    perc_volume = re.findall(r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
+    updated = re.findall(r'text-right\s.*">(.+)</td>', res)
+
+    return [
+        {
+            "source": src,
+            "pair": mark,
+            "volume_24h": float(vol),
+            "price": float(price),
+            "percent_volume": float(perc),
+            "updated": up == "Recently"
+        } for src, mark, vol, price, perc, up in zip(sources, markets, volume_24h,
+                                              price, perc_volume, updated)
+    ]
+
+cpdef ranks(res):
+    cdef int i = 30
+
+    names = re.findall(r'<a href="/currencies/.+/">(.+)</a>.*', res)[6:]
+    symbols = re.findall(r'<td class="text-left">(\w+)</td>', res)
+    volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
+    price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
+    percent_change = re.findall(r'right" .*data-usd="(-*\d+\.*[\d|e|-]*)"', res)
+
+    index_map = {
+        "gainers": {"1h": 0, "7d": 30, "24h": 60},
+        "losers": {"1h": 90, "7d": 150, "24h": 120}
+    }
+
+    return {rank: {period: [{
+        "name": names[index_map[rank][period]],
+        "symbol": symbols[index_map[rank][period]],
+        "volume_24h": float(volume_24h[index_map[rank][period]]),
+        "price": float(price[index_map[rank][period]]),
+        "percent_change": float(percent_change[index_map[rank][period]])
+    } for _ in range(i)] \
+         for period in ["1h", "24h", "7d"] } for rank in ["gainers", "losers"]}
+
+cpdef historical(res, start, end, revert):
+    cdef long len_i, i, i2, i3
+
+    dates = re.findall(r'<td class="text-left">(.+)</td>', res)
+    vol_marketcap = re.findall(r'cap [\w|-]+="(-|\d+\.*[\d+-e]*)"', res)
+    ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res)
+
+    len_i = len(dates)
+    i = 0
+    i2 = 0
+    i3 = 0
+
+    response = []
+    for _ in range(len_i):
+        date = datetime.strptime(dates[i], '%b %d, %Y')
+        if date < start:
+            continue
+        else:
+            if date <= end:
+                response.append({
+                    "date": date,
+                    "open": float(ohlc[i3]),
+                    "high": float(ohlc[i3+1]),
+                    "low": float(ohlc[i3+2]),
+                    "close": float(ohlc[i3+3]),
+                    "volume": float(ohlc[i2]),
+                    "market_cap": float(ohlc[i2+1])
+                })
+            else:
+                break
+        i += 1
+        i2 += 2
+        i3 += 4
+    return list(reversed(response)) if revert else response
+
+def recently(res, convert):
+    names = re.findall(r'<a href="/currencies/.+/">(.+)</a>', res)[6:]
+    symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
+    added = re.findall(r'<td class="text-right.*">(Today|\d+ days ago)</td>', res)
+    mcap = re.findall(r'cap .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
+    prices = re.findall(r'price" .*data-%s="(\d+\.*[\d|e|-|\+]*)"' % convert, res)
+    supply = re.findall(r'data-supply="(\?|\d+\.*[\d|e|-|\+]*)"', res)
+    vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
+    p_change = re.findall(
+        r'change .*data-%s="(\?|-*\d+\.*[\d|e|-|\+]*)"|<td class="text-right">(\?)</td>' \
+        % convert, res
+    )
+
+    for n, sym, add, mcp, pr, sup, vol, perc in zip(
+            names, symbols, added, mcap, prices, supply, vol_24h, p_change
+        ):
+        try: perc_change = float(perc[0])
+        except ValueError: perc_change = None
+        try: market_cap = float(mcp)
+        except ValueError: market_cap = None
+        try: csupply = float(sup)
+        except ValueError: csupply = None
+        try: volume_24h = float(vol)
+        except ValueError: volume_24h = None
+        yield {
+            "name": n,
+            "symbol": sym,
+            "added": add,
+            "market_cap": market_cap,
+            "price": float(pr),
+            "circulating_supply": csupply,
+            "volume_24h": volume_24h,
+            "percent_change": perc_change
+        }
+
+cpdef exchange(res, convert):
+    currencies = re.findall(r'"market-name">(.+)</a>', res)
+    pairs = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
+    vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
+    prices = re.findall(r'price" .*data-%s="(\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
+    perc_vols = re.findall(r'percentage data-format-value="(\d+\.*\d*e{0,1}-{0,1}\d*)"', res)
+    updated = re.findall(r'text-right\s.*"\s*>(.+)</td>', res)
+
+    twitter_username = re.search(r'target="_blank">(@.+)</a>', res)
+    twitter_link = re.findall(r'"(https://twitter.com/[^\s]+)"', res) \
+        if twitter_username else None
+
+    formatted_name = re.search(r'<h1 class="text-large">\s*(.+)\s*</h1>', res).group(1)
+    web = re.search(r'title="Website">.*href="\s*([^\s|"]+)', res)
+
+    markets = []
+    for curr, pair, vol, price, perc_vol, up in zip(
+        currencies, pairs, vol_24h, prices, perc_vols, updated
+        ):
+        try: vol = float(vol)
+        except ValueError: vol = None
+        markets.append({
+            "currency": curr,
+            "pair": pair,
+            "vol_24h": vol,
+            "price": float(price),
+            "perc_volume": float(perc_vol),
+            "updated": up == "Recently"
+        })
+    if convert == "btc":
+        try: total_volume = float(perc_vols[0])
+        except ValueError: total_volume = None
+    else:
+        try:
+            total_volume = float(
+                re.search(r'currency-volume data-usd="(\d+\.*[\d|e|-|\+]*)">', res).group(1)
+            )
+        except (AttributeError, ValueError):
+            total_volume = None
+
+    return {
+        "name": formatted_name,
+        "website": web.group(1) if web else None,
+        "volume": total_volume,
+        "social": {
+            "twitter": {
+                "link": twitter_link[0] if twitter_link else None,
+                "username": twitter_username.group(1) if twitter_username else None
+            }
+        },
+        "markets": markets
+    }
+
+cpdef exchanges(res, convert):
+    cdef int i
+    exchanges = re.findall(r'\. <a href="/exchanges/.+/">(.+)</a>', res)
+    indexes = re.findall(r'<td>(\d+)</td>', res)
+    currencies = re.findall(r'/currencies/.+/">(.+)</a>', res)[2:]
+    links_pairs = re.findall(r'<a href="(.*)" .*_blank">(%s)</a>' % PAIRS_REGEX, res)
+    volumes = re.findall(
+        r'class="text-right .*volume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
+    )
+    prices = re.findall(r'ice" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
+    perc_volumes = re.findall(r'"percent-volume">(\d+\.*\d*)</span>', res)
+
+    response = []
+    for exc in exchanges:
+        markets = []
+        for _ in indexes:
+            i = int(_)
+            try: vol = float(volumes[i-1])
+            except ValueError: vol = None
+            try: price = float(prices[i-1])
+            except ValueError: price = None
+
+            markets.append({
+                "name": currencies[i-1],
+                "web": links_pairs[i-1][0],
+                "pair": links_pairs[i-1][1],
+                "volume": vol,
+                "price": price,
+                "perc_volume": float(perc_volumes[i-1])
+            })
+
+            try:
+                if indexes[i] == "1":
+                    indexes = indexes[i:]
+                    currencies = currencies[i:]
+                    break
+            except IndexError:
+                break
+
+        response.append({
+            "name": exc,
+            "markets": markets,
+        })
+
+    return response
+
+cpdef tokens(res, convert):
+    names = re.findall(r'currency-name-container" href="/currencies/.+/">(.+)</a>', res)
+    symbols = re.findall(r'currency-symbol"><a href="/currencies/.+/">(.+)</a>', res)
+    platforms = re.findall(r'platform-name"><a href="/currencies/[\w-]*/">(.*)</a>', res)
+    caps = re.findall(
+        r'market-cap .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
+    )
+    prices = re.findall(r'price" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
+    supplys = re.findall(r'data-supply="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"', res)
+    vols_24h = re.findall(
+        r'volume" .*data-%s="(None|\d+\.*\d*e{0,1}[+-]{0,1}\d*)"' % convert, res
+    )
+
+    response = []
+    for n, sym, plat, mcap, price, sup, vol in zip(
+        names, symbols, platforms, caps, prices, supplys, vols_24h
+        ):
+        if plat == "": plat = None
+        try: mcap = float(mcap)
+        except ValueError: mcap = None
+        try: price = float(price)
+        except ValueError: price = None
+        try: sup = float(sup)
+        except ValueError: sup = None
+        try: vol = float(vol)
+        except ValueError: vol = None
+        response.append({
+            "name": n,
+            "symbol": sym,
+            "platform": plat,
+            "market_cap": mcap,
+            "price": price,
+            "circulating_supply": sup,
+            "volume_24h": vol
+        })
+    return response

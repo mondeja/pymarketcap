@@ -1,7 +1,7 @@
 .IPHONY: install builds clean test bench proof
 
 builds:
-	python3 setup.py build_ext -fi
+	sudo python3 setup.py build_ext -fi
 
 dist:
 	python3 setup.py dist
@@ -15,17 +15,22 @@ install-light:
 	python3 setup.py install --no-curl
 
 dev-install:
-	pip3 install -r dev-requirements.txt
-	python3 setup.py install
+	sudo pip3 install -r dev-requirements.txt
+	sudo python3 setup.py install
 
 uninstall:
 	sudo pip3 uninstall pymarketcap -y
 	make restore-sources
 
+reinstall:
+	make clean
+	make uninstall
+	sudo python3 setup.py install -f
+
 clean:
 	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/
 	sudo find . -type d -name "__pycache__" -exec rm -r {} +
-	sudo rm pymarketcap/core.c pymarketcap/curl.c
+	sudo rm pymarketcap/*.c
 	sudo find . -type d -name "_build" -exec rm -r {} +
 
 test:

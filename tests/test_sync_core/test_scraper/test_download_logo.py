@@ -37,7 +37,7 @@ def test_consistence():
             assert os.path.exists(res)
             os.remove(res)
             assert os.path.exists(res) == False
-        else:
+        if attempts == 0:
             raise AssertionError("0 coins downloaded. Check it!")
 
 def test_invalid():

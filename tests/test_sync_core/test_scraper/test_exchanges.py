@@ -5,7 +5,7 @@ from re import findall as re_findall
 from urllib.request import urlopen
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap(cache=False)
+pym = Pymarketcap()
 
 class TypeTester:
     def _name(self, value): assert type(value) == str

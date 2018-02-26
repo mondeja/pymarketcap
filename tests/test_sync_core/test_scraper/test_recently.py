@@ -4,7 +4,7 @@
 """Tests for ticker() method"""
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap(cache=False)
+pym = Pymarketcap()
 
 class TypeTester:
     def _name(self, value): assert type(value) == str
@@ -19,7 +19,7 @@ class TypeTester:
 tt = TypeTester()
 
 def assert_types(res):
-    assert hasattr(res, '__iter__') and not hasattr(res, '__len__')
+    assert type(res) == list
     for currency in res:
         assert type(currency) == dict
         for key, value in currency.items():

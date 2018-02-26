@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap(cache=False)
+pym = Pymarketcap()
 
 class TypeTester:
     def _name(self, value): assert type(value) == str

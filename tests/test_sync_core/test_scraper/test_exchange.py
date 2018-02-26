@@ -47,7 +47,8 @@ def assert_types(res):
 def test_types():
     exc = choice(pym.exchange_slugs)
     print("(Exchange: %s)" % exc, end=" ")
-    assert_types(pym.exchange(exc))
+    res = pym.exchange(exc)
+    assert_types(res)
 
 def assert_number_of_markets(exc, markets):
     req = urlopen("https://coinmarketcap.com/exchanges/%s/" % exc)
@@ -78,13 +79,10 @@ def test_convert():
     assert_consistence(res, exc)
 
 def test_invalid():
-    exc = "OkCoin Intl."
-    try:
-        with pytest.raises(ValueError) as excinfo:
-            pym.exchange(exc)
-        assert '%s is not a valid exchange name.' % exc in str(excinfo.value)
-    except HTTPError:
-        pass
+    exc = "dabsfgbdsagubfeqbfeyfv"
+    with pytest.raises(ValueError) as excinfo:
+        pym.exchange(exc)
+    assert '%s is not a valid exchange name.' % exc in str(excinfo.value)
 
 @pytest.mark.end2end
 def test_end2end():

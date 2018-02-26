@@ -109,6 +109,10 @@ You can test basically benchmarking of code running
 the number of repetitions for each one or change file where store
 benchmarks results: run ``python3 bench/main.py --help``.
 
+TODO
+~~~~
+- Create an asynchronous wrapper for scraper methods.
+
 
 --------------
 

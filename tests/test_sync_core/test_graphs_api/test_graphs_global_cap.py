@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pymarketcap import Pymarketcap
-pym = Pymarketcap(cache=False)
+pym = Pymarketcap()
 
 def test_types():
     res = pym.graphs.global_cap()

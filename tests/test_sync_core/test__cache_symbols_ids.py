@@ -6,10 +6,8 @@
 import time
 
 from pymarketcap import Pymarketcap
+from pymarketcap.consts import exceptional_coin_slugs
 pym = Pymarketcap()
-
-def teardown_function(function):
-    time.sleep(1)
 
 def test_types():
     res = pym._cache_symbols_ids()
@@ -33,5 +31,5 @@ def test_consistence():
                 assert ch.islower()
         for ch in value:
             assert ch.islower() or ch.isnumeric() or ch in ["-"]
-    for original, correct in pym.exceptional_coin_slugs.items():
+    for original, correct in exceptional_coin_slugs.items():
         assert res[original] == correct
