@@ -57,7 +57,7 @@ or from source as above wihout ``--no-curl`` flag.
 Documentation
 -------------
 
-Check out `live docs hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb>`__ or `static docs at Readthedocs <http://pymarketcap.readthedocs.io/>`__.
+Check out `live docs hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__ or `static docs at Readthedocs <http://pymarketcap.readthedocs.io/>`__.
 
 `Contributing and testing <https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.rst>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
