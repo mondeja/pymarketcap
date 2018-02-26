@@ -4,7 +4,7 @@ Reference
 pymarketcap.core
 ----------------
 
-.. autoclass:: pymarketcap.Pymarketcap
+.. autoclass:: pymarketcap.core.Pymarketcap
 
     .. centered:: Coinmarketcap API
 
@@ -40,7 +40,15 @@ pymarketcap.core
     .. automethod:: convert
     .. automethod:: download_logo
 
+pymarketcap.pymasyncore
+-----------------------
+.. autoclass:: pymarketcap.pymasyncore.AsyncPymarketcapScraper
 
+    .. note:: All scraper methods described in ``Pymarketcap`` object and almost all the properties also exists in ``AsyncPymarketcapScraper``.
+    .. automethod:: every_currency
+    .. automethod:: every_markets
+    .. automethod:: every_historical
+    .. automethod:: every_exchange
 
 pymarketcap.errors
 ------------------

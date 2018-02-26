@@ -42,6 +42,7 @@ benchmarks results: run ``python3 bench/main.py --help``.
 
 TODO
 ~~~~
+- Document asynchronous interface.
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
 
 --------------
