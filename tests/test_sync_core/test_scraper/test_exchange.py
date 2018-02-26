@@ -19,20 +19,6 @@ def test_types():
     res = pym.exchange(exc)
     assert_types(res)
 
-def assert_number_of_markets(exc, markets):
-    req = urlopen("https://coinmarketcap.com/exchanges/%s/" % exc)
-    data = req.read()
-    req.close()
-    indexes = re_findall(r'<td class="text-right">(\d+)</td>', data.decode())
-    assert len(markets) == int(indexes[-1])
-
-def assert_consistence(res, exc):
-    assert len(res["name"]) > 0
-    assert res["name"] != None
-    assert len(res["website"]) > 0
-    assert res["website"] != None
-    assert_number_of_markets(exc, res["markets"])
-
 def test_consistence():
     exc = choice(pym.exchange_slugs)
     print("(Exchange: %s)" % exc, end=" ")

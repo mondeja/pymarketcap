@@ -5,7 +5,10 @@ from random import choice
 
 import pytest
 
-from pymarketcap.tests.currency import assert_types
+from pymarketcap.tests.currency import (
+    assert_types,
+    assert_consistence
+)
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -14,10 +17,6 @@ def test_types():
     print("(Currency: %s)" % symbol, end=" ")
     res = pym.currency(symbol)
     assert_types(res)
-
-def assert_consistence(res):
-    assert res["price"] != None
-    assert len(list(res.keys())) in list(range(12, 15))
 
 def test_consistence():
     symbol = choice(pym.symbols)

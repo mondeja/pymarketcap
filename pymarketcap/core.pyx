@@ -403,8 +403,8 @@ cdef class Pymarketcap:
             else:
                 raise NotImplementedError
 
-        # Total market capitalization and volume 24h
-        return processer.currency(res, convert)
+        response.update(processer.currency(res, convert))
+        return response
 
     cpdef markets(self, unicode name, convert="USD"):
         """Get available coinmarketcap markets data.
@@ -419,8 +419,17 @@ cdef class Pymarketcap:
         Returns (list):
             Markets on wich provided currency is currently tradeable.
         """
+        response = {}
         if _is_symbol(name):
+            response["symbol"] = name
             name = self.correspondences[name]
+            response["slug"] = name
+        else:
+            response["slug"] = name
+            for symbol, slug in self.correspondences.items():
+                if slug == name:
+                    response["symbol"] = symbol
+                    break
         convert = convert.lower()
 
         try:
@@ -434,7 +443,8 @@ cdef class Pymarketcap:
             else:
                 raise NotImplementedError
 
-        return processer.markets(res, convert)
+        response["markets"] = processer.markets(res, convert)
+        return response
 
     cpdef ranks(self):
         """Returns gainers and losers for the periods 1h, 24h and 7d.

@@ -6,7 +6,10 @@ from random import choice
 
 import pytest
 
-from pymarketcap.tests.historical import assert_types
+from pymarketcap.tests.historical import (
+    assert_types,
+    assert_consistence
+)
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -23,10 +26,7 @@ def test_consistence():
     res = pym.historical(symbol)
 
     # Check dates order
-    for i, tick in enumerate(res["history"]):
-        assert len(tick.keys()) == 7  # Check number of keys
-        if i < len(res)-1:
-            assert res["history"][i+1]["date"] < tick["date"]
+    
 
 def test_invalid():
     symbol = "BDAD)DAAS&/9324423OUVibb"

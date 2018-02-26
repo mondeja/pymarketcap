@@ -174,7 +174,7 @@ class AsyncPymarketcapScraper(ClientSession):
         while True:
             try:
                 url = await main_queue.get()
-                responses.append(await self._get(url))
+                responses.append([url, await self._get(url)])
                 # Notify the queue that the item has been processed
                 main_queue.task_done()
             except (TimeoutError) as e:
@@ -186,7 +186,7 @@ class AsyncPymarketcapScraper(ClientSession):
     async def _base_currency_url(self, name):
         if _is_symbol(name):
             name = self.correspondences[name]
-        return "https://coinmarketcap.com/currencies/%s/" % name
+        return "https://coinmarketcap.com/currencies/%s" % name
 
     async def currency(self, name, convert="USD"):
         res = await self._get(self._base_currency_url(name))
@@ -216,13 +216,14 @@ class AsyncPymarketcapScraper(ClientSession):
             desc="Retrieving every currency data " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
-        for raw_res in res:
-            yield processer.currency(raw_res[20000:], convert)
-
-    async def _base_market_url(self, name):
-        if _is_symbol(name):
-            name = self.correspondences[name]
-        return "https://coinmarketcap.com/currencies/%s/" % name
+        for url, raw_res in res:
+            processed = processer.currency(raw_res[20000:], convert)
+            processed["slug"] = url.split("/")[-1]
+            for symbol, slug in self.correspondences.items():
+                if slug == processed["slug"]:
+                    processed["symbol"] = symbol
+                    break
+            yield processed
 
     async def markets(self, name, convert="USD"):
         res = await self._get(self._base_currency_url(name))
@@ -247,13 +248,19 @@ class AsyncPymarketcapScraper(ClientSession):
         currencies = currencies if currencies else self.symbols
         res = await self._async_multiget(
             currencies,
-            self._base_market_url,
+            self._base_currency_url,
             self.consumers,
             desc="Retrieving all markets " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
-        for raw_res in res:
-            yield processer.markets(raw_res[20000:], convert)
+        for url, raw_res in res:
+            response = {"markets": processer.markets(raw_res[20000:], convert),
+                        "slug": url.split("/")[-1]}
+            for symbol, slug in self.correspondences.items():
+                if slug == response["slug"]:
+                    response["symbol"] = symbol
+                    break
+            yield response
 
     async def ranks(self):
         res = await self._get("https://coinmarketcap.com/gainers-losers/")
@@ -262,7 +269,7 @@ class AsyncPymarketcapScraper(ClientSession):
     async def _base_historical_url(self, name):
         if _is_symbol(name):
             name = self.correspondences[name]
-        url = "https://coinmarketcap.com/currencies/%s/historical-data/" % name
+        url = "https://coinmarketcap.com/currencies/%s/historical-data" % name
         _start = "%d%02d%02d" % (self.__start.year, self.__start.month, self.__start.day)
         _end = "%d%02d%02d" % (self.__end.year, self.__end.month, self.__end.day)
         url += "?start=%s&end=%s" % (_start, _end)
@@ -291,8 +298,15 @@ class AsyncPymarketcapScraper(ClientSession):
             desc="Retrieving all historical data " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
-        for raw_res in res:
-            yield processer.historical(raw_res[50000:], start, end, revert)
+        for url, raw_res in res:
+            response = {"history": processer.historical(raw_res[50000:],
+                                                        start, end, revert),
+                        "slug": url.split("/historical-data")[0].split("/")[-1]}
+            for symbol, slug in self.correspondences.items():
+                if slug == response["slug"]:
+                    response["symbol"] = symbol
+                    break
+            yield response
 
     async def recently(self, convert="USD"):
         convert = convert.lower()
@@ -301,7 +315,7 @@ class AsyncPymarketcapScraper(ClientSession):
         return list(processer.recently(res, convert))
 
     async def _base_exchange_url(self, name):
-        return "https://coinmarketcap.com/exchanges/%s/" % name
+        return "https://coinmarketcap.com/exchanges/%s" % name
 
     async def exchange(self, name, convert="USD"):
         convert = convert.lower()
@@ -318,7 +332,7 @@ class AsyncPymarketcapScraper(ClientSession):
             desc="Retrieving all exchange data " \
                  + "for %d exchanges from coinmarketcap." % len(exchanges)
         )
-        for i, raw_res in enumerate(res):
-            yield processer.exchange(raw_res, convert)
-
-
+        for url, raw_res in res:
+            response = processer.exchange(raw_res, convert)
+            response["slug"] = url.split("/")[-1]
+            yield response
