@@ -34,8 +34,6 @@ http_errors_map = {
 
 http_error_numbers = [int(number) for number in http_errors_map.keys()]
 
-# Common RegEx
-PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
 cdef class Pymarketcap:
     """Unique class for retrieve data from coinmarketcap.com

@@ -1,6 +1,5 @@
 environment:
   matrix:
-    - PYTHON: C:\Python35-x64
     - PYTHON: C:\Python36
     - PYTHON: C:\Python36-x64
 
@@ -15,4 +14,4 @@ build: off
 test_script:
   - cd ..
   - dir
-  - "if %PYTHON%==C:\\Python35-x64 (%PYTHON%\\python -m pytest pymarketcap/tests -vs --end2end) else (%PYTHON%\\python -m pytest pymarketcap/tests -vs)"
+  - "if %PYTHON%==C:\\Python36-x64 (%PYTHON%\\python -m pytest pymarketcap/tests -vs --end2end) else (%PYTHON%\\python -m pytest pymarketcap/tests -vs)"

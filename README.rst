@@ -16,7 +16,7 @@ pymarketcap
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
 of a cythonized scraper and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
-library instead. Actually, only works in Python≥3.5.
+library instead. Actually, only works in Python≥3.6.
 
 .. code:: diff
 
