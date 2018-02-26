@@ -5,7 +5,7 @@ import asyncio
 
 import pytest
 
-from pymarketcap.tests.currency import assert_types
+from pymarketcap.tests.exchange import assert_types
 from pymarketcap import (
     AsyncPymarketcapScraper,
     Pymarketcap
@@ -19,15 +19,13 @@ async def test_every_currency(event_loop):
                                        queue_size=30,
                                        consumers=30) as apym:
         res = []
-        async for (currency) in apym.every_currency():
-            res.append(currency)
+        async for exc in apym.every_exchange():
+            res.append(exc)
 
             # Test types
-            assert_types(currency)
+            assert_types(exc)
         assert type(res) == list
 
         # Assert consistence
-        assert len(res) < pym.total_currencies + 100
-        assert len(res) > pym.total_currencies - 100
-
-
+        assert len(res) < len(pym.exchange_slugs) + 100
+        assert len(res) > len(pym.exchange_slugs) - 100

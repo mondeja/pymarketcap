@@ -379,13 +379,29 @@ cdef class Pymarketcap:
         Returns (dict):
             Aditional general metadata not supported by other methods.
         """
+        response = {}
         if _is_symbol(name):
+            response["symbol"] = name
             name = self.correspondences[name]
+            response["slug"] = name
+        else:
+            response["slug"] = name
+            for symbol, slug in self.correspondences.items():
+                if slug == name:
+                    response["symbol"] = symbol
+                    break
         convert = convert.lower()
 
-        res = self._get(
-            b"https://coinmarketcap.com/currencies/%s/" % name.encode()
-        )[20000:]
+        try:
+            res = self._get(
+                b"https://coinmarketcap.com/currencies/%s/" % name.encode()
+            )[20000:]
+        except CoinmarketcapHTTPError404:
+            if name not in self.coins:
+                raise ValueError("%s is not a valid currency name. See 'symbols' or 'coins'" % name \
+                                 + " properties for get all valid currencies.")
+            else:
+                raise NotImplementedError
 
         # Total market capitalization and volume 24h
         return processer.currency(res, convert)
@@ -407,9 +423,16 @@ cdef class Pymarketcap:
             name = self.correspondences[name]
         convert = convert.lower()
 
-        res = self._get(
-            b"https://coinmarketcap.com/currencies/%s/" % name.encode()
-        )[20000:]
+        try:
+            res = self._get(
+                b"https://coinmarketcap.com/currencies/%s/" % name.encode()
+            )[20000:]
+        except CoinmarketcapHTTPError404:
+            if name not in self.coins:
+                raise ValueError("%s is not a valid currrency name. See 'symbols'" % name \
+                                 + " or 'coins' properties for get all valid currencies.")
+            else:
+                raise NotImplementedError
 
         return processer.markets(res, convert)
 
@@ -424,14 +447,14 @@ cdef class Pymarketcap:
 
         return processer.ranks(res)
 
-    def historical(self, unicode currency,
+    def historical(self, unicode name,
                    start=datetime(2008, 8, 18),
                    end=datetime.now(),
                    revert=False):
         """Get historical data for a currency.
 
         Args:
-            currency (str): Currency to scrap historical data.
+            name (str): Currency to scrap historical data.
             start (date, optional): Time to start scraping
                 periods as datetime.datetime type.
                 As default ``datetime(2008, 8, 18)``.
@@ -445,17 +468,35 @@ cdef class Pymarketcap:
             Historical dayly OHLC for a currency.
         """
         cdef bytes url, _start, _end
+        response = {}
 
-        if _is_symbol(currency):
-            currency = self.correspondences[currency]
+        if _is_symbol(name):
+            response["symbol"] = name
+            response["slug"] = self.correspondences[name]
+            name = response["slug"]
+        else:
+            response["slug"] = name
+            for symbol, slug in self.correspondences.items():
+                if slug == name:
+                    response["symbol"] = symbol
+                    break
 
-        url = b"https://coinmarketcap.com/currencies/%s/historical-data/" % currency.encode()
+        url = b"https://coinmarketcap.com/currencies/%s/historical-data/" % name.encode()
         _start = b"%d" % start.year + b"%02d" % start.month + b"%02d" % start.day
         _end = b"%d" % end.year + b"%02d" % end.month + b"%02d" % end.day
         url += b"?start=%s" % _start + b"&" + b"end=%s" % _end
-        res = self._get(url)[50000:]
 
-        return processer.historical(res, start, end, revert)
+        try:
+            res = self._get(url)[50000:]
+        except CoinmarketcapHTTPError404:
+            if name not in self.coins:
+                raise ValueError("%s is not a valid currrency name. See 'symbols'" % name \
+                                 + " or 'coins' properties for get all valid currencies.")
+            else:
+                raise NotImplementedError
+
+        response["history"] = processer.historical(res, start, end, revert)
+        return response
 
     def recently(self, convert="USD"):
         """Get recently added currencies along with other metadata.
@@ -496,12 +537,15 @@ cdef class Pymarketcap:
         except CoinmarketcapHTTPError404:
             if name not in self.exchange_slugs:
                 raise ValueError("%s is not a valid exchange name. See exchange_slugs" % name \
-                                 + " instance attribute for get all valid exchanges.")
+                                 + " property for get all valid exchanges.")
             else:
                 raise NotImplementedError
+        else:
+            response = {"slug": name}
         convert = convert.lower()
 
-        return processer.exchange(res, convert)
+        response.update(processer.exchange(res, convert))
+        return response
 
     cpdef exchanges(self, convert="USD"):
         """Get all the exchanges in coinmarketcap ranked by volumes

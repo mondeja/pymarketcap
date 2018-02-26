@@ -160,12 +160,14 @@ cpdef historical(res, start, end, revert):
             continue
         else:
             if date <= end:
+                try: close = float(ohlc[i3+3])
+                except ValueError: close = None
                 response.append({
                     "date": date,
                     "open": float(ohlc[i3]),
                     "high": float(ohlc[i3+1]),
                     "low": float(ohlc[i3+2]),
-                    "close": float(ohlc[i3+3]),
+                    "close": close,
                     "volume": float(ohlc[i2]),
                     "market_cap": float(ohlc[i2+1])
                 })

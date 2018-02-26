@@ -5,28 +5,12 @@ from random import choice
 from urllib.request import urlopen
 from re import findall as re_findall
 
+import pytest
+
+from pymarketcap.tests.markets import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-class TypeTester:
-    def _source(self, value): assert type(value) == str
-    def _pair(self, value): assert type(value) == str
-    def _volume_24h(self, value): assert type(value) == float
-    def _price(self, value): assert type(value) == float
-    def _percent_volume(self, value): assert type(value) == float
-    def _updated(self, value): assert type(value) == bool
-
-tt = TypeTester()
-
-def assert_types(res):
-    assert type(res) == list
-    for source in res:
-        assert type(source) == dict
-        for key, value in source.items():
-            eval("tt._{}({})".format(
-                    key,  # Strings need to be "quoted":
-                    value if type(value) != str else '"%s"' % value
-                ))
 
 def assert_number_of_markets(res, coin_slug):
     req = urlopen("https://coinmarketcap.com/currencies/%s/" % coin_slug)
@@ -57,3 +41,9 @@ def test_with_convert():
     res = pym.markets(coin, convert="BTC")
     assert_types(res)
     assert_consistence(res, coin)
+
+def test_invalid():
+    symbol = "BDAD)DAAS&/9324423OUVibb"
+    with pytest.raises(ValueError) as excinfo:
+        res = pym.markets(symbol)
+    assert "See 'symbols' or 'coins' properties" in str(excinfo)

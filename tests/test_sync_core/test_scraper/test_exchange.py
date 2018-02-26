@@ -9,40 +9,9 @@ from urllib.error import HTTPError
 from tqdm import tqdm
 import pytest
 
+from pymarketcap.tests.exchange import assert_types
 from pymarketcap import Pymarketcap, CoinmarketcapHTTPError
 pym = Pymarketcap()
-
-class TypeTester:
-    def _currency(self, value): assert type(value) == str
-    def _pair(self, value): assert type(value) == str
-    def _vol_24h(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) == float
-    def _perc_volume(self, value): assert type(value) == float
-    def _updated(self, value): assert type(value) == bool
-
-tt = TypeTester()
-
-def assert_types(res):
-    assert type(res) == dict
-
-    assert type(res["name"]) == str
-    assert type(res["website"]) == str
-    assert type(res["volume"]) in [float, type(None)]
-    assert type(res["social"]) == dict
-
-    for key, fields in res["social"].items():
-        assert type(key) == str
-        for field, data in fields.items():
-            assert type(field) == str
-            assert type(data) in [str, type(None)]
-
-    for market in res["markets"]:
-        assert type(market) == dict
-        for key, value in market.items():
-            eval("tt._{}({})".format(
-                key,
-                value if type(value) != str else '"%s"' % value
-            ))
 
 def test_types():
     exc = choice(pym.exchange_slugs)
@@ -83,12 +52,3 @@ def test_invalid():
     with pytest.raises(ValueError) as excinfo:
         pym.exchange(exc)
     assert '%s is not a valid exchange name.' % exc in str(excinfo.value)
-
-@pytest.mark.end2end
-def test_end2end():
-    for exc in tqdm(pym.exchange_slugs, desc="Testing all_exchanges"):
-        tqdm.write(exc)
-        for convert in ["USD", "BTC"]:
-            res = pym.exchange(exc, convert=convert)
-            assert_types(res)
-            assert_consistence(res, exc)

@@ -16,7 +16,7 @@ pymarketcap
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
 of a cythonized scraper and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
-library instead. Actually, only works in Python≥3.6.
+library instead. Only works in Python≥3.6.
 
 .. code:: diff
 
@@ -38,7 +38,7 @@ Without libcurl
 
     git clone https://github.com/mondeja/pymarketcap.git
     cd pymarketcap
-    pip3 install Cython
+    pip3 install -r requirements.txt
     python setup.py install --no-curl
 
 ``urllib`` will be used instead.
@@ -98,7 +98,7 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
 .. |PyPI Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
    :target: https://pypi.python.org/pypi/pymarketcap
 .. |Binder| image:: https://mybinder.org/badge.svg
-   :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb
+   :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
    :target: http://pymarketcap.readthedocs.io/?badge=latest
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true

@@ -59,13 +59,13 @@ class AsyncPymarketcapScraper(ClientSession):
             ``logging.StreamHandler()``.
         debug (bool, optional): If ``True``, the logger
             level will be setted as ``logging.DEBUG``.
-        **kwargs: arguments that corresponds to
-            ``aiohttp.ClientSession``.
+        **kwargs: arguments that corresponds to the
+            ``aiohttp.ClientSession`` parent class.
 
     """
 
-    def __init__(self, queue_size=50, progress_bar=True,
-                 consumers=50, timeout=DEFAULT_TIMEOUT,
+    def __init__(self, queue_size=10, progress_bar=True,
+                 consumers=10, timeout=DEFAULT_TIMEOUT,
                  logger=logger, debug=False,
                  **kwargs):
         super(AsyncPymarketcapScraper, self).__init__(**kwargs)
@@ -194,24 +194,27 @@ class AsyncPymarketcapScraper(ClientSession):
         return processer.currency(res[20000:], convert)
 
     async def every_currency(self, currencies=None, convert="USD"):
-        """Return data from every currency in coinmarketcap
-        passing a list of symbols as first parameter. As
-        default returns data for all symbols.
+        """Return general data from every currency in coinmarketcap
+        passing a list of currencies as first parameter.
+        As default returns data for all currencies.
 
         Args:
             currencies (list, optional): Iterator with all the currencies
-                that you want to retrieve. As default ``self.symbols``.
+                that you want to retrieve. As default ``None``
+                (``self.symbols`` is used).
             convert (str): Convert prices in response between "USD"
                and BTC. As default ``"USD"``.
 
-        Returns (list): Data for al symbols.
+        Returns (list): Data for all currencies.
         """
         convert = convert.lower()
+        currencies = currencies if currencies else self.symbols
         res = await self._async_multiget(
-            currencies if currencies else self.symbols,
+            currencies,
             self._base_currency_url,
             self.consumers,
-            desc="Retrieving every currency from coinmarketcap..."
+            desc="Retrieving every currency data " \
+                 + "for %d currencies from coinmarketcap." % len(currencies)
         )
         for raw_res in res:
             yield processer.currency(raw_res[20000:], convert)
@@ -227,39 +230,95 @@ class AsyncPymarketcapScraper(ClientSession):
         return processer.markets(res[20000:], convert)
 
     async def every_markets(self, currencies=None, convert="USD"):
+        """Returns markets data from every currency in coinmarketcap
+        passing a list of currencies as first parameter.
+        As default returns data for all symbols.
+
+        Args:
+            currencies (list, optional): Iterator with all the currencies
+                that you want to retrieve. As default ``None``
+                (``self.symbols`` is used in that case).
+            convert (str): Convert prices in response between "USD"
+               and BTC. As default ``"USD"``.
+
+        Returns (async iterator): Data for all currencies.
+        """
         convert = convert.lower()
-        res = await self._async(
-            currencies if currencies else self.symbols,
+        currencies = currencies if currencies else self.symbols
+        res = await self._async_multiget(
+            currencies,
             self._base_market_url,
             self.consumers,
-            desc="Retrieving all markets for all currencies from coinmarketcap."
+            desc="Retrieving all markets " \
+                 + "for %d currencies from coinmarketcap." % len(currencies)
         )
         for raw_res in res:
             yield processer.markets(raw_res[20000:], convert)
-
 
     async def ranks(self):
         res = await self._get("https://coinmarketcap.com/gainers-losers/")
         return processer.ranks(res)
 
-    async def historical(self, currency,
+    async def _base_historical_url(self, name):
+        if _is_symbol(name):
+            name = self.correspondences[name]
+        url = "https://coinmarketcap.com/currencies/%s/historical-data/" % name
+        _start = "%d%02d%02d" % (self.__start.year, self.__start.month, self.__start.day)
+        _end = "%d%02d%02d" % (self.__end.year, self.__end.month, self.__end.day)
+        url += "?start=%s&end=%s" % (_start, _end)
+        return url
+
+    async def historical(self, name,
                          start=datetime(2008, 8, 18),
                          end=datetime.now(),
                          revert=False):
-        if _is_symbol(currency):
-            currency = self.correspondences[currency]
-
-        url = "https://coinmarketcap.com/currencies/%s/historical-data/" % currency
-        _start = "%d%02d%02d" % (start.year, start.month, start.day)
-        _end = "%d%02d%02d" % (end.year, end.month, end.day)
-        url += "?start=%s&end=%s" % (_start, _end)
-        res = await self._get(url)
-
+        self.__start = start
+        self.__end = end
+        url = await self._get(self._base_historical_url(name))
         return processer.historical(res[50000:], start, end, revert)
+
+    async def every_historical(self, currencies=None,
+                               start=datetime(2008, 8, 18),
+                               end=datetime.now(),
+                               revert=False):
+        self.__start = start
+        self.__end = end
+        currencies = currencies if currencies else self.symbols
+        res = await self._async_multiget(
+            currencies,
+            self._base_historical_url,
+            self.consumers,
+            desc="Retrieving all historical data " \
+                 + "for %d currencies from coinmarketcap." % len(currencies)
+        )
+        for raw_res in res:
+            yield processer.historical(raw_res[50000:], start, end, revert)
 
     async def recently(self, convert="USD"):
         convert = convert.lower()
         url = "https://coinmarketcap.com/new/"
         res = await self._get(url)
         return list(processer.recently(res, convert))
+
+    async def _base_exchange_url(self, name):
+        return "https://coinmarketcap.com/exchanges/%s/" % name
+
+    async def exchange(self, name, convert="USD"):
+        convert = convert.lower()
+        res = await self._get(_base_exchange_url(name))[20000:]
+        return processer.exchange(res, convert)
+
+    async def every_exchange(self, exchanges=None, convert="USD"):
+        convert = convert.lower()
+        exchanges = exchanges if exchanges else self.exchange_slugs
+        res = await self._async_multiget(
+            exchanges,
+            self._base_exchange_url,
+            self.consumers,
+            desc="Retrieving all exchange data " \
+                 + "for %d exchanges from coinmarketcap." % len(exchanges)
+        )
+        for i, raw_res in enumerate(res):
+            yield processer.exchange(raw_res, convert)
+
 

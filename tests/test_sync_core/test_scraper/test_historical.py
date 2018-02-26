@@ -4,41 +4,32 @@
 from datetime import datetime, timedelta
 from random import choice
 
+import pytest
+
+from pymarketcap.tests.historical import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-class TypeTester:
-    def _date(self, value): assert type(value) == datetime
-    def _open(self, value): assert type(value) == float
-    def _high(self, value): assert type(value) == float
-    def _low(self, value): assert type(value) == float
-    def _close(self, value): assert type(value) == float
-    def _volume(self, value): assert type(value) == float
-    def _market_cap(self, value): assert type(value) == float
-
-tt = TypeTester()
 
 def test_types():
     symbol = choice(pym.coins)
     print("(Currency: %s)" % symbol, end=" ")
     res = pym.historical(symbol)
-    assert type(res) == list
-    for tick in res:
-        assert type(tick) == dict
-        for key, value in tick.items():
-            eval("tt._{}({})".format(
-                key,
-                value if type(value) != datetime else "value"
-            ))
+    assert_types(res)
 
 def test_consistence():
     symbol = choice(pym.coins)
     symbol = "TLE"
     print("(Currency: %s)" % symbol, end=" ")
-    res = list(pym.historical(symbol))
+    res = pym.historical(symbol)
 
     # Check dates order
-    for i, tick in enumerate(res):
+    for i, tick in enumerate(res["history"]):
         assert len(tick.keys()) == 7  # Check number of keys
         if i < len(res)-1:
-            assert res[i+1]["date"] < tick["date"]
+            assert res["history"][i+1]["date"] < tick["date"]
+
+def test_invalid():
+    symbol = "BDAD)DAAS&/9324423OUVibb"
+    with pytest.raises(ValueError) as excinfo:
+        res = pym.historical(symbol)
+    assert "See 'symbols' or 'coins' properties" in str(excinfo)

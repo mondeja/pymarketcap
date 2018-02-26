@@ -3,34 +3,11 @@
 
 from random import choice
 
+import pytest
+
+from pymarketcap.tests.currency import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-class TypeTester:
-    def _source_code(self, value): assert type(value) in [str, type(None)]
-    def _announcement(self, value): assert type(value) in [str, type(None)]
-    def _explorers(self, value): assert type(value) == list
-    def _total_markets_volume_24h(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) == float
-    def _rank(self, value): assert type(value) == int
-    def _total_markets_cap(self, value): assert type(value) in [float, type(None)]
-    def _chats(self, value): assert type(value) == list
-    def _message_boards(self, value): assert type(value) == list
-    def _circulating_supply(self, value): assert type(value) in [float, type(None)]
-    def _total_supply(self, value): assert type(value) in [float, type(None)]
-    def _max_supply(self, value): assert type(value) in [float, type(None)]
-    def _mineable(self, value): assert type(value) == bool
-    def _webs(self, value): assert type(value) == list
-
-tt = TypeTester()
-
-def assert_types(res):
-    assert type(res) == dict
-    for key, value in res.items():
-        eval("tt._{}({})".format(
-            key,
-            value if type(value) != str else '"%s"' % value
-        ))
 
 def test_types():
     symbol = choice(pym.symbols)
@@ -55,3 +32,10 @@ def test_convert():
 
     assert_types(res)
     assert_consistence(res)
+
+def test_invalid():
+    symbol = "BDAD)DAAS&/9324423OUVibb"
+    with pytest.raises(ValueError) as excinfo:
+        res = pym.currency(symbol)
+    assert "See 'symbols' or 'coins' properties" in str(excinfo)
+
