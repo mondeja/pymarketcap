@@ -630,13 +630,9 @@ cdef class Pymarketcap:
                 be includedin global market capitalization graph.
                 As default ``True``.
             start (int, optional): Time to start retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default ``None``.
-            end (optional, datetime): Time to end retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default ``None``.
+                graphs data in datetime. As default ``None``.
+            end (optional, datetime): Time to start retrieving
+                graphs data in datetime. As default ``None``.
 
         Returns (dict):
             Whose values are lists of lists with timestamp and values,
@@ -648,33 +644,49 @@ cdef class Pymarketcap:
         else:
             url = b"https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"
 
-        if start and end:
-            url += b"%s/%s/" % (str(start).encode(), str(end).encode())
+        res = loads(self._get(url))
 
-        return loads(self._get(url))
+        response = {}
+        for key in list(res.keys()):
+            group = []
+            for _tmp, data in res[key]:
+                tmp = datetime.fromtimestamp(int(_tmp/1000))
+                try:
+                    if tmp >= start and tmp <= end:
+                        group.append([tmp, data])
+                except TypeError:
+                    group.append([tmp, data])
+            response[key] = group
+        return response
 
     cpdef _dominance(self, start=None, end=None):
         """Get currencies dominance percentage graph
 
         Args:
             start (int, optional): Time to start retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default None.
-            end (optional, datetime): Time to end retrieving
-                graphs data in microseconds unix timestamps.
-                Only works with times provided by the times
-                returned in graphs functions. As default None.
+                graphs data in datetime. As default ``None``.
+            end (optional, datetime): Time to start retrieving
+                graphs data in datetime. As default ``None``.
 
         Returns (dict):
             Altcoins and dominance percentage values with timestamps.
         """
         url = b"https://graphs2.coinmarketcap.com/global/dominance/"
 
-        if start and end:
-            url += b"%s/%s/" % (str(start).encode(), str(end).encode())
+        res = loads(self._get(url))
 
-        return loads(self._get(url))
+        response = {}
+        for key in list(res.keys()):
+            group = []
+            for _tmp, data in res[key]:
+                tmp = datetime.fromtimestamp(int(_tmp/1000))
+                try:
+                    if tmp >= start and tmp <= end:
+                        group.append([tmp, data])
+                except TypeError:
+                    group.append([tmp, data])
+            response[key] = group
+        return response
 
     cpdef download_logo(self, unicode name, size=64, filename=None):
         """Download a currency image logo

@@ -29,6 +29,24 @@ if not built:
         print("Error building pymarketcap.")
         sys.exit(1)
 
+# Check if minimum Python3.6
+PYTHON_VERSION = sys.version_info
+if PYTHON_VERSION < (3,6):
+    if PYTHON_VERSION > (3,5):
+        if "--quiet" not in sys.argv:
+            msg = "\nPython version:\n%s\n\nYou need to install almost " % sys.version \
+                + "Python3.6 in order to use the asynchronous Pymarketcap interface.\n" \
+                + "Install pymarketcap without it anyway? Y/N: "
+            cont = str(input(msg)).lower()
+            if cont == "n":
+                print("Installation cancelled.")
+                sys.exit(0)
+            else:
+                pass
+    else:
+        print("You need almost Python3.5 version to install pymarketcap.")
+        sys.exit(1)
+
 
 # ===========  Cython compilation  ===========
 

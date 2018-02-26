@@ -12,6 +12,7 @@ from pymarketcap import (
 )
 pym = Pymarketcap()
 
+@pytest.mark.skip
 @pytest.mark.end2end
 @pytest.mark.asyncio
 async def test_every_currency(event_loop):

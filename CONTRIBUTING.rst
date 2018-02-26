@@ -44,8 +44,6 @@ TODO
 ~~~~
 - Add names of currencies or exchanges for every response on asynchronous methods.
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
-- Manage setup for Python3.5, only posible without asynchronous interface. Show a warning indicating that asynchronous interface is only installable with Python≥3.6 and ask to the user if he wants to install anyway.
-- Set timestamps of parameters and responses in methods of ``graphs`` interface as datetime objects.
 
 --------------
 
