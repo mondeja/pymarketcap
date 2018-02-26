@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from random import choice
-from re import findall as re_findall
-from urllib.request import urlopen
 from urllib.error import HTTPError
 
 from tqdm import tqdm
 import pytest
 
-from pymarketcap.tests.exchange import assert_types
+from pymarketcap.tests.exchange import (
+    assert_types,
+    assert_consistence
+)
 from pymarketcap import Pymarketcap, CoinmarketcapHTTPError
 pym = Pymarketcap()
 

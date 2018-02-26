@@ -13,7 +13,7 @@ before_script:
   - pip install -r dev-requirements.txt
   - echo $TRAVIS_PYTHON_VERSION
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then travis_wait 20 make test-end2end; else make test; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
 branches:
   only:
     - master
