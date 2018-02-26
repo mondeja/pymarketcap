@@ -64,7 +64,9 @@ def test_start_end():
         # Test consistence
         assert end.day == res["price_btc"][-1][0].day
         if startend:
-            assert start.day == res["price_usd"][0][0].day
+            first_day = res["price_usd"][0][0].day
+            previous_day = (res["price_usd"][0][0] - timedelta(days=1)).day
+            assert start.day in [first_day, previous_day]
 
 
 

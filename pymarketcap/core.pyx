@@ -614,7 +614,7 @@ cdef class Pymarketcap:
             for _tmp, data in res[key]:
                 tmp = datetime.fromtimestamp(int(_tmp/1000))
                 try:
-                    if tmp > start and tmp <= end:
+                    if tmp >= start and tmp <= end:
                         group.append([tmp, data])
                 except TypeError:
                     group.append([tmp, data])

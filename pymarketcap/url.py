@@ -16,10 +16,14 @@ def get_to_memory(url, timeout, debug):
         url.decode(),
         headers={"User-Agent": "pymarketcap %s" % __version__}
     )
-    req = urlopen(req, timeout=timeout)
-    data = req.read()
-    if debug:
-        print(data)
-    res = Response(data, req.getcode(), url)
-    req.close()
-    return res
+    try:
+        req = urlopen(req, timeout=timeout)
+    except HTTPError as e:
+        return Response(b"", e.code, url)
+    else:
+        data = req.read()
+        if debug:
+            print(data)
+        res = Response(data, req.getcode(), url)
+        req.close()
+        return res
