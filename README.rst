@@ -12,9 +12,9 @@ pymarketcap
 
 |PyPI| |PyPI Versions| |LICENSE|
 
-**pymarketcap** is library for retrieve data from
+**pymarketcap** is a library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
-of a cythonized scraper and API wrapper built with libcurl, but is
+of a cythonized scraper and and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
 library instead. Only works in Python≥3.6.
 

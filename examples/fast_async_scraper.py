@@ -5,12 +5,12 @@
 it will use a lot of your memory."""
 
 import asyncio
-from pymarketcap import AsyncPymarketcapScraper
+from pymarketcap import AsyncPymarketcap
 
 res = []
 
 async def main():
-    async with AsyncPymarketcapScraper(queue_size=50, consumers=50) as apym:
+    async with AsyncPymarketcap(queue_size=50, consumers=50) as apym:
         async for currency in apym.every_historical():
             res.append(currency)
 

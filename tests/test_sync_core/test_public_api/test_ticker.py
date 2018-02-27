@@ -3,7 +3,7 @@
 
 """Tests for ticker() method"""
 
-import time
+from time import sleep
 from random import choice, randint
 from math import ceil
 
@@ -53,7 +53,7 @@ class TestWithoutParams:
         assert res[-1]["rank"] == pym.total_currencies
 
     def teardown(self):
-        time.sleep(3)
+        sleep(1)
 
 class TestWithParams:
     def test_limit(self):
@@ -63,10 +63,10 @@ class TestWithParams:
         res = pym.ticker(limit=385)
         assert len(res) == 385
 
-    def test_currency(self):
+    def test_name(self):
         symbol = choice(pym.symbols)
         res = pym.ticker(symbol)
-        print("(Currency: %s)" % symbol, end=" ")
+        print("(Symbol: %s)" % symbol, end=" ")
 
         # Test types
         assert type(res) == dict
@@ -101,4 +101,4 @@ class TestWithParams:
             assert badges_in_keys_count == 3
 
     def teardown(self):
-        time.sleep(3)
+        sleep(1)

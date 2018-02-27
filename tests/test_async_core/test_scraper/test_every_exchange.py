@@ -8,7 +8,7 @@ from pymarketcap.tests.exchange import (
     assert_consistence
 )
 from pymarketcap import (
-    AsyncPymarketcapScraper,
+    AsyncPymarketcap,
     Pymarketcap
 )
 pym = Pymarketcap()
@@ -16,12 +16,16 @@ pym = Pymarketcap()
 
 @pytest.mark.end2end
 @pytest.mark.asyncio
-async def test_every_currency(event_loop):
-    async with AsyncPymarketcapScraper(debug=True,
+async def test_every_exchange(event_loop):
+    async with AsyncPymarketcap(debug=True,
                                        queue_size=50,
                                        consumers=50) as apym:
         res = []
+        show_msg = True
         async for exc in apym.every_exchange():
+            if show_msg:
+                print("Testing all responses...")
+                show_msg = False
             res.append(exc)
 
             assert_types(exc)

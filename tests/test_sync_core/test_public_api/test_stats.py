@@ -3,7 +3,7 @@
 
 """Tests for stats() method"""
 
-import time
+from time import sleep
 from random import choice
 
 from pymarketcap import Pymarketcap
@@ -24,7 +24,7 @@ class TypeTester:
 tt = TypeTester()
 
 def teardown_function(function):
-    time.sleep(1)
+    sleep(1)
 
 def assert_types(res):
     assert type(res) == dict

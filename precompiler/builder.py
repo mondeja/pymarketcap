@@ -19,7 +19,7 @@ class Builder:
         self.source = source
         self.test_sources = {
             "test_ticker": os.path.join(os.getcwd(), "tests", "test_sync_core",
-                                        "test_api", "test_ticker.py")
+                                        "test_public_api", "test_ticker.py")
         }
 
     ###   MAIN BUILDER METHODS   ###

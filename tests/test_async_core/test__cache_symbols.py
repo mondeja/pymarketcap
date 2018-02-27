@@ -3,11 +3,11 @@
 
 import pytest
 
-from pymarketcap import AsyncPymarketcapScraper
+from pymarketcap import AsyncPymarketcap
 
 @pytest.mark.asyncio
 async def test_types():
-    async with AsyncPymarketcapScraper(debug=True) as apym:
+    async with AsyncPymarketcap(debug=True) as apym:
         res = await apym._cache_symbols()
 
         assert type(res) == dict
@@ -17,6 +17,6 @@ async def test_types():
 
 @pytest.mark.asyncio
 async def test_consistence():
-    async with AsyncPymarketcapScraper() as apym:
+    async with AsyncPymarketcap() as apym:
         res = await apym._cache_symbols()
         assert len(res) > 0

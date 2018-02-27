@@ -5,19 +5,14 @@ from random import randint
 from datetime import datetime, timedelta
 from pprint import pprint
 
+from pymarketcap.tests.graphs import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def test_types():
     res = pym.graphs.dominance()
 
-    assert type(res) == dict
-    for key, values in res.items():
-        assert type(key) == str
-        assert type(values) == list
-        for tmp, value in values:
-            assert isinstance(tmp, datetime)
-            assert type(value) in [float, int]
+    assert_types(res)
 
 def test_consistence():
     res = pym.graphs.dominance()

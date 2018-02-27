@@ -7,18 +7,18 @@ import pytest
 
 from pymarketcap import (
     Pymarketcap,
-    AsyncPymarketcapScraper,
+    AsyncPymarketcap,
 )
 
 @pytest.mark.asyncio
 async def test_sync_interface():
-    async with AsyncPymarketcapScraper(debug=True) as apym:
+    async with AsyncPymarketcap(debug=True) as apym:
         sync_interface = apym.sync
     assert isinstance(sync_interface, Pymarketcap)
 
 @pytest.mark.asyncio
 async def test_cached_properties():
-    async with AsyncPymarketcapScraper(debug=True) as apym:
+    async with AsyncPymarketcap(debug=True) as apym:
         properties = [
             "symbols", "coins", "exchange_names", "exchange_slugs"
         ]

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-from pymarketcap import AsyncPymarketcapScraper
+from pymarketcap import AsyncPymarketcap
 
 async def main():
-    async with AsyncPymarketcapScraper() as apym:
+    async with AsyncPymarketcap() as apym:
         async for currency in apym.every_currency():
             print(currency)
 

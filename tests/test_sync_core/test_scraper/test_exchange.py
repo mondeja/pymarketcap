@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from random import choice
-from urllib.error import HTTPError
+from re import findall
+from urllib.request import urlopen
 
 from tqdm import tqdm
 import pytest
@@ -14,6 +15,13 @@ from pymarketcap.tests.exchange import (
 from pymarketcap import Pymarketcap, CoinmarketcapHTTPError
 pym = Pymarketcap()
 
+def assert_number_of_markets(res):
+    req = urlopen("https://coinmarketcap.com/exchanges/%s/" % res["slug"])
+    data = req.read()
+    req.close()
+    indexes = findall(r'<td class="text-right">(\d+)</td>', data.decode())
+    assert len(res["markets"]) == int(indexes[-1])
+
 def test_types():
     exc = choice(pym.exchange_slugs)
     print("(Exchange: %s)" % exc, end=" ")
@@ -23,7 +31,9 @@ def test_types():
 def test_consistence():
     exc = choice(pym.exchange_slugs)
     print("(Exchange: %s)" % exc, end=" ")
-    assert_types(pym.exchange(exc))
+    res = pym.exchange(exc)
+    assert_consistence(res)
+    assert_number_of_markets(res)
 
 
 def test_convert():
@@ -32,7 +42,7 @@ def test_convert():
     res = pym.exchange(exc, convert="BTC")
 
     assert_types(res)
-    assert_consistence(res, exc)
+    assert_consistence(res)
 
 def test_invalid():
     exc = "dabsfgbdsagubfeqbfeyfv"

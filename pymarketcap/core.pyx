@@ -52,6 +52,7 @@ cdef class Pymarketcap:
     cdef readonly list _symbols
     cdef readonly list _coins
     cdef readonly int  _total_currencies
+    cdef readonly int  _total_exchanges
     cdef readonly list _currencies_to_convert
     cdef readonly list _converter_cache
     cdef readonly list _exchange_names
@@ -68,7 +69,9 @@ cdef class Pymarketcap:
         #: object: Initialization of graphs internal interface
         self.graphs = type("Graphs", (), self._graphs_interface)
 
-    ######   UTILS   #######
+    # ====================================================================
+
+                         #######   UTILS   #######
 
     @property
     def _graphs_interface(self):
@@ -217,6 +220,15 @@ cdef class Pymarketcap:
         return list(OrderedDict.fromkeys(parsed)) # Remove duplicates without change order
 
     @property
+    def total_exchanges(self):
+        res = self._total_exchanges
+        if res:
+            return res
+        else:
+            self._total_exchanges = len(self.exchanges())
+            return self._total_exchanges
+
+    @property
     def converter_cache(self):
         res = self._converter_cache
         if res:
@@ -246,7 +258,7 @@ cdef class Pymarketcap:
 
     # ====================================================================
 
-                           #######   API   #######
+                        #######   PUBLIC API   #######
 
     cpdef stats(self, convert="USD"):
         """ Get global cryptocurrencies statistics.
@@ -593,7 +605,7 @@ cdef class Pymarketcap:
 
     # ====================================================================
 
-    ######   GRAPHS API   #######
+                       #######   INTERNAL API   #######
 
     cpdef _currency(self, unicode name, start=None, end=None):
         """Get graphs data of a currency.
@@ -618,18 +630,7 @@ cdef class Pymarketcap:
         url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % name.encode()
         res = loads(self._get(url))
 
-        response = {}
-        for key in list(res.keys()):
-            group = []
-            for _tmp, data in res[key]:
-                tmp = datetime.fromtimestamp(int(_tmp/1000))
-                try:
-                    if tmp >= start and tmp <= end:
-                        group.append([tmp, data])
-                except TypeError:
-                    group.append([tmp, data])
-            response[key] = group
-        return response
+        return processer.graphs(res, start, end)
 
     cpdef _global_cap(self, bitcoin=True, start=None, end=None):
         """Get global market capitalization graphs, including
@@ -656,18 +657,7 @@ cdef class Pymarketcap:
 
         res = loads(self._get(url))
 
-        response = {}
-        for key in list(res.keys()):
-            group = []
-            for _tmp, data in res[key]:
-                tmp = datetime.fromtimestamp(int(_tmp/1000))
-                try:
-                    if tmp >= start and tmp <= end:
-                        group.append([tmp, data])
-                except TypeError:
-                    group.append([tmp, data])
-            response[key] = group
-        return response
+        return processer.graphs(res, start, end)
 
     cpdef _dominance(self, start=None, end=None):
         """Get currencies dominance percentage graph
@@ -685,18 +675,7 @@ cdef class Pymarketcap:
 
         res = loads(self._get(url))
 
-        response = {}
-        for key in list(res.keys()):
-            group = []
-            for _tmp, data in res[key]:
-                tmp = datetime.fromtimestamp(int(_tmp/1000))
-                try:
-                    if tmp >= start and tmp <= end:
-                        group.append([tmp, data])
-                except TypeError:
-                    group.append([tmp, data])
-            response[key] = group
-        return response
+        return processer.graphs(res, start, end)
 
     cpdef download_logo(self, unicode name, size=64, filename=None):
         """Download a currency image logo

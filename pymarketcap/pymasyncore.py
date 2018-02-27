@@ -19,6 +19,8 @@ from tqdm import tqdm
 
 # Internal Cython modules
 from pymarketcap import Pymarketcap
+from pymarketcap import processer
+_is_symbol = processer._is_symbol
 
 # Internal Python modules
 from pymarketcap.consts import (
@@ -26,8 +28,6 @@ from pymarketcap.consts import (
     exceptional_coin_slugs,
     DEFAULT_FORMATTER
 )
-from pymarketcap import processer
-_is_symbol = processer._is_symbol
 
 # Logging initialization
 logger_name = "/pymarketcap%s" % __file__.split("pymarketcap")[-1]
@@ -36,20 +36,20 @@ handler = logging.StreamHandler()
 handler.setFormatter(DEFAULT_FORMATTER)
 logger.addHandler(handler)
 
-class AsyncPymarketcapScraper(ClientSession):
+class AsyncPymarketcap(ClientSession):
     """Asynchronous scraper for coinmarketcap.com
 
     Args:
         queue_size (int): Number of maximum simultanenous
            get requests performing together in methods
-           involving several requests.
+           involving several requests. As default ``10``.
         progress_bar(bool): Select ``True`` or ``False`` if you
             want to show a progress bar in methods involving
             processing of several requests (requires ``tqdm``
             module). As default, ``True``.
         consumers(int): Number of consumers resolving http
             requests in from an internal ``asyncio.Queue``.
-            As default, 10.
+            As default, ``10``.
         timeout (int/float, optional): Limit max time
             waiting for a response. As default, ``15``.
         logger (logging.logger): As default with
@@ -65,7 +65,7 @@ class AsyncPymarketcapScraper(ClientSession):
                  consumers=10, timeout=DEFAULT_TIMEOUT,
                  logger=logger, debug=False,
                  **kwargs):
-        super(AsyncPymarketcapScraper, self).__init__(**kwargs)
+        super(AsyncPymarketcap, self).__init__(**kwargs)
         self.timeout = timeout
         self.logger = logger
         self.sync = Pymarketcap()
@@ -74,6 +74,8 @@ class AsyncPymarketcapScraper(ClientSession):
         self._responses = []
         self.progress_bar = progress_bar
         self.consumers = consumers
+
+        self.graphs = type("Graphs", (), self._graphs_interface)
 
         if debug:
             self.logger.setLevel(logging.DEBUG)
@@ -122,7 +124,34 @@ class AsyncPymarketcapScraper(ClientSession):
             self._exchange_slugs = self.sync.exchange_slugs
             return self._exchange_slugs
 
+    @property
+    def total_currencies(self):
+        """Get all exchange raw names provided by coinmarketcap."""
+        try:
+            return self._total_currencies
+        except AttributeError:
+            self._total_currencies = self.sync.total_currencies
+            return self._total_currencies
+
+    @property
+    def total_exchanges(self):
+        """Get all exchange raw names provided by coinmarketcap."""
+        try:
+            return self._total_exchanges
+        except AttributeError:
+            self._total_exchanges = self.sync.total_exchanges
+            return self._total_exchanges
+
     # UTILS
+
+    @property
+    def _graphs_interface(self):
+        return {
+            "currency": self._currency,
+            "every_currency": self._every_currency,
+            "global_cap": self._global_cap,
+            "dominance": self._dominance
+        }
 
     async def _cache_symbols(self):
         url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
@@ -163,8 +192,7 @@ class AsyncPymarketcapScraper(ClientSession):
             return 1000000
 
     async def _producer(self, items, build_url_callback, queue, desc=""):
-        for item in tqdm(items, desc=desc + " (Estimation)", 
-                         disable=not self.progress_bar):
+        for item in tqdm(items, desc=desc, disable=not self.progress_bar):
             await queue.put(await build_url_callback(item))
 
     async def _consumer(self, main_queue, dlq, responses):
@@ -190,7 +218,7 @@ class AsyncPymarketcapScraper(ClientSession):
         convert = convert.lower()
         return processer.currency(res[20000:], convert)
 
-    async def every_currency(self, currencies=None, convert="USD"):
+    async def every_currency(self, currencies=None, convert="USD", consumers=None):
         """Return general data from every currency in coinmarketcap
         passing a list of currencies as first parameter.
         As default returns data for all currencies.
@@ -198,18 +226,20 @@ class AsyncPymarketcapScraper(ClientSession):
         Args:
             currencies (list, optional): Iterator with all the currencies
                 that you want to retrieve. As default ``None``
-                (``self.symbols`` is used).
+                (``self.coins`` will be used).
             convert (str): Convert prices in response between "USD"
                and BTC. As default ``"USD"``.
+            consumers (int): Number of consumers processing the requests
+                simultaneously. As default ``None`` (``self.consumers``).
 
         Returns (list): Data for all currencies.
         """
         convert = convert.lower()
-        currencies = currencies if currencies else self.symbols
+        currencies = currencies if currencies else self.coins
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
-            self.consumers,
+            consumers if consumers else self.consumers,
             desc="Retrieving every currency data " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
@@ -227,7 +257,7 @@ class AsyncPymarketcapScraper(ClientSession):
         convert = convert.lower()
         return processer.markets(res[20000:], convert)
 
-    async def every_markets(self, currencies=None, convert="USD"):
+    async def every_markets(self, currencies=None, convert="USD", consumers=None):
         """Returns markets data from every currency in coinmarketcap
         passing a list of currencies as first parameter.
         As default returns data for all currencies.
@@ -235,18 +265,20 @@ class AsyncPymarketcapScraper(ClientSession):
         Args:
             currencies (list, optional): Iterator with all the currencies
                 that you want to retrieve. As default ``None``
-                (``self.symbols`` is used in that case).
+                (``self.coins`` will be used in that case).
             convert (str): Convert prices in response between "USD"
                and BTC. As default ``"USD"``.
+            consumers (int): Number of consumers processing the requests
+                simultaneously. As default ``None`` (``self.consumers``).
 
         Returns (async iterator): Data for all currencies.
         """
         convert = convert.lower()
-        currencies = currencies if currencies else self.symbols
+        currencies = currencies if currencies else self.coins
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
-            self.consumers,
+            consumers if consumers else self.consumers,
             desc="Retrieving all markets " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
@@ -284,7 +316,8 @@ class AsyncPymarketcapScraper(ClientSession):
     async def every_historical(self, currencies=None,
                                start=datetime(2008, 8, 18),
                                end=datetime.now(),
-                               revert=False):
+                               revert=False,
+                               consumers=None):
         """Returns historical data from every currency in coinmarketcap
         passing a list of currencies as first parameter.
         As default returns data for all currencies.
@@ -292,7 +325,7 @@ class AsyncPymarketcapScraper(ClientSession):
         Args:
             currencies (list, optional): Iterator with all the currencies
                 that you want to retrieve. As default ``None``
-                (``self.symbols`` is used in that case).
+                (``self.coins`` will be used in that case).
             start (date, optional): Time to start scraping
                 periods as ``datetime.datetime`` type.
                 As default ``datetime(2008, 8, 18)``.
@@ -301,16 +334,18 @@ class AsyncPymarketcapScraper(ClientSession):
             revert (bool, optional): If ``False``, return first date
                 first, in chronological order, otherwise returns
                 reversed list of periods. As default ``False``.
+            consumers (int): Number of consumers processing the requests
+                simultaneously. As default ``None`` (``self.consumers``).
 
         Returns (async iterator): Historical data for all currencies.
         """
         self.__start = start
         self.__end = end
-        currencies = currencies if currencies else self.symbols
+        currencies = currencies if currencies else self.coins
         res = await self._async_multiget(
             currencies,
             self._base_historical_url,
-            self.consumers,
+            consumers if consumers else self.consumers,
             desc="Retrieving all historical data " \
                  + "for %d currencies from coinmarketcap." % len(currencies)
         )
@@ -338,7 +373,7 @@ class AsyncPymarketcapScraper(ClientSession):
         res = await self._get(_base_exchange_url(name))[20000:]
         return processer.exchange(res, convert)
 
-    async def every_exchange(self, exchanges=None, convert="USD"):
+    async def every_exchange(self, exchanges=None, convert="USD", consumers=None):
         """Returns general data from every exchange in coinmarketcap
         passing a list of exchanges as first parameter.
         As default returns data for all exchanges.
@@ -350,6 +385,8 @@ class AsyncPymarketcapScraper(ClientSession):
             convert (str, optional): Convert market_caps, prices,
                 volumes and percent_changes between USD and BTC.
                 As default ``"USD"``.
+            consumers (int): Number of consumers processing the requests
+                simultaneously. As default ``None`` (``self.consumers``).
 
         Returns (async iterator): General data from all exchanges.
         """
@@ -358,7 +395,7 @@ class AsyncPymarketcapScraper(ClientSession):
         res = await self._async_multiget(
             exchanges,
             self._base_exchange_url,
-            self.consumers,
+            consumers if consumers else self.consumers,
             desc="Retrieving all exchange data " \
                  + "for %d exchanges from coinmarketcap." % len(exchanges)
         )
@@ -366,3 +403,71 @@ class AsyncPymarketcapScraper(ClientSession):
             response = processer.exchange(raw_res, convert)
             response["slug"] = url.split("/")[-1]
             yield response
+
+    async def exchanges(self, convert="USD"):
+        url = "https://coinmarketcap.com/exchanges/volume/24-hour/all/"
+        convert = convert.lower()
+        res = await self._get(url)[45000:]
+        return processer.exchanges(res, convert)
+
+    async def tokens(self, convert="USD"):
+        url = "https://coinmarketcap.com/tokens/views/all/"
+        convert = convert.lower()
+        res = await self._get(url)[40000:]
+        return processer.tokens(res, convert)
+
+    # GRAPHS API
+    async def _base_graphs_currency_url(self, name):
+        if _is_symbol(name):
+            name = self.correspondences[name]
+        return "https://graphs2.coinmarketcap.com/currencies/%s" % name
+
+    async def _currency(self, name, start=None, end=None):
+        res = await self._get(self._base_graphs_currency_url(name))
+        return processer.graphs(loads(res), start, end)
+
+    async def _every_currency(self, currencies=None, start=None, end=None, consumers=None):
+        """Returns graphs data from every currency in coinmarketcap
+        passing a list of currencies as first parameter.
+        As default returns graphs data for all currencies.
+
+        Args:
+            currencies (list, optional): Iterator with all the currencies
+                that you want to retrieve. As default ``None``
+                (``self.coins`` will be used in that case).
+            start (datetime, optional): Time to start retrieving
+                graphs data in datetime. As default ``None``.
+            end (datetime, optional): Time to end retrieving
+                graphs data in datetime. As default ``None``.
+            consumers (int): Number of consumers processing the requests
+                simultaneously. As default ``None`` (``self.consumers``).
+
+        Returns (async iterator): Graphs data from all currencies.
+        """
+        currencies = currencies if currencies else self.coins
+        res = await self._async_multiget(
+            currencies,
+            self._base_graphs_currency_url,
+            consumers if consumers else self.consumers,
+            desc="Retrieving all graphs data " \
+                 + "for %d currencies from coinmarketcap." % len(currencies)
+        )
+        for url, raw_res in res:
+            response = processer.graphs(loads(raw_res), start, end)
+            response["slug"] = url.split("/")[-1]
+            for symbol, slug in self.correspondences.items():
+                if slug == response["slug"]:
+                    response["symbol"] = symbol
+                    break
+            yield response
+
+    async def _global_cap(self, bitcoin=True, start=None, end=None):
+        if bitcoin:
+            url = "https://graphs2.coinmarketcap.com/global/marketcap-total/"
+        else:
+            url = "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"
+        return processer.graphs(loads(self._get(url)), start, end)
+
+    async def _dominance(self, start=None, end=None):
+        url = "https://graphs2.coinmarketcap.com/global/dominance/"
+        return processer.graphs(loads(self._get(url)), start, end)

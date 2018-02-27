@@ -5,6 +5,7 @@ from random import choice, randint
 from datetime import datetime, timedelta
 from pprint import pprint
 
+from pymarketcap.tests.graphs import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -15,11 +16,7 @@ def test_types():
     res = pym.graphs.currency(symbol)
     print("(Currency: %s)" % symbol, end=" ")
 
-    for field, values in res.items():
-        assert type(values) == list
-        for tmp, value in values:
-            assert isinstance(tmp, datetime)
-            assert type(value) in [float, int]
+    assert_types(res)
 
 def test_consistence():
     symbol = choice(all_symbols)

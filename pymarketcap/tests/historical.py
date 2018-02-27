@@ -30,5 +30,6 @@ def assert_types(res):
 def assert_consistence(res):
     for i, tick in enumerate(res["history"]):
         assert len(tick.keys()) == 7  # Check number of keys
-        if i < len(res)-1:
-            assert res["history"][i+1]["date"] < tick["date"]
+        if len(res["history"]) > 1:
+            if i < len(res)-1:
+                assert res["history"][i+1]["date"] < tick["date"]

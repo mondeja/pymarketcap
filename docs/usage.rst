@@ -14,12 +14,12 @@ Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/m
 .. centered:: Asynchronous Scraper
 .. code-block:: python
 
-   from pymarketcap import AsyncPymarketcapScraper
+   from pymarketcap import AsyncPymarketcap
    import asyncio
 
    res = []
    async def get_every_exchange():
-       async for exc in AsyncPymarketcapScraper() as apym:
+       async for exc in AsyncPymarketcap() as apym:
            res.append(exc)
 
    loop = asyncio.get_event_loop()

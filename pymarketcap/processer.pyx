@@ -348,3 +348,18 @@ cpdef tokens(res, convert):
             "volume_24h": vol
         })
     return response
+
+cpdef graphs(res, start, end):
+    response = {}
+    for key in list(res.keys()):
+        group = []
+        for _tmp, data in res[key]:
+            tmp = datetime.fromtimestamp(int(_tmp/1000))
+            try:
+                if tmp >= start and tmp <= end:
+                    group.append([tmp, data])
+            except TypeError:
+                group.append([tmp, data])
+        response[key] = group
+    return response
+
