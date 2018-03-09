@@ -241,7 +241,7 @@ class AsyncPymarketcap(ClientSession):
             self._base_currency_url,
             consumers if consumers else self.consumers,
             desc="Retrieving every currency data " \
-                 + "for %d currencies from coinmarketcap." % len(currencies)
+                 + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             processed = processer.currency(raw_res[20000:], convert)
@@ -280,7 +280,7 @@ class AsyncPymarketcap(ClientSession):
             self._base_currency_url,
             consumers if consumers else self.consumers,
             desc="Retrieving all markets " \
-                 + "for %d currencies from coinmarketcap." % len(currencies)
+                 + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             response = {"markets": processer.markets(raw_res[20000:], convert),
@@ -347,7 +347,7 @@ class AsyncPymarketcap(ClientSession):
             self._base_historical_url,
             consumers if consumers else self.consumers,
             desc="Retrieving all historical data " \
-                 + "for %d currencies from coinmarketcap." % len(currencies)
+                 + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             response = {"history": processer.historical(raw_res[50000:],
@@ -397,7 +397,7 @@ class AsyncPymarketcap(ClientSession):
             self._base_exchange_url,
             consumers if consumers else self.consumers,
             desc="Retrieving all exchange data " \
-                 + "for %d exchanges from coinmarketcap." % len(exchanges)
+                 + "for %d exchanges from coinmarketcap" % len(exchanges)
         )
         for url, raw_res in res:
             response = processer.exchange(raw_res, convert)
@@ -450,7 +450,7 @@ class AsyncPymarketcap(ClientSession):
             self._base_graphs_currency_url,
             consumers if consumers else self.consumers,
             desc="Retrieving all graphs data " \
-                 + "for %d currencies from coinmarketcap." % len(currencies)
+                 + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             response = processer.graphs(loads(raw_res), start, end)

@@ -16,8 +16,8 @@ def test_consistence():
     print("tests/test_scraper/test_download_logo.py::test_consistence")
     for size in tqdm([16, 32, 64, 128, 200]):
         attempts = 20
-        _assert = True
         while attempts > 0:
+            _assert = True
             symbol = choice(pym.symbols)
             tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
             try:

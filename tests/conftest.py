@@ -16,3 +16,11 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "end2end" in item.keywords:
             item.add_marker(skip_end2end)
+
+@pytest.yield_fixture()
+def event_loop():
+    loop = asyncio.get_event_loop()
+    yield loop
+    #loop.close()
+    pass
+

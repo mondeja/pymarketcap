@@ -27,7 +27,8 @@ def assert_types(res):
             ))
 
 def test_types():
-    assert_types(pym.tokens())
+    res = pym.tokens()
+    assert_types(res)
 
 def assert_number_of_tokens(res):
     req = urlopen("https://coinmarketcap.com/tokens/views/all/")
@@ -39,3 +40,4 @@ def assert_number_of_tokens(res):
 def test_consistence():
     res = pym.tokens()
     assert_number_of_tokens(res)
+

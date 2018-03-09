@@ -321,7 +321,7 @@ cpdef exchanges(res, convert):
 cpdef tokens(res, convert):
     names = re.findall(r'currency-name-container" href="/currencies/.+/">(.+)</a>', res)
     symbols = re.findall(r'currency-symbol"><a href="/currencies/.+/">(.+)</a>', res)
-    platforms = re.findall(r'platform-name"><a href="/currencies/[\w-]*/">(.*)</a>', res)
+    platforms = re.findall(r'platform-name" data-sort="([^"]+)">', res)
     caps = re.findall(
         r'market-cap .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
     )
