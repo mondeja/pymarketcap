@@ -143,14 +143,15 @@ cpdef ranks(res):
 
 cpdef historical(res, start, end, revert):
     cdef long len_i, i, i2, i3
+    cdef short superior_fields_len
 
     dates = re.findall(r'<td class="text-left">(.+)</td>', res)
-    vol_marketcap = re.findall(r'cap [\w|-]+="(-|\d+\.*[\d+-e]*)"', res)
+    vol_marketcap = re.findall(r'cap data-format-value="(-|\d+\.*[\d+-e]*)"', res)
     ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res)
 
     len_i = len(dates)
     i = 0
-    i2 = 0
+    i2 = len(vol_marketcap*2) - len(ohlc)
     i3 = 0
 
     response = []
@@ -162,14 +163,19 @@ cpdef historical(res, start, end, revert):
             if date <= end:
                 try: close = float(ohlc[i3+3])
                 except ValueError: close = None
+                try: volume = float(vol_marketcap[i2-1])
+                except ValueError: volume = None
+                try: market_cap = float(vol_marketcap[i2])
+                except ValueError: market_cap = None
+
                 response.append({
                     "date": date,
                     "open": float(ohlc[i3]),
                     "high": float(ohlc[i3+1]),
                     "low": float(ohlc[i3+2]),
                     "close": close,
-                    "volume": float(ohlc[i2]),
-                    "market_cap": float(ohlc[i2+1])
+                    "volume": volume,
+                    "market_cap": market_cap
                 })
             else:
                 break

@@ -21,12 +21,9 @@ def test_types():
 
 def test_consistence():
     symbol = choice(pym.coins)
-    symbol = "TLE"
     print("(Currency: %s)" % symbol, end=" ")
     res = pym.historical(symbol)
-
-    # Check dates order
-    
+    assert_consistence(res)
 
 def test_invalid():
     symbol = "BDAD)DAAS&/9324423OUVibb"

@@ -1,4 +1,4 @@
-.IPHONY: install builds clean test bench proof
+.IPHONY: install builds dist install install-light dev-install uninstall reinstall clean test test-end2end precompile-sources restore-sources docs-html
 
 builds:
 	sudo python3 setup.py build_ext -fi

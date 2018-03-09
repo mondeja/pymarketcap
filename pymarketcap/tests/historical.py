@@ -9,8 +9,8 @@ class TypeTester:
     def _high(self, value): assert type(value) == float
     def _low(self, value): assert type(value) == float
     def _close(self, value): assert type(value) in [float, type(None)]
-    def _volume(self, value): assert type(value) == float
-    def _market_cap(self, value): assert type(value) == float
+    def _volume(self, value): assert type(value) in [float, type(None)]
+    def _market_cap(self, value): assert type(value) in [float, type(None)]
     def _name(self, value): assert type(value) == str
 
 tt = TypeTester()

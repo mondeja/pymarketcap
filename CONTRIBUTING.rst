@@ -28,7 +28,7 @@ Contributing guidelines
 -----------------------
 
 -  Each new method developed needs to be accompanied with their
-   respective complete unittest as is shown in ``tests/`` directory.
+   respective complete unittest as shown in ``tests/`` directory.
 -  Each new pull request needs to be good performed. Plase, don't make a
    pull request with 4 commits for change a line in the code.
 
@@ -43,6 +43,7 @@ benchmarks results: run ``python3 bench/main.py --help``.
 TODO
 ~~~~
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
+- Improves exchanges cache retrieving data from ``https://files.coinmarketcap.com/generated/search/quick_search_exchanges.json``.
 
 --------------
 
