@@ -14,15 +14,16 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def test_types():
-    symbol = choice(pym.coins)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.historical(symbol)
+    coin = choice(pym.coins)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.historical(coin)
     assert_types(res)
 
+
 def test_consistence():
-    symbol = choice(pym.coins)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.historical(symbol)
+    coin = choice(pym.coins)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.historical(coin)
     assert_consistence(res)
 
 def test_invalid():

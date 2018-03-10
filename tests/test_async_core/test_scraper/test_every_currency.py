@@ -31,10 +31,6 @@ def test_every_currency(event_loop):
                 assert_types(currency)
                 assert_consistence(currency)
             assert type(res) == list
-
-            # Assert consistence
-            assert len(res) < pym.total_currencies + 100
-            assert len(res) > pym.total_currencies - 100
     event_loop.run_until_complete(wrapper())
 
 

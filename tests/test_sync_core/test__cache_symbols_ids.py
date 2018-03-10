@@ -33,3 +33,5 @@ def test_consistence():
             assert ch.islower() or ch.isnumeric() or ch in ["-"]
     for original, correct in exceptional_coin_slugs.items():
         assert res[original] == correct
+
+

@@ -14,10 +14,17 @@ exceptional_coin_slugs = {
     "888": "octocoin",
     "$$$": "money",
     "BTBc": "bitbase",
-    "1337": "1337coin"
+    "1337": "1337coin",
+    "AMMO": "ammo-reloaded",
+    "BTW": "bitwhite"
 }
 
 exceptional_coin_slugs_keys = list(exceptional_coin_slugs.keys())
+
+# Coins retrieved by cache but not found in coinmarketcap
+invalid_coins = [
+    "coindash"
+]
 
 # Logging
 

@@ -10,7 +10,7 @@ def pytest_addoption(parser):
 
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--end2end"):
-        # --runslow given in cli: do not skip slow tests
+        # Run end2end tests
         return
     skip_end2end = pytest.mark.skip(reason="Need --end2end option to run")
     for item in items:

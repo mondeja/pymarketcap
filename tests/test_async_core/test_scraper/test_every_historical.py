@@ -17,8 +17,8 @@ pym = Pymarketcap()
 def test_every_historical(event_loop):
     async def wrapper():
         async with AsyncPymarketcap(debug=True,
-                                           queue_size=50,
-                                           consumers=50) as apym:
+                                    queue_size=50,
+                                    consumers=50) as apym:
             res = []
             show_msg = True
             async for (currency) in apym.every_historical():
@@ -30,6 +30,5 @@ def test_every_historical(event_loop):
                 assert_types(currency)
                 assert_consistence(currency)
             assert type(res) == list
-            assert len(res) < pym.total_currencies + 100
-            assert len(res) > pym.total_currencies - 100
+
     event_loop.run_until_complete(wrapper())

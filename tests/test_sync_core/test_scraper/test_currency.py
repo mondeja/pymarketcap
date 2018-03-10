@@ -13,21 +13,21 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def test_types():
-    symbol = choice(pym.symbols)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.currency(symbol)
+    coin = choice(pym.coins)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.currency(coin)
     assert_types(res)
 
 def test_consistence():
-    symbol = choice(pym.symbols)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.currency(symbol)
+    coin = choice(pym.coins)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.currency(coin)
     assert_consistence(res)
 
 def test_convert():
-    symbol = choice(pym.symbols)
-    print("(Currency: %s)" % symbol, end=" ")
-    res = pym.currency(symbol, convert="BTC")
+    coin = choice(pym.coins)
+    print("(Currency: %s)" % coin, end=" ")
+    res = pym.currency(coin, convert="BTC")
 
     assert_types(res)
     assert_consistence(res)

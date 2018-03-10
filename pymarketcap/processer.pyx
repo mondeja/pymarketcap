@@ -10,25 +10,6 @@ from pymarketcap.consts import (
     exceptional_coin_slugs_keys
 )
 
-# General utilities
-
-cpdef _is_symbol(unicode currency):
-    """Internal function for check
-    if a currency string may be a symbol or not.
-    This function is not strict, so if you pass
-    _is_symbol("OBASDFPAFFFOUASVBF") will returns True
-    but in this context we don't need to check if
-    the user has introduced a valid symbol.
-
-    Returns bint:
-        1 if True, 0 if False
-    """
-    cdef bint response
-    response = 0
-    if currency.isupper() or currency in exceptional_coin_slugs_keys:
-        response = 1
-    return response
-
 # RegEx parsing
 PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
@@ -143,7 +124,6 @@ cpdef ranks(res):
 
 cpdef historical(res, start, end, revert):
     cdef long len_i, i, i2, i3
-    cdef short superior_fields_len
 
     dates = re.findall(r'<td class="text-left">(.+)</td>', res)
     vol_marketcap = re.findall(r'cap data-format-value="(-|\d+\.*[\d+-e]*)"', res)
@@ -151,7 +131,7 @@ cpdef historical(res, start, end, revert):
 
     len_i = len(dates)
     i = 0
-    i2 = len(vol_marketcap*2) - len(ohlc)
+    i2 = min([len(vol_marketcap*2) - len(ohlc), 2])
     i3 = 0
 
     response = []

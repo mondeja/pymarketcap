@@ -13,12 +13,12 @@ from urllib.error import HTTPError
 # Internal Cython modules
 from pymarketcap.curl import get_to_memory
 from pymarketcap import processer
-_is_symbol = processer._is_symbol
 
 # Internal Python modules
 from pymarketcap.consts import (
     DEFAULT_TIMEOUT,
-    exceptional_coin_slugs
+    exceptional_coin_slugs,
+    invalid_coins
 )
 from pymarketcap.errors import (
     CoinmarketcapHTTPError,
@@ -57,6 +57,7 @@ cdef class Pymarketcap:
     cdef readonly list _converter_cache
     cdef readonly list _exchange_names
     cdef readonly list _exchange_slugs
+    cdef readonly dict __repeated_symbols
 
     cdef public long timeout
     cdef public object graphs
@@ -103,19 +104,53 @@ cdef class Pymarketcap:
             self._ids_correspondences = main_cache[1]
             return self._ids_correspondences
 
-    cpdef _cache_symbols_ids(self):
-        """Internal function for load in cache al symbols
-        in coinmarketcap with their respectives currency names."""
+    cpdef _is_symbol(self, unicode currency):
+        """Internal function for check
+        if a currency string may be a symbol or not.
+        This function is not strict, so if you pass
+        self._is_symbol("OBASDFPAFFFOUASVBF") will returns True
+        but in this context we don't need to check if
+        the user has introduced a valid symbol.
+
+        Returns bint:
+            1 if True, 0 if False
+        """
+        cdef bint response
+        response = 0
+        if currency.isupper() or currency in exceptional_coin_slugs:
+            if currency in self.__repeated_symbols:
+                msg = 'The symbol "%s" has more than one correspondence ' % currency \
+                    + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
+                    + "\nPossible valid slug names: %r." % self.__repeated_symbols[currency]
+                raise ValueError(msg)
+            response = 1
+        return response
+
+    cpdef _quick_search(self):
+        """Internal pymarketcap JSON cache file ``quick_search.json``."""
         cdef bytes url
         url = b"https://files.coinmarketcap.com/generated/search/quick_search.json"
-        res = loads(self._get(url))
-        symbols, ids = {}, {}
-        for currency in res:
-            symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
-            ids[currency["symbol"]] = currency["id"]
+        return loads(self._get(url))
+
+    cpdef _cache_symbols_ids(self):
+        """Internal function for load in cache all symbols
+        in coinmarketcap with their respectives currency names."""
+        self.__repeated_symbols = {}
+        symbols_slugs, symbols_ids = {}, {}
+        for currency in self._quick_search():
+            symbol = currency["symbol"]
+            slug = currency["slug"].replace(" ", "")
+            if symbol in symbols_slugs:    # Repeated symbols are stored internally
+                if symbol in self.__repeated_symbols:
+                    self.__repeated_symbols[symbol].append(slug)
+                else:
+                    self.__repeated_symbols[symbol] = [symbols_slugs[symbol], slug]
+            else:
+                symbols_slugs[symbol] = slug
+            symbols_ids[symbol] = currency["id"]
         for original, correct in exceptional_coin_slugs.items():
-            symbols[original] = correct
-        return (symbols, ids)
+            symbols_slugs[original] = correct
+        return (symbols_slugs, symbols_ids)
 
     @property
     def symbols(self):
@@ -129,6 +164,8 @@ cdef class Pymarketcap:
             return res
         else:
             self._symbols = sorted(list(self.correspondences.keys()))
+            for invalid_symbol in self.__repeated_symbols:
+                self._symbols.remove(invalid_symbol)
             return self._symbols
 
     @property
@@ -143,7 +180,16 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._coins = sorted(list(self.correspondences.values()))
+            self._coins = []
+            for coin_or_coins in list(self.correspondences.values()):
+                if isinstance(coin_or_coins, list):
+                    for coin in coin_or_coins:
+                        self._coins.append(coin)
+                else:
+                    self._coins.append(coin_or_coins)
+            for invalid_coin in invalid_coins:
+                self._coins.remove(invalid_coin)
+            self._coins = sorted(self._coins)
             return self._coins
 
     @property
@@ -279,10 +325,7 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
-        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"]
+        return
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -318,7 +361,7 @@ cdef class Pymarketcap:
             for i in range(len_i):
                 response[i]["symbol"] = str(response[i]["symbol"])
         else:
-            if _is_symbol(currency):
+            if self._is_symbol(currency):
                 currency = self.correspondences[currency]
             url = b"https://api.coinmarketcap.com/v1/ticker/%s" % currency.encode()
             url += b"?convert=%s" % convert.encode()
@@ -395,7 +438,7 @@ cdef class Pymarketcap:
             Aditional general metadata not supported by other methods.
         """
         response = {}
-        if _is_symbol(name):
+        if self._is_symbol(name):
             response["symbol"] = name
             name = self.correspondences[name]
             response["slug"] = name
@@ -435,7 +478,7 @@ cdef class Pymarketcap:
             Markets on wich provided currency is currently tradeable.
         """
         response = {}
-        if _is_symbol(name):
+        if self._is_symbol(name):
             response["symbol"] = name
             name = self.correspondences[name]
             response["slug"] = name
@@ -495,7 +538,7 @@ cdef class Pymarketcap:
         cdef bytes url, _start, _end
         response = {}
 
-        if _is_symbol(name):
+        if self._is_symbol(name):
             response["symbol"] = name
             response["slug"] = self.correspondences[name]
             name = response["slug"]
@@ -627,7 +670,7 @@ cdef class Pymarketcap:
             For each value, a list of lists where each one
             has two values [<datetime>, <value>]
         """
-        if _is_symbol(name):
+        if self._is_symbol(name):
             name = self.correspondences[name]
 
         url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % name.encode()
@@ -693,7 +736,7 @@ cdef class Pymarketcap:
         Returns (str):
             Filename of downloaded file if all was correct.
         """
-        if _is_symbol(name):
+        if self._is_symbol(name):
             try:
                 _name = self.ids_correspondences[name]
             except KeyError:

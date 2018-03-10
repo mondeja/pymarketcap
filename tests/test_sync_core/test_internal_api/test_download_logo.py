@@ -14,7 +14,8 @@ pym = Pymarketcap()
 
 def test_consistence():
     print("tests/test_scraper/test_download_logo.py::test_consistence")
-    for size in tqdm([16, 32, 64, 128, 200]):
+    for size in tqdm([16, 32, 64, 128, 200],
+                     desc="Testing logo downloads for all sizes"):
         attempts = 20
         while attempts > 0:
             _assert = True

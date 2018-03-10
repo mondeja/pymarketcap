@@ -20,4 +20,4 @@ pytest_benchmark/
 last_results.json
 *.png
 async.py
-
+test_currency_tracking.py

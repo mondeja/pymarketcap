@@ -18,8 +18,8 @@ pym = Pymarketcap()
 def test_every_exchange(event_loop):
     async def wrapper():
         async with AsyncPymarketcap(debug=True,
-                                           queue_size=50,
-                                           consumers=50) as apym:
+                                    queue_size=50,
+                                    consumers=50) as apym:
             res = []
             show_msg = True
             async for exc in apym.every_exchange():
@@ -31,8 +31,6 @@ def test_every_exchange(event_loop):
                 assert_types(exc)
                 assert_consistence(exc)
             assert type(res) == list
-            assert len(res) < len(pym.exchange_slugs) + 100
-            assert len(res) > len(pym.exchange_slugs) - 100
     event_loop.run_until_complete(wrapper())
 
 

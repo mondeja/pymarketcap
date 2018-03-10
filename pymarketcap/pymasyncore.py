@@ -5,6 +5,7 @@
 import re
 import logging
 from json import loads
+from json.decoder import JSONDecodeError
 from datetime import datetime
 from collections import OrderedDict
 from asyncio import (
@@ -20,7 +21,6 @@ from tqdm import tqdm
 # Internal Cython modules
 from pymarketcap import Pymarketcap
 from pymarketcap import processer
-_is_symbol = processer._is_symbol
 
 # Internal Python modules
 from pymarketcap.consts import (
@@ -35,6 +35,16 @@ logger = logging.getLogger(logger_name)
 handler = logging.StreamHandler()
 handler.setFormatter(DEFAULT_FORMATTER)
 logger.addHandler(handler)
+
+def _is_symbol(currency):
+    if currency.isupper() or currency in exceptional_coin_slugs:
+        if currency in sync.__repeated_symbols:
+            msg = 'The symbol "%s" has more than one correspondence ' % currency \
+                + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
+                + "\nPossible valid slug names: %r." % sync.__repeated_symbols[currency]
+            raise ValueError(msg)
+        return True
+    return False
 
 class AsyncPymarketcap(ClientSession):
     """Asynchronous scraper for coinmarketcap.com
@@ -95,7 +105,7 @@ class AsyncPymarketcap(ClientSession):
         try:
             return self._symbols
         except AttributeError:
-            self._symbols = sorted(list(self.sync.correspondences.keys()))
+            self._symbols = self.sync.symbols
             return self._symbols
 
     @property
@@ -103,7 +113,7 @@ class AsyncPymarketcap(ClientSession):
         try:
             return self._coins
         except AttributeError:
-            self._coins = sorted(list(self.sync.correspondences.values()))
+            self._coins = self.sync.coins
             return self._coins
 
     @property
@@ -453,7 +463,11 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
-            response = processer.graphs(loads(raw_res), start, end)
+            try:
+                raw_res = loads(raw_res)
+            except JSONDecodeError:  # Ignore 404 responses
+                continue
+            response = processer.graphs(raw_res, start, end)
             response["slug"] = url.split("/")[-1]
             for symbol, slug in self.correspondences.items():
                 if slug == response["slug"]:
