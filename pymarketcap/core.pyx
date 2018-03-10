@@ -6,7 +6,6 @@ import re
 from json import loads
 from datetime import datetime
 from time import time
-from collections import OrderedDict
 from urllib.request import urlretrieve
 from urllib.error import HTTPError
 
@@ -231,10 +230,10 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_names = self.__exchange_names()
+            self._exchange_names = sorted(list(self.__exchange_names_slugs().keys()))
             return self._exchange_names
 
-    cpdef __exchange_names(self):
+    cpdef __exchange_names_slugs(self):
         """Internal function for get all exchange names
             available currently in coinmarketcap. Check ``exchange_names``
             instance attribute for the cached method counterpart.
@@ -242,8 +241,8 @@ cdef class Pymarketcap:
         Returns (list):
             All exchanges names formatted in coinmarketcap.
         """
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
-        return re.findall(r'<a href="/exchanges/.+/">((?!View More).+)</a>', res)[5:]
+        res = self._get(b"https://files.coinmarketcap.com/generated/search/quick_search_exchanges.json")
+        return {exc["name"]: exc["slug"] for exc in loads(res)}
 
     @property
     def exchange_slugs(self):
@@ -252,18 +251,8 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_slugs = self.__exchange_slugs()
+            self._exchange_slugs = sorted(list(self.__exchange_names_slugs().values()))
             return self._exchange_slugs
-
-    cpdef __exchange_slugs(self):
-        """Internal function for obtain all exchanges slugs.
-
-        Returns (list):
-            All exchanges slugs from coinmarketcap.
-        """
-        res = self._get(b"https://coinmarketcap.com/exchanges/volume/24-hour/all/")
-        parsed = re.findall(r'<a href="/exchanges/(.+)/">', res)[5:]
-        return list(OrderedDict.fromkeys(parsed)) # Remove duplicates without change order
 
     @property
     def total_exchanges(self):

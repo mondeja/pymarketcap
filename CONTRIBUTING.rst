@@ -43,7 +43,6 @@ benchmarks results: run ``python3 bench/main.py --help``.
 TODO
 ~~~~
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
-- Improves exchanges cache retrieving data from ``https://files.coinmarketcap.com/generated/search/quick_search_exchanges.json``.
 
 --------------
 

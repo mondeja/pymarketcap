@@ -99,7 +99,7 @@ def test_exchange_names():
 
     # Test consistence
     assert len(res) > 0
-    assert len(res) == len(pym.__exchange_names())
+    assert len(res) == len(pym.__exchange_names_slugs())
 
 def test_exchange_slugs():
     # Test types
@@ -110,4 +110,4 @@ def test_exchange_slugs():
 
     # Test consistence
     assert len(res) > 0
-    assert len(res) == len(pym.__exchange_slugs())
+    assert len(res) == len(pym.__exchange_names_slugs())
