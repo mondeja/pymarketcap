@@ -56,13 +56,13 @@ or from source as above wihout ``--no-curl`` flag.
 
 Documentation
 -------------
-
-Check out `live docs hosted at Binderhub <https://cnhv.co/1ue5c>`__ or `static docs at Readthedocs <https://cnhv.co/1ue57>`__.
+- `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
+- `Static documentation at Readthedocs <https://cnhv.co/1y9f0>`__.
 
 `Contributing and testing <https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.rst>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Changelog <https://cnhv.co/1xgxm>`__
+`Changelog <https://cnhv.co/1y9ex>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 --------------
@@ -98,7 +98,7 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
 .. |PyPI Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
    :target: https://cnhv.co/1xgwm
 .. |Binder| image:: https://mybinder.org/badge.svg
-   :target: https://cnhv.co/1xgwv
+   :target: https://cnhv.co/1y9ff
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
    :target: https://cnhv.co/1xgx1
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true
