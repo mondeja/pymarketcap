@@ -8,7 +8,9 @@ Changelog
 -  The data is obtained and processed by regular expressions instead of
    parsing the DOM tree.
 -  Core functionality of the wrapper rewritten for work with ``libcurl``
-   C library through a Cython bridge at compilation time. Also, you can use the wrapper with ``urrlib`` standard library only installing by ``pytohn setup.py install --no-curl``.
+   C library through a Cython wrap at compilation time.
+   Also, you can use the wrapper with ``urllib`` standard library only
+   installing by ``python setup.py install --no-curl``.
 -  Tests now performed with ``pytest`` instead of standard library
    ``unittest``.
 -  ``request``, ``lxml`` and ``bs4`` dependencies removed, only
@@ -20,11 +22,16 @@ Changelog
    page, as before. Is possible select between USD or BTC to returns
    these in most methods.
 -  New method ``convert()`` for convert between currencies as
-   coinmarketcap currencies calculator:
-   https://coinmarketcap.com/calculator/
+   coinmarketcap currencies calculator: https://coinmarketcap.com/calculator/
 -  New method ``tokens()`` convering partially
    https://coinmarketcap.com/tokens/views/all/ endpoint.
 -  New method ``currency()`` for get all metadata from a currency.
+-  New asynchronous class interface with methods for retrieve
+   faster long lists of exchanges or currencies: ``every_currency()``,
+   ``every_exchange()``, ``every_historical()``.
+-  Improvements in both speed and accuracy in exchanges and currencies
+   cache, from ``quick_search.json`` and ``quick_search_exchanges.json``
+   files of coinmarketcap server.
 
 3.3.0
 ~~~~~

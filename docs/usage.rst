@@ -1,7 +1,7 @@
 Basic usage
 ===========
 
-Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Flive.ipynb>`__.
+Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 
 .. centered:: Synchronous Interface
 .. code-block:: python
