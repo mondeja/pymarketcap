@@ -62,12 +62,12 @@ Check out `live docs hosted at Binderhub <https://cnhv.co/1ue5c>`__ or `static d
 `Contributing and testing <https://github.com/mondeja/pymarketcap/blob/master/CONTRIBUTING.rst>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Changelog <https://github.com/mondeja/pymarketcap/blob/master/CHANGELOG.rst>`__
+`Changelog <https://cnhv.co/1xgxm>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 --------------
 
-`License <https://github.com/mondeja/pymarketcap/blob/master/LICENSE.txt>`__
+`License <https://cnhv.co/1xgxi>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Support
@@ -77,13 +77,6 @@ Support
 -  If you want contact me → mondejar1994@gmail.com
 
 --------------
-
-
-[![Donate with Open Source Citizen](http://www.opensourcecitizen.org/badge?url=github.com/mondeja/pymarketcap)](http://www.opensourcecitizen.org/project?url=github.com/mondeja/pymarketcap)
-
-If you found this library useful, donate some CPU cycles to its
-development efforts by clicking above. Thank you! 😇
-
 
 Buy me a coffee?
 ^^^^^^^^^^^^^^^^
@@ -99,16 +92,16 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
     STEEM: @mondeja
 
 .. |Build Status| image:: https://travis-ci.org/mondeja/pymarketcap.svg?branch=master
-   :target: https://travis-ci.org/mondeja/pymarketcap
+   :target: https://cnhv.co/1xgw5
 .. |PyPI| image:: https://img.shields.io/pypi/v/pymarketcap.svg
-   :target: https://pypi.python.org/pypi/pymarketcap
+   :target: https://cnhv.co/1xgwg
 .. |PyPI Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
-   :target: https://pypi.python.org/pypi/pymarketcap
+   :target: https://cnhv.co/1xgwm
 .. |Binder| image:: https://mybinder.org/badge.svg
-   :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb
+   :target: https://cnhv.co/1xgwv
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
-   :target: http://pymarketcap.readthedocs.io/?badge=latest
+   :target: https://cnhv.co/1xgx1
 .. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true
-   :target: https://ci.appveyor.com/project/mondeja/pymarketcap
+   :target: https://cnhv.co/1xgx7
 .. |LICENSE| image:: https://img.shields.io/pypi/l/pymarketcap.svg
-   :target: https://github.com/mondeja/pymarketcap/blob/master/LICENSE
+   :target: https://cnhv.co/1xgxd
