@@ -27,6 +27,8 @@ def test_start_end():
     res = pym.graphs.global_cap(start=days_ago)
     assert res["market_cap_by_available_supply"][-1][0].day == today.day
     assert res["market_cap_by_available_supply"][0][0].day in \
-        [days_ago.day, (days_ago+timedelta(days=1)).day]
-
-
+        [
+         days_ago.day,
+         (days_ago+timedelta(days=1)).day,
+         (days_ago-timedelta(days=1)).day
+        ]
