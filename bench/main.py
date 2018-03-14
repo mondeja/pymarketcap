@@ -31,20 +31,17 @@ LAST_RESULTS = None
 
 basic_setup = "from pymarketcap import Pymarketcap"
 
-common_init = "cmc = Pymarketcap()"
-light_init = "cmc = Pymarketcap(cache=False)"
+common_init = light_init = "cmc = Pymarketcap()"
 
 common_setup = "%s;%s" % (basic_setup, common_init)
 common_light_setup = "%s;%s" % (basic_setup, light_init)
 
 BENCHS = [
     {"setup": basic_setup, "run": common_init, "name": "__init__"},
-    {"setup": common_light_setup, "run": "cmc._cache_symbols()", "name": "_cache_symbols"},
+    {"setup": common_light_setup, "run": "cmc._cache_symbols_ids()", "name": "_cache_symbols"},
     {"setup": common_light_setup, "run": "cmc.ticker()", "name": "ticker"},
-    {"setup": common_setup, "run": "cmc.ticker('BTC')",
-        "name": "ticker", "kwargs": dict(currency="BTC")},
-    {"setup": common_setup, "run": "cmc.ticker('BTC', convert='EUR')",
-        "name": "ticker", "kwargs": dict(currency="BTC", convert="EUR")},
+    #{"setup": common_setup, "run": "cmc.ticker('STEEM', convert='EUR')",
+    #    "name": "ticker", "kwargs": dict(currency="STEEM", convert="EUR")},
     {"setup": common_light_setup, "run": "cmc.stats()", "name": "stats"},
     {"setup": common_light_setup, "run": "cmc.stats(convert='EUR')",
         "name": "stats", "kwargs": dict(convert="EUR")},

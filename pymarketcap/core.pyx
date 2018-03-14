@@ -117,11 +117,14 @@ cdef class Pymarketcap:
         cdef bint response
         response = 0
         if currency.isupper() or currency in exceptional_coin_slugs:
-            if currency in self.__repeated_symbols:
-                msg = 'The symbol "%s" has more than one correspondence ' % currency \
-                    + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
-                    + "\nPossible valid slug names: %r." % self.__repeated_symbols[currency]
-                raise ValueError(msg)
+            try:
+                if currency in self.__repeated_symbols:
+                    msg = 'The symbol "%s" has more than one correspondence ' % currency \
+                        + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
+                        + "\nPossible valid slug names: %r." % self.__repeated_symbols[currency]
+                    raise ValueError(msg)
+            except TypeError:
+                pass
             response = 1
         return response
 
@@ -140,7 +143,7 @@ cdef class Pymarketcap:
             symbol = currency["symbol"]
             slug = currency["slug"].replace(" ", "")
             if symbol in symbols_slugs:    # Repeated symbols are stored internally
-                if symbol in self.__repeated_symbols:
+                if symbol in self.__repeated_symbols.keys():
                     self.__repeated_symbols[symbol].append(slug)
                 else:
                     self.__repeated_symbols[symbol] = [symbols_slugs[symbol], slug]

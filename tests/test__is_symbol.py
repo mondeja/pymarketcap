@@ -12,6 +12,8 @@ def test_types():
     symbol = choice(pym.symbols)
     print("(Symbol: %s)" % symbol, end=" ")
     res = pym._is_symbol(symbol)
+    print(pym.ticker("bitcoin"))
+    print(res)
     assert type(res) == bool
 
     slug = choice(pym.coins)
