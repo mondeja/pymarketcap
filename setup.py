@@ -10,9 +10,8 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 
 def simple_call(command):
-    command
     try:
-        return check_output(parse(command)) # 0   # <--- Código de salida del proceso
+        return check_output(parse(command))
     except Exception as e:
         return 1
 
@@ -87,7 +86,7 @@ if PYTHON_VERSION < (3,6):
             else:
                 pass
     else:
-        print("You need almost Python3.5 version to install pymarketcap.")
+        print("You need almost Python3.6 version to install pymarketcap.")
         sys.exit(1)
 
 
@@ -157,14 +156,14 @@ ext_modules = cythonize(ext_modules)
 LONG_DESC = "pymarketcap is library for retrieve data from coinmarketcap.com" \
           + " API and website. Consist of a cythonized scraper and API wrapper built" \
           + " with curl C library, but is possible to compile a lightweight version" \
-          + " with standard urllib library instead. Actually, only works in Python>=3.5."
+          + " with standard urllib library instead. Actually, only works in Python>=3.6"
 
 with open(REQ_PATH, "r") as f:
     REQ = f.readlines()
 
 setup(
     name = "pymarketcap",
-    version = "3.9.134",
+    version = "3.9.135",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",
