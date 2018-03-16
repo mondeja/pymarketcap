@@ -163,8 +163,8 @@ with open(REQ_PATH, "r") as f:
     REQ = f.readlines()
 
 setup(
-    name="pymarketcap",
-    version = "3.9.125",
+    name = "pymarketcap",
+    version = "3.9.134",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",
@@ -176,13 +176,12 @@ setup(
                 "scraper", "json", "BTC", "Bitcoin", "C", "Curl", "Cython"],
     install_requires = REQ,
     packages = find_packages(exclude=["precompiler"]),
-    ext_modules=ext_modules,
-    classifiers=[
+    ext_modules = ext_modules,
+    classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Financial and Insurance Industry",
         "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: PyPy",
@@ -194,6 +193,11 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    zip_safe = False,
+    zip_safe = True,
     provides = ["setup_template_cython"],
+    project_urls = {
+        'Documentation': 'http://pymarketcap.readthedocs.io/',
+        'Source': 'https://github.com/mondeja/pymarketcap',
+        'Tracker': 'https://github.com/mondeja/pymarketcap/issues',
+    }
 )

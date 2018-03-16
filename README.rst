@@ -18,13 +18,10 @@ of a cythonized scraper and and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
 library instead. Only works in Python3.6+
 
-.. code:: diff
-
-    + New version 3.9.0 (unstable)
-    - Some breaking changes have been introduced since 3.9.0 version. The old version (3.3.158) is still hosted at Pypi and will be there for a short period of time but won't be longer supported. The new stable version will be 4.0.0. Please, update to the new version, is faster, more accurate and has new features!
-
 Install
 -------
+
+``pip3 install pymarketcap``
 
 Dependencies
 ~~~~~~~~~~~~
@@ -45,12 +42,12 @@ Without libcurl
 
 In Windows this is the default behaviour, although ``--no-curl`` flag it's specified. If you want try to install with ``curl`` in Windows use ``python setup.py install --force-curl``.
 
-With libcurl
+With libcurl (Unix)
 ^^^^^^^^^^^^
 
 ::
 
-    pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
+    pip3 install pymarketcap
 
 or from source as above wihout ``--no-curl`` flag.
 

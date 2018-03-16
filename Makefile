@@ -30,7 +30,7 @@ reinstall:
 clean:
 	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/
 	sudo find . -type d -name "__pycache__" -exec rm -r {} +
-	sudo rm pymarketcap/*.c
+	sudo rm pymarketcap/*.c pymarketcap/*.so
 	sudo find . -type d -name "_build" -exec rm -r {} +
 
 test:

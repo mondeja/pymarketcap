@@ -2,22 +2,20 @@ language: python
 
 os:
   - linux
-  - osx
 
 python:
   - "3.6"
   - "3.7-dev"
 
 install:
+  # urllib version in Python3.6
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make install-light; else make install; fi
 before_script:
   - pip install -r dev-requirements.txt
   - echo $TRAVIS_PYTHON_VERSION
 script:
+  # Long tests in Python3.6
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
 branches:
   only:
     - master
-
-# No-curl version testing running in PYTHON3.5
-# End2end tests running in Pypy3 and PYTHON3.6
