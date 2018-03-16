@@ -13,6 +13,7 @@ scripts/
 # Local test development
 builder_checks.py
 proof.py
+env/
 .benchmarks/
 .pytest_cache/
 pytest_benchmark/
@@ -20,4 +21,6 @@ pytest_benchmark/
 last_results.json
 *.png
 async.py
+push.sh
 test_currency_tracking.py
+*.go

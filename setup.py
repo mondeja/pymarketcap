@@ -4,14 +4,57 @@
 import os
 import sys
 import argparse
+from shlex import split as parse
+from subprocess import check_output
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
+
+def simple_call(command):
+    command
+    try:
+        return check_output(parse(command)) # 0   # <--- Código de salida del proceso
+    except Exception as e:
+        return 1
+
+def spec_sys_calls(command):
+    if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
+        command = [command, "sudo %s" % (command)]
+    return [command]
+
+
+def install_cython_via_pip():
+    code = 1
+    calls = spec_sys_calls("pip3 install Cython")[0]
+    for i, command in enumerate(calls):
+        code = simple_call(command)
+        print(code)
+        if i >= len(calls) or code == 0:
+            break
+    return code
+
 
 try:
     from Cython.Build import cythonize
 except ImportError:   # Cython required
     print("Cython not found. You need to install Cython before pymarketcap.")
     sys.exit(1)
+
+REQ_PATH = os.path.join(os.path.dirname(__file__),
+                        "requirements.txt")
+
+code = 1
+base_call = "pip3 install -r %s" % REQ_PATH
+calls = spec_sys_calls(base_call)
+for i, command in enumerate(calls):
+    code = simple_call(command)
+    if i >= len(calls) or code == 0:
+        break
+
+if code == 0:
+    print("Dependencies installed sucessfully.")
+else:
+    print("Error installing dependencies, installing pymarketcap anywhere...")
+
 
 # ===========  Precompiler  ===========
 from precompiler import run_builder, run_unbuilder
@@ -116,12 +159,12 @@ LONG_DESC = "pymarketcap is library for retrieve data from coinmarketcap.com" \
           + " with curl C library, but is possible to compile a lightweight version" \
           + " with standard urllib library instead. Actually, only works in Python>=3.5."
 
-with open(os.path.join(os.path.dirname(__file__), "requirements.txt")) as f:
+with open(REQ_PATH, "r") as f:
     REQ = f.readlines()
 
 setup(
     name="pymarketcap",
-    version = "3.9.124",
+    version = "3.9.125",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",

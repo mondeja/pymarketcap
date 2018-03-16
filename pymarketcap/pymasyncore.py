@@ -164,7 +164,7 @@ class AsyncPymarketcap(ClientSession):
         }
 
     async def _cache_symbols(self):
-        url = "https://files.coinmarketcap.com/generated/search/quick_search.json"
+        url = "https://s2.coinmarketcap.com/generated/search/quick_search.json"
         res = await self._get(url)
         symbols = {}
         for currency in loads(res):

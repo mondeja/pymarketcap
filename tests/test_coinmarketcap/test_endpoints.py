@@ -15,7 +15,8 @@ coin = choice(pym.coins)
 exchange = choice(pym.exchange_slugs)
 
 endpoints = [
-    ("_cache_symbols",     "https://files.coinmarketcap.com/generated/search/quick_search.json"),
+    ("_cache_symbols_ids",     "https://s2.coinmarketcap.com/generated/search/quick_search.json"),
+    ("_exchange_names_slugs",  "https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json"),
     ("ticker",            ["https://api.coinmarketcap.com/v1/ticker/",
                            "https://api.coinmarketcap.com/v1/ticker/%s" % coin]),
     ("markets",            "https://coinmarketcap.com/currencies/%s/" % coin),
@@ -29,7 +30,7 @@ endpoints = [
     ("graphs.global_cap", ["https://graphs2.coinmarketcap.com/global/marketcap-total/",
                            "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"]),
     ("graphs.dominance",   "https://graphs2.coinmarketcap.com/global/dominance/"),
-    ("download_logo",      "https://files.coinmarketcap.com/static/img/coins/64x64/1.png")
+    ("download_logo",      "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")
 ]
 
 def assert_up(ep):

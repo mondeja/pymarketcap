@@ -131,7 +131,7 @@ cdef class Pymarketcap:
     cpdef _quick_search(self):
         """Internal pymarketcap JSON cache file ``quick_search.json``."""
         cdef bytes url
-        url = b"https://files.coinmarketcap.com/generated/search/quick_search.json"
+        url = b"https://s2.coinmarketcap.com/generated/search/quick_search.json"
         return loads(self._get(url))
 
     cpdef _cache_symbols_ids(self):
@@ -190,7 +190,10 @@ cdef class Pymarketcap:
                 else:
                     self._coins.append(coin_or_coins)
             for invalid_coin in invalid_coins:
-                self._coins.remove(invalid_coin)
+                try:
+                    self._coins.remove(invalid_coin)
+                except ValueError:
+                    pass
             self._coins = sorted(self._coins)
             return self._coins
 
@@ -244,7 +247,7 @@ cdef class Pymarketcap:
         Returns (list):
             All exchanges names formatted in coinmarketcap.
         """
-        res = self._get(b"https://files.coinmarketcap.com/generated/search/quick_search_exchanges.json")
+        res = self._get(b"https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json")
         return {exc["name"]: exc["slug"] for exc in loads(res)}
 
     @property
@@ -739,7 +742,7 @@ cdef class Pymarketcap:
         else:
             _name = name
 
-        url_schema = "https://files.coinmarketcap.com/static/img/coins/%dx%d/%d.png"
+        url_schema = "https://s2.coinmarketcap.com/static/img/coins/%dx%d/%d.png"
         url = url_schema % (size, size, _name)
         if not filename:
             filename = "%s_%dx%d.png" % (self.correspondences[name], size, size)

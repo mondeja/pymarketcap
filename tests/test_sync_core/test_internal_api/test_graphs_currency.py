@@ -63,7 +63,8 @@ def test_start_end():
         if startend:
             first_day = res["price_usd"][0][0].day
             previous_day = (res["price_usd"][0][0] - timedelta(days=1)).day
-            assert start.day in [first_day, previous_day]
+            next_day = (res["price_usd"][0][0] + timedelta(days=1)).day
+            assert start.day in [first_day, previous_day, next_day]
 
 
 
