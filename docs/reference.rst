@@ -29,7 +29,7 @@ pymarketcap.core
     .. automethod:: tokens
 
     .. centered:: Graphs API
-    .. note:: The next methods can be called also as ``graphs.currency()``, ``graphs.global_cap()`` and ``graphs.dominance()``.
+    .. note:: The ``graphs`` methods can be called also as ``cmc.graphs.currency()``, ``cmc.graphs.global_cap()`` and ``cmc.graphs.dominance()``, being ``cmc`` a instance of ``Pymarketcap`` or ``AyncPymarketcap`` classes.
 
     .. automethod:: _currency
     .. automethod:: _global_cap

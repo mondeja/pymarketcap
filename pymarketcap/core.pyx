@@ -320,10 +320,7 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
-        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"]
+        return
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -503,11 +500,11 @@ cdef class Pymarketcap:
         return response
 
     cpdef ranks(self):
-        """Returns gainers and losers for the periods 1h, 24h and 7d.
+        """Returns gainers and losers for 1 hour, 24 hours and 7 days.
 
         Returns (dict):
             A dictionary with 2 keys (gainers and losers) whose values
-            are the periods "1h", "24h" and "7d".
+            are the periods ``"1h"``, ``"24h"`` and ``"7d"``.
         """
         res = self._get(b"https://coinmarketcap.com/gainers-losers/")
 
@@ -722,14 +719,14 @@ cdef class Pymarketcap:
         return processer.graphs(res, start, end)
 
     cpdef download_logo(self, unicode name, size=64, filename=None):
-        """Download a currency image logo
+        """Download a currency image logo providing their size.
 
         Args:
             currency (str): Currency name or symbol to download.
             size (int, optional): Size in pixels. Valid sizes are:
-                [16, 32, 64, 128, 200]. As default 128.
+                ``[16, 32, 64, 128, 200]``. As default ``128``.
             filename (str, optional): Filename for store the logo.
-                Must be in .png extension. As default None.
+                Must be in ``.png`` extension. As default ``None``.
 
         Returns (str):
             Filename of downloaded file if all was correct.

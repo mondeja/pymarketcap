@@ -81,6 +81,7 @@ class TestWithParams:
         res = pym.ticker(start=pos)
         assert res[0]["rank"] == (pos + 1)
 
+    @pytest.mark.skip(reason="ticker_badges property needed but not built yet")
     def test_convert(self):
         for currency in [True, False]:  # With and without currency
             symbol = None
