@@ -1,28 +1,24 @@
 Install
 =======
 
-Dependencies
-------------
+You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__ before pymarketcap. Try: ``pip3 install Cython`` and then:
 
-You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__, and, optionally, `libcurl <https://curl.haxx.se/docs/install.html>`__ .
+::
 
-Without libcurl (light version)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    pip3 install pymarketcap
+
+- On Windows will be used ``urllib`` library to make synchronous requests and on Linux/Mac will be build against `libcurl <https://curl.haxx.se/docs/install.html>`__ C library. You can control mannually this (see below):
+
+
+From source
+-----------
 
 ::
 
     git clone https://github.com/mondeja/pymarketcap.git
     cd pymarketcap
-    pip3 install Cython
-    python setup.py install --no-curl
+    pip3 install -r requirements.txt
+    python setup.py install
 
-``urllib`` will be used instead.
-
-With libcurl
-^^^^^^^^^^^^
-
-::
-
-    pip3 install https://github.com/mondeja/pymarketcap/archive/master.zip
-
-or from source as above wihout ``--no-curl`` flag.
+- To force installation with libcurl, use ``--force-curl`` in last command.
+- To install with urllib, use ``--no-curl``.

@@ -59,7 +59,7 @@ def test_start_end():
                 assert type(value) in [int, float]
 
         # Test consistence
-        assert end.day == res["price_btc"][-1][0].day
+        assert end.day >= res["price_btc"][-1][0].day
         if startend:
             first_day = res["price_usd"][0][0]
             next_day = res["price_usd"][0][0] + timedelta(days=1)
