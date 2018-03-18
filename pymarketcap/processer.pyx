@@ -1,3 +1,5 @@
+# cython: linetrace=True
+# distutils: define_macros=CYTHON_TRACE=1
 
 """This module process all core scraper methods raw responses."""
 
@@ -218,8 +220,10 @@ cpdef exchange(res, convert):
     for curr, pair, vol, price, perc_vol, up in zip(
         currencies, pairs, vol_24h, prices, perc_vols, updated
         ):
-        try: vol = float(vol)
-        except ValueError: vol = None
+        try:
+            vol = float(vol)
+        except ValueError:
+            vol = None
         markets.append({
             "currency": curr,
             "pair": pair,
@@ -229,8 +233,10 @@ cpdef exchange(res, convert):
             "updated": up == "Recently"
         })
     if convert == "btc":
-        try: total_volume = float(perc_vols[0])
-        except ValueError: total_volume = None
+        try:
+            total_volume = float(perc_vols[0])
+        except (ValueError, IndexError):
+            total_volume = None
     else:
         try:
             total_volume = float(

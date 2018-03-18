@@ -34,10 +34,10 @@ clean:
 	sudo find . -type d -name "_build" -exec rm -r {} +
 
 test:
-	pytest tests -vs
+	pytest tests -vs --cov
 
 test-end2end:
-	pytest tests -vs --end2end
+	pytest tests -vs --end2end --cov
 
 precompile-sources:
 	python3 -c "from precompiler import run_builder;import os; \

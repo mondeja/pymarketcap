@@ -24,3 +24,4 @@ async.py
 push.sh
 test_currency_tracking.py
 *.go
+.coverage

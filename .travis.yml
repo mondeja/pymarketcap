@@ -14,8 +14,9 @@ before_script:
   - pip install -r dev-requirements.txt
   - echo $TRAVIS_PYTHON_VERSION
 script:
-  # Long tests in Python3.6
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make test-end2end; else make test; fi
+  - tox
 branches:
   only:
     - master
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then coveralls; fi

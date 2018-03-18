@@ -76,15 +76,21 @@ PYTHON_VERSION = sys.version_info
 if PYTHON_VERSION < (3,6):
     if PYTHON_VERSION > (3,5):
         if "--quiet" not in sys.argv:
-            msg = "\nPython version:\n%s\n\nYou need to install almost " % sys.version \
-                + "Python3.6 in order to use the asynchronous Pymarketcap interface.\n" \
-                + "Install pymarketcap without it anyway? Y/N: "
-            cont = str(input(msg)).lower()
-            if cont == "n":
-                print("Installation cancelled.")
-                sys.exit(0)
-            else:
-                pass
+            while True:
+                msg = "\nPython version:\n%s\n\nYou need " % sys.version \
+                    + "to install almost Python3.6 in order to use " \
+                    + "the asynchronous Pymarketcap interface.\n" \
+                    + "Install pymarketcap without it anyway? Y/N: "
+                cont = str(input(msg)).lower()
+                if cont == "n":
+                    print("Installation cancelled.")
+                    sys.exit(0)
+                    break
+                elif cont != "s":
+                    print("Invalid option.")
+                else:
+                    print("Installing pymarketcap...")
+                    break
     else:
         print("You need almost Python3.6 version to install pymarketcap.")
         sys.exit(1)
@@ -137,7 +143,8 @@ if COMPILE_CURL:
     )
     package_data["pymarketcap"].extend(["curl.pyx", "curl.pxd"])
 else:
-    core_path = os.path.join(os.path.dirname(__file__), "pymarketcap", "core.pyx")
+    core_path = os.path.join(os.path.dirname(__file__),
+                             "pymarketcap", "core.pyx")
     with open(core_path, "r") as f:
         content = f.readlines()
 
@@ -149,7 +156,8 @@ else:
     with open(core_path, "w") as f:
         f.writelines(content)
 
-ext_modules = cythonize(ext_modules)
+ext_modules = cythonize(ext_modules,
+                       compiler_directives={'linetrace': True})
 
 
 # ===========  Package metadata  ===========
@@ -163,7 +171,7 @@ with open(REQ_PATH, "r") as f:
 
 setup(
     name = "pymarketcap",
-    version = "3.9.138",
+    version = "3.9.139",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",

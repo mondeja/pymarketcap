@@ -10,7 +10,7 @@ pymarketcap
 
 |Build Status| |AppVeyor| |ReadTheDocs| |Binder|
 
-|PyPI| |PyPI Versions| |LICENSE|
+|PyPI| |PyPI Versions| |Coveralls| |LICENSE|
 
 **pymarketcap** is a library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
@@ -95,3 +95,5 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: https://cnhv.co/1xgx7
 .. |LICENSE| image:: https://img.shields.io/pypi/l/pymarketcap.svg
    :target: https://cnhv.co/1xgxd
+.. |Coveralls| image:: https://coveralls.io/repos/github/mondeja/pymarketcap/badge.svg?branch=master
+   :target: https://coveralls.io/github/mondeja/pymarketcap?branch=master

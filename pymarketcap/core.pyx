@@ -1,3 +1,6 @@
+# cython: linetrace=True
+# distutils: define_macros=CYTHON_TRACE=1
+
 
 """API wraper and web scraper module."""
 
