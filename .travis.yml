@@ -4,20 +4,23 @@ os:
   - linux
 
 python:
+  - "3.6"
   - "3.6.3"
+  - "3.6.4"
+  - "nightly"
   - "3.7-dev"
 
 install:
   # urllib version in Python3.6
   - pip install -r dev-requirements.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make install-light; else make install; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make install-light; else make install; fi
 before_script:
   - python -m pip install --upgrade pip
   - echo $TRAVIS_PYTHON_VERSION
 script:
-  - tox
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make test-end2end; else make test; fi
 branches:
   only:
     - master
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then coveralls; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then coveralls; fi

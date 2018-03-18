@@ -37,7 +37,7 @@ def assert_types(res):
         if key in map_types:
             type_test(map_types, key, value)
         else:
-            assert isinstance(value, (float, type(None)))
+            assert isinstance(value, (float, int, type(None)))
 
 
 def test_consistence():

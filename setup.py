@@ -156,8 +156,7 @@ else:
     with open(core_path, "w") as f:
         f.writelines(content)
 
-ext_modules = cythonize(ext_modules,
-                       compiler_directives={'linetrace': True})
+ext_modules = cythonize(ext_modules)
 
 
 # ===========  Package metadata  ===========
@@ -173,7 +172,7 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name = "pymarketcap",
-    version = "3.9.142",
+    version = "3.9.144",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = author,

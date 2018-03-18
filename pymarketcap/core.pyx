@@ -323,7 +323,10 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
-        return
+        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
+                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
+                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"]
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -347,13 +350,12 @@ cdef class Pymarketcap:
         Returns (dict/list):
             The type depends if currency param is provided or not.
         """
-        cdef bytes url
         cdef short i, len_i
         if not currency:
-            url = b"https://api.coinmarketcap.com/v1/ticker/?%s" % b"limit=%d" % limit
-            url += b"&start=%d" % start
-            url += b"&convert=%s" % convert.encode()
-            res = self._get(url)
+            url =  "https://api.coinmarketcap.com/v1/ticker/?limit=%d" % limit
+            url += "&start=%d" % start
+            url += "&convert=%s" % convert
+            res = self._get(url.encode())
             response = loads(re_sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))
             len_i = len(response)
             for i in range(len_i):
@@ -361,9 +363,9 @@ cdef class Pymarketcap:
         else:
             if self._is_symbol(currency):
                 currency = self.correspondences[currency]
-            url = b"https://api.coinmarketcap.com/v1/ticker/%s" % currency.encode()
-            url += b"?convert=%s" % convert.encode()
-            res = self._get(url)
+            url = "https://api.coinmarketcap.com/v1/ticker/%s" % currency
+            url += "?convert=%s" % convert
+            res = self._get(url.encode())
             response = loads(re_sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))[0]
             response["symbol"] = str(response["symbol"])
         return response
@@ -533,7 +535,6 @@ cdef class Pymarketcap:
         Returns (list):
             Historical dayly OHLC for a currency.
         """
-        cdef bytes url, _start, _end
         response = {}
 
         if self._is_symbol(name):
@@ -547,13 +548,13 @@ cdef class Pymarketcap:
                     response["symbol"] = symbol
                     break
 
-        url = b"https://coinmarketcap.com/currencies/%s/historical-data/" % name.encode()
-        _start = b"%d" % start.year + b"%02d" % start.month + b"%02d" % start.day
-        _end = b"%d" % end.year + b"%02d" % end.month + b"%02d" % end.day
-        url += b"?start=%s" % _start + b"&" + b"end=%s" % _end
+        url = "https://coinmarketcap.com/currencies/%s/historical-data/" % name
+        _start = "%d" % start.year + "%02d" % start.month + "%02d" % start.day
+        _end = "%d" % end.year + "%02d" % end.month + "%02d" % end.day
+        url += "?start=%s" % _start + "&" + "end=%s" % _end
 
         try:
-            res = self._get(url)[50000:]
+            res = self._get(url.encode())[50000:]
         except CoinmarketcapHTTPError404:
             if name not in self.coins:
                 raise ValueError("%s is not a valid currrency name. See 'symbols'" % name \
@@ -596,10 +597,9 @@ cdef class Pymarketcap:
             Data from a exchange. Keys: ``"name"``, ``"website"``,
             ``"volume"`` (total), ``"social"`` and ``"markets"``.
         """
-        cdef bytes url
-        url = b"https://coinmarketcap.com/exchanges/%s/" % name.encode()
+        url = "https://coinmarketcap.com/exchanges/%s/" % name
         try:
-            res = self._get(url)[20000:]
+            res = self._get(url.encode())[20000:]
         except CoinmarketcapHTTPError404:
             if name not in self.exchange_slugs:
                 raise ValueError("%s is not a valid exchange name. See exchange_slugs" % name \

@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 import asyncio
 import pytest
+
+sys.path.append(os.path.join(os.getcwd(), "pymarketcap"))
 
 def pytest_addoption(parser):
     parser.addoption("--end2end", action="store_true",
@@ -23,4 +27,5 @@ def event_loop():
     yield loop
     #loop.close()
     pass
+
 
