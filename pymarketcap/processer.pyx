@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Internal Python modules
 from pymarketcap.consts import (
-    exceptional_coin_slugs_keys
+    EXCEPTIONAL_COIN_SLUGS_KEYS
 )
 
 # RegEx parsing
@@ -223,9 +223,9 @@ cpdef exchange(res, convert):
         markets.append({
             "currency": curr,
             "pair": pair,
-            "vol_24h": vol,
+            "volume_24h": vol,
             "price": float(price),
-            "perc_volume": float(perc_vol),
+            "percent_volume": float(perc_vol),
             "updated": up == "Recently"
         })
     if convert == "btc":

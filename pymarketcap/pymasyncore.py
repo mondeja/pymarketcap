@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""Asynchronous Pymarketcap interface module."""
+
 # Standard Python modules
-import re
 import logging
 from json import loads
 from json.decoder import JSONDecodeError
 from datetime import datetime
-from collections import OrderedDict
 from asyncio import (
     ensure_future,
     Queue,
-    TimeoutError
 )
+from asyncio import TimeoutError as AsyncioTimeoutError
 
 # External Python dependencies
 from aiohttp import ClientSession
@@ -25,26 +25,16 @@ from pymarketcap import processer
 # Internal Python modules
 from pymarketcap.consts import (
     DEFAULT_TIMEOUT,
-    exceptional_coin_slugs,
+    EXCEPTIONAL_COIN_SLUGS,
     DEFAULT_FORMATTER
 )
 
 # Logging initialization
-logger_name = "/pymarketcap%s" % __file__.split("pymarketcap")[-1]
-logger = logging.getLogger(logger_name)
-handler = logging.StreamHandler()
-handler.setFormatter(DEFAULT_FORMATTER)
-logger.addHandler(handler)
-
-def _is_symbol(currency):
-    if currency.isupper() or currency in exceptional_coin_slugs:
-        if currency in sync.__repeated_symbols:
-            msg = 'The symbol "%s" has more than one correspondence ' % currency \
-                + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
-                + "\nPossible valid slug names: %r." % sync.__repeated_symbols[currency]
-            raise ValueError(msg)
-        return True
-    return False
+LOGGER_NAME = "/pymarketcap%s" % __file__.split("pymarketcap")[-1]
+LOGGER = logging.getLogger(LOGGER_NAME)
+LOGGER_HANDLER = logging.StreamHandler()
+LOGGER_HANDLER.setFormatter(DEFAULT_FORMATTER)
+LOGGER.addHandler(LOGGER_HANDLER)
 
 class AsyncPymarketcap(ClientSession):
     """Asynchronous scraper for coinmarketcap.com
@@ -74,7 +64,7 @@ class AsyncPymarketcap(ClientSession):
 
     def __init__(self, queue_size=10, progress_bar=True,
                  consumers=10, timeout=DEFAULT_TIMEOUT,
-                 logger=logger, debug=False, **kwargs):
+                 logger=LOGGER, debug=False, **kwargs):
         super(AsyncPymarketcap, self).__init__(**kwargs)
         self.timeout = timeout
         self.logger = logger
@@ -163,13 +153,23 @@ class AsyncPymarketcap(ClientSession):
             "dominance": self._dominance
         }
 
+    def _is_symbol(self, currency):
+        if currency.isupper() or currency in EXCEPTIONAL_COIN_SLUGS:
+            if currency in self.sync.__repeated_symbols:
+                msg = 'The symbol "%s" has more than one correspondence ' % currency \
+                    + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
+                    + "\nPossible valid slug names: %r." % self.sync.__repeated_symbols[currency]
+                raise ValueError(msg)
+            return True
+        return False
+
     async def _cache_symbols(self):
         url = "https://s2.coinmarketcap.com/generated/search/quick_search.json"
         res = await self._get(url)
         symbols = {}
         for currency in loads(res):
             symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
-        for original, correct in exceptional_coin_slugs.items():
+        for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
             symbols[original] = correct
         return symbols
 
@@ -215,14 +215,14 @@ class AsyncPymarketcap(ClientSession):
                 responses.append([url, await self._get(url)])
                 # Notify the queue that the item has been processed
                 main_queue.task_done()
-            except (TimeoutError) as e:
-                logger.debug("Problem with %s, Moving to DLQ" % url)
+            except AsyncioTimeoutError:
+                self.logger.debug("Problem with %s, Moving to DLQ" % url)
                 await dlq.put(url)
                 main_queue.task_done()
 
     # SCRAPER
     async def _base_currency_url(self, name):
-        if _is_symbol(name):
+        if self._is_symbol(name):
             name = self.correspondences[name]
         return "https://coinmarketcap.com/currencies/%s" % name
 
@@ -315,7 +315,7 @@ class AsyncPymarketcap(ClientSession):
         return processer.ranks(res)
 
     async def _base_historical_url(self, name):
-        if _is_symbol(name):
+        if self._is_symbol(name):
             name = self.correspondences[name]
         url = "https://coinmarketcap.com/currencies/%s/historical-data" % name
         _start = "%d%02d%02d" % (self.__start.year, self.__start.month, self.__start.day)
@@ -329,7 +329,7 @@ class AsyncPymarketcap(ClientSession):
                          revert=False):
         self.__start = start
         self.__end = end
-        url = await self._get(self._base_historical_url(name))
+        res = await self._get(self._base_historical_url(name))
         return processer.historical(res[50000:], start, end, revert)
 
     async def every_historical(self, currencies=None,
@@ -446,7 +446,7 @@ class AsyncPymarketcap(ClientSession):
 
     # GRAPHS API
     async def _base_graphs_currency_url(self, name):
-        if _is_symbol(name):
+        if self._is_symbol(name):
             name = self.correspondences[name]
         return "https://graphs2.coinmarketcap.com/currencies/%s" % name
 

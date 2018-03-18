@@ -1,31 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""``historical()`` shared method test module."""
+
 from datetime import datetime
 
-class TypeTester:
-    def _date(self, value): assert type(value) == datetime
-    def _open(self, value): assert type(value) == float
-    def _high(self, value): assert type(value) == float
-    def _low(self, value): assert type(value) == float
-    def _close(self, value): assert type(value) in [float, type(None)]
-    def _volume(self, value): assert type(value) in [float, type(None)]
-    def _market_cap(self, value): assert type(value) in [float, type(None)]
-    def _name(self, value): assert type(value) == str
-
-tt = TypeTester()
-
 def assert_types(res):
-    assert type(res["history"]) == list
-    assert type(res["symbol"]) == str
-    assert type(res["slug"]) == str
+    type_tester = {
+        "date":       datetime,
+        "open":       float,
+        "high":       float,
+        "low":        float,
+        "close":      [float, type(None)],
+        "volume":     [float, type(None)],
+        "market_cap": [float, type(None)],
+        "name":       str
+    }
+
+    assert isinstance(res["history"], list)
+    assert isinstance(res["symbol"], str)
+    assert isinstance(res["slug"], str)
     for tick in res["history"]:
-        assert type(tick) == dict
+        assert isinstance(tick, dict)
         for key, value in tick.items():
-            eval("tt._{}({})".format(
-                key,
-                value if type(value) != datetime else "value"
-            ))
+            assert isinstance(value, type_tester[key])
 
 def assert_consistence(res):
     for i, tick in enumerate(res["history"]):

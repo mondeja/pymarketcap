@@ -16,8 +16,8 @@ from pymarketcap import processer
 # Internal Python modules
 from pymarketcap.consts import (
     DEFAULT_TIMEOUT,
-    exceptional_coin_slugs,
-    invalid_coins
+    EXCEPTIONAL_COIN_SLUGS,
+    INVALID_COINS
 )
 from pymarketcap.errors import (
     CoinmarketcapHTTPError,
@@ -94,6 +94,8 @@ cdef class Pymarketcap:
 
     @property
     def ids_correspondences(self):
+        """Get symbols with their correspondient numeric
+        id (used for debug purposes)."""
         res = self._ids_correspondences
         if res:
             return res
@@ -116,7 +118,7 @@ cdef class Pymarketcap:
         """
         cdef bint response
         response = 0
-        if currency.isupper() or currency in exceptional_coin_slugs:
+        if currency.isupper() or currency in EXCEPTIONAL_COIN_SLUGS:
             try:
                 if currency in self.__repeated_symbols:
                     msg = 'The symbol "%s" has more than one correspondence ' % currency \
@@ -150,7 +152,7 @@ cdef class Pymarketcap:
             else:
                 symbols_slugs[symbol] = slug
             symbols_ids[symbol] = currency["id"]
-        for original, correct in exceptional_coin_slugs.items():
+        for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
             symbols_slugs[original] = correct
         return (symbols_slugs, symbols_ids)
 
@@ -189,7 +191,7 @@ cdef class Pymarketcap:
                         self._coins.append(coin)
                 else:
                     self._coins.append(coin_or_coins)
-            for invalid_coin in invalid_coins:
+            for invalid_coin in INVALID_COINS:
                 try:
                     self._coins.remove(invalid_coin)
                 except ValueError:
@@ -320,7 +322,10 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
-        return
+        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
+                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
+                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
+                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"]
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
@@ -754,7 +759,7 @@ cdef class Pymarketcap:
                 if size in valid_sizes:
                     raise ValueError(
                         ("Seems that %s currency doesn't allows to be downloaded with " \
-                        + "size %dx%d. Try with another size.") % (name, size, size)
+                        + "size %dx%d. Try another size.") % (name, size, size)
                     )
                 else:
                     raise ValueError("%dx%d is not a valid size." % (size, size))

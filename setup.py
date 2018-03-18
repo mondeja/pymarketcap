@@ -163,7 +163,7 @@ with open(REQ_PATH, "r") as f:
 
 setup(
     name = "pymarketcap",
-    version = "3.9.137",
+    version = "3.9.138",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = "Álvaro Mondéjar Rubio",

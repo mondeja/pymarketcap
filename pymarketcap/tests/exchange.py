@@ -1,42 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from re import findall
-from urllib.request import urlopen
-
-class TypeTester:
-    def _currency(self, value): assert type(value) == str
-    def _pair(self, value): assert type(value) == str
-    def _vol_24h(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) == float
-    def _perc_volume(self, value): assert type(value) == float
-    def _updated(self, value): assert type(value) == bool
-    def _name(self, value): assert type(value) == str
-    def _slug(self, value): assert type(value) == str
-
-tt = TypeTester()
+"""``exchange()`` shared method test module."""
 
 def assert_types(res):
-    assert type(res) == dict
+    """Type assertions for ``exchange()`` methods attribute."""
+    type_tester = {
+        "currency":       str,
+        "pair":           str,
+        "volume_24h":     [float, type(None)],
+        "price":          float,
+        "percent_volume": float,
+        "updated":        bool,
+        "name":           str,
+        "slug":           str
+    }
+    assert isinstance(res, dict)
 
-    assert type(res["name"]) == str
-    assert type(res["website"]) == str
-    assert type(res["volume"]) in [float, type(None)]
-    assert type(res["social"]) == dict
+    assert isinstance(res["name"], str)
+    assert isinstance(res["website"], str)
+    assert isinstance(res["volume"], [float, type(None)])
+    assert isinstance(res["social"], dict)
 
     for key, fields in res["social"].items():
-        assert type(key) == str
+        assert isinstance(key, str)
         for field, data in fields.items():
-            assert type(field) == str
-            assert type(data) in [str, type(None)]
+            assert isinstance(field, str)
+            assert isinstance(data, [str, type(None)])
 
     for market in res["markets"]:
-        assert type(market) == dict
+        assert isinstance(market, dict)
         for key, value in market.items():
-            eval("tt._{}({})".format(
-                key,
-                value if type(value) != str else '"%s"' % value
-            ))
+            assert isinstance(value, type_tester[key])
 
 def assert_consistence(res):
     assert len(res["name"]) > 0

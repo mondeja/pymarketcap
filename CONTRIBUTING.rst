@@ -43,6 +43,8 @@ benchmarks results: run ``python3 bench/main.py --help``.
 TODO
 ~~~~
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
+- Include links to source code in documentation reference.
+- Assert names consistence in responses fields between methods.
 
 --------------
 

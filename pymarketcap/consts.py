@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+"""Constants used by Pymarketcap interfaces."""
+
 import logging
 
 # Parameters
 DEFAULT_TIMEOUT = 15
 
 # Data
-exceptional_coin_slugs = {
+EXCEPTIONAL_COIN_SLUGS = {
     "42": "42-coin",
     "808": "808coin",
     "611": "sixeleven",
@@ -19,10 +21,10 @@ exceptional_coin_slugs = {
     "BTW": "bitwhite"
 }
 
-exceptional_coin_slugs_keys = list(exceptional_coin_slugs.keys())
+EXCEPTIONAL_COIN_SLUGS_KEYS = list(EXCEPTIONAL_COIN_SLUGS.keys())
 
 # Coins retrieved by cache but not found in coinmarketcap
-invalid_coins = [
+INVALID_COINS = [
     "coindash"
 ]
 

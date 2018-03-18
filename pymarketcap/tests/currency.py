@@ -1,34 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-class TypeTester:
-    def _symbol(self, value): assert type(value) == str
-    def _slug(self, value): assert type(value) == str
-    def _source_code(self, value): assert type(value) in [str, type(None)]
-    def _announcement(self, value): assert type(value) in [str, type(None)]
-    def _explorers(self, value): assert type(value) == list
-    def _total_markets_volume_24h(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) in [float, type(None)]
-    def _rank(self, value): assert type(value) == int
-    def _total_markets_cap(self, value): assert type(value) in [float, type(None)]
-    def _chats(self, value): assert type(value) == list
-    def _message_boards(self, value): assert type(value) == list
-    def _circulating_supply(self, value): assert type(value) in [float, type(None)]
-    def _total_supply(self, value): assert type(value) in [float, type(None)]
-    def _max_supply(self, value): assert type(value) in [float, type(None)]
-    def _mineable(self, value): assert type(value) == bool
-    def _webs(self, value): assert type(value) == list
-    def _name(self, value): assert type(value) == str
-
-tt = TypeTester()
+"""``currency()`` shared method test module."""
 
 def assert_types(res):
-    assert type(res) == dict
+    type_tester = {
+        "symbol":                   str,
+        "slug":                     str,
+        "source_code":              [str, type(None)],
+        "announcement":             [str, type(None)],
+        "explorers":                list,
+        "total_markets_volume_24h": [float, type(None)],
+        "price":                    [float, type(None)],
+        "rank":                     list,
+        "total_markets_cap":        [float, type(None)],
+        "chats":                    list,
+        "message_boards":           list,
+        "circulating_supply":       [float, type(None)],
+        "total_supply":             [float, type(None)],
+        "max_supply":               [float, type(None)],
+        "mineable":                 bool,
+        "webs":                     list,
+        "name":                     str
+    }
+    assert isinstance(res, dict)
     for key, value in res.items():
-        eval("tt._{}({})".format(
-            key,
-            value if type(value) != str else '"%s"' % value
-        ))
+        assert isinstance(value, type_tester[key])
 
 def assert_consistence(res):
     keys = list(res.keys())
