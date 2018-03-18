@@ -4,8 +4,9 @@ environment:
     - PYTHON: C:\Python36-x64
 
 install:
-  - echo Installed Pythons
+  - echo "Installed Python versions:"
   - dir c:\Python*
+  - python -m pip install --upgrade pip
   - "%PYTHON%\\python -m pip install -r dev-requirements.txt"
   - "%PYTHON%\\python setup.py install"
 

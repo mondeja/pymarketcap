@@ -4,14 +4,15 @@ os:
   - linux
 
 python:
-  - "3.6"
+  - "3.6.3"
   - "3.7-dev"
 
 install:
   # urllib version in Python3.6
+  - pip install -r dev-requirements.txt
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then make install-light; else make install; fi
 before_script:
-  - pip install -r dev-requirements.txt
+  - python -m pip install --upgrade pip
   - echo $TRAVIS_PYTHON_VERSION
 script:
   - tox
