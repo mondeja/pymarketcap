@@ -5,99 +5,82 @@
 
 from time import sleep
 from random import choice, randint
-from math import ceil
 
-import pytest
-
+from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def teardown_function():
-    time.sleep(1)
+    sleep(1)
 
-class TypeTester:
-    def _id(self, value): assert type(value) == str
-    def _name(self, value): assert type(value) == str
-    def _symbol(self, value): assert type(value) == str
-    def _rank(self, value): assert type(value) == int
-    def _price_usd(self, value): assert type(value) in [float, type(None)]
-    def _price_btc(self, value): assert type(value) in [float, type(None)]
-    def _24h_volume_usd(self, value): assert type(value) in [float, type(None)]
-    def _market_cap_usd(self, value): assert type(value) in [float, int, type(None)]
-    def _available_supply(self, value): assert type(value) in [float, int, type(None)]
-    def _total_supply(self, value): assert type(value) in [float, int, type(None)]
-    def _max_supply(self, value): assert type(value) in [type(None), float, int]
-    def _percent_change_1h(self, value): assert type(value) in [float, type(None)]
-    def _percent_change_24h(self, value): assert type(value) in [float, type(None)]
-    def _percent_change_7d(self, value): assert type(value) in [float, type(None)]
-    def _last_updated(self, value): assert type(value) in [int, type(None)]
+def assert_types(res):
+    map_types = {
+        "id":                   str,
+        "name":                 str,
+        "symbol":               str,
+        "rank":                 int,
+        "price_usd":            (float, type(None)),
+        "price_btc":            (float, type(None)),
+        "24h_volume_usd":        (float, type(None)),
+        "market_cap_usd":       (float, int, type(None)),
+        "available_supply":     (float, int, type(None)),
+        "total_supply":         (float, int, type(None)),
+        "max_supply":           (float, int, type(None)),
+        "percent_change_1h":    (float, type(None)),
+        "percent_change_24h":   (float, type(None)),
+        "percent_change_7d":    (float, type(None)),
+        "last_updated":         (int, type(None))
+    }
+    assert isinstance(res, (list, dict))
 
-tt = TypeTester()
+    for key, value in res.items():
+        if key in map_types:
+            type_test(map_types, key, value)
+        else:
+            assert isinstance(value, (float, type(None)))
 
-class TestWithoutParams:
-    def test_types(self):
-        res = pym.ticker()
-        assert type(res) == list
 
-        for currency in res:
-            assert type(currency) == dict
-            for key, value in currency.items():
-                eval("tt._{}({})".format(
-                    key,  # Strings need to be "quoted":
-                    value if type(value) != str else '"%s"' % value
-                ))
+def test_consistence():
+    res = pym.ticker()
+    assert res[0]["rank"] == 1
+    assert res[-1]["rank"] == pym.total_currencies
 
-    def test_consistence(self):
-        res = pym.ticker()
-        assert res[0]["rank"] == 1
-        assert res[-1]["rank"] == pym.total_currencies
+def test_limit():
+    res = pym.ticker(limit=40)
+    assert len(res) == 40
+    assert res[0]["rank"] == 1
+    res = pym.ticker(limit=385)
+    assert len(res) == 385
 
-    def teardown(self):
-        sleep(1)
+def test_name():
+    symbol = choice(pym.symbols)
+    res = pym.ticker(symbol)
+    print("(Symbol: %s)" % symbol, end=" ")
 
-class TestWithParams:
-    def test_limit(self):
-        res = pym.ticker(limit=40)
-        assert len(res) == 40
-        assert res[0]["rank"] == 1
-        res = pym.ticker(limit=385)
-        assert len(res) == 385
+    assert_types(res)
 
-    def test_name(self):
-        symbol = choice(pym.symbols)
-        res = pym.ticker(symbol)
-        print("(Symbol: %s)" % symbol, end=" ")
+def test_start():
+    pos = randint(0, pym.total_currencies - 1)
+    res = pym.ticker(start=pos)
+    assert res[0]["rank"] == (pos + 1)
 
-        # Test types
-        assert type(res) == dict
-        for key, value in res.items():
-            eval("tt._{}({})".format(
-                    key,  # Strings need to be 'quoted':
-                    value if type(value) != str else '"%s"' % value
-                ))
+def test_convert():
+    for currency in [True, False]:  # With and without currency
+        symbol = None
+        badge = choice(pym.ticker_badges)
+        if currency:
+            symbol = choice(pym.symbols)
+            print("(Currency: %s - Badge: %s)" % (symbol, badge), end=" | ")
+        else:
+            print("(Badge: %s)" % badge, end=" ")
 
-    def test_start(self):
-        pos = randint(0, pym.total_currencies - 1)
-        res = pym.ticker(start=pos)
-        assert res[0]["rank"] == (pos + 1)
+        res = pym.ticker(currency=symbol, convert=badge)
+        keys = res.keys() if currency else res[0].keys()
+        badges_in_keys_count = 0
+        for key in keys:
+            if badge.lower() in key:
+                badges_in_keys_count += 1
+        assert badges_in_keys_count == 3
 
-    def test_convert(self):
-        for currency in [True, False]:  # With and without currency
-            symbol = None
-            badge = choice(pym.ticker_badges)
-            if currency:
-                symbol = choice(pym.symbols)
-                print("(Currency: %s - Badge: %s)" % (symbol, badge), end=" | ")
-            else:
-                print("(Badge: %s)" % badge, end=" ")
-
-            res = pym.ticker(currency=symbol, convert=badge)
-            keys = res.keys() if currency else res[0].keys()
-            badges_in_keys_count = 0
-            for key in keys:
-                if badge.lower() in key:
-                    badges_in_keys_count += 1
-            assert badges_in_keys_count == 3
-
-    def teardown(self):
-        sleep(1)
+        if currency:
+            assert_types(res)

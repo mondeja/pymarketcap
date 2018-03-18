@@ -1,33 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-class TypeTester:
-    def _name(self, value): assert type(value) == str
-    def _symbol(self, value): assert type(value) == str
-    def _volume_24h(self, value): assert type(value) == float
-    def _price(self, value): assert type(value) == float
-    def _percent_change(self, value): assert type(value) == float
-
-tt = TypeTester()
-
 def assert_types(data):
-    assert type(data) == dict
+    map_types = {
+        "name":           str,
+        "symbol":         str,
+        "volume_24h":     float,
+        "price":          float,
+        "percent_change": float,
+    }
+
+    assert isinstance(data, dict)
     for rank, rdata in data.items():
-        assert type(rank) == str
-        assert type(rdata) == dict
+        assert isinstance(rank, str)
+        assert isinstance(rdata, dict)
         for period, pdata in rdata.items():
-            assert type(period) == str
-            assert type(pdata) == list
+            assert isinstance(period, str)
+            assert isinstance(pdata, list)
             for currency in pdata:
-                assert type(currency) == dict
+                assert isinstance(currency, dict)
                 for key, value in currency.items():
-                    eval("tt._{}({})".format(
-                        key,  # Strings need to be "quoted":
-                        value if type(value) != str else '"%s"' % value
-                    ))
+                    type_test(map_types, key, value)
 
 def test_types():
     assert_types(pym.ranks())

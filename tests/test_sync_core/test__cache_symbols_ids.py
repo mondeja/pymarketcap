@@ -3,22 +3,20 @@
 
 """Tests for _cache_symbols() private method"""
 
-import time
-
 from pymarketcap import Pymarketcap
 from pymarketcap.consts import EXCEPTIONAL_COIN_SLUGS
 pym = Pymarketcap()
 
 def test_types():
     res = pym._cache_symbols_ids()
-    assert type(res) == tuple
+    assert isinstance(res, tuple)
     for i, _property in enumerate(res):
-        assert type(_property) == dict
+        assert isinstance(_property, dict)
         for key, value in _property.items():
             if i == 0:
-                assert type(value) == str
+                assert isinstance(value, str)
             else:
-                assert type(value) == int
+                assert isinstance(value, int)
 
 def test_consistence():
     res = pym.correspondences
@@ -33,5 +31,3 @@ def test_consistence():
             assert ch.islower() or ch.isnumeric() or ch in ["-"]
     for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
         assert res[original] == correct
-
-

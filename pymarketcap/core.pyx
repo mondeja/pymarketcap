@@ -2,7 +2,8 @@
 """API wraper and web scraper module."""
 
 # Standard Python modules
-import re
+from re import sub as re_sub
+from re import findall as re_findall
 from json import loads
 from datetime import datetime
 from time import time
@@ -226,7 +227,7 @@ cdef class Pymarketcap:
             All currencies that could be passed to convert() method.
         """
         res = self._get(b"https://coinmarketcap.com")
-        currencies = re.findall(r'data-([a-z]+)="\d', res[-10000:-2000])
+        currencies = re_findall(r'data-([a-z]+)="\d', res[-10000:-2000])
         response = [currency.upper() for currency in currencies]
         response.extend([str(currency["symbol"]) for currency in self.ticker()])
         return sorted(response)
@@ -356,7 +357,7 @@ cdef class Pymarketcap:
             url += b"&start=%d" % start
             url += b"&convert=%s" % convert.encode()
             res = self._get(url)
-            response = loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))
+            response = loads(re_sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))
             len_i = len(response)
             for i in range(len_i):
                 response[i]["symbol"] = str(response[i]["symbol"])
@@ -366,7 +367,7 @@ cdef class Pymarketcap:
             url = b"https://api.coinmarketcap.com/v1/ticker/%s" % currency.encode()
             url += b"?convert=%s" % convert.encode()
             res = self._get(url)
-            response = loads(re.sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))[0]
+            response = loads(re_sub(r'"(-*\d+(?:\.\d+)?)"', r"\1", res))[0]
             response["symbol"] = str(response["symbol"])
         return response
 
@@ -384,7 +385,7 @@ cdef class Pymarketcap:
             the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
-        rates = re.findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000])
+        rates = re_findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000])
         response = {currency.upper(): float(rate) for currency, rate in rates}
         for currency in self.ticker():
             try:

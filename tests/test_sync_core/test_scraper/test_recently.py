@@ -3,31 +3,27 @@
 
 """Tests for ticker() method"""
 
+from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-class TypeTester:
-    def _name(self, value): assert type(value) == str
-    def _symbol(self, value): assert type(value) == str
-    def _added(self, value): assert type(value) == str
-    def _market_cap(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) == float
-    def _circulating_supply(self, value): assert type(value) in [float, type(None)]
-    def _volume_24h(self, value): assert type(value) in [float, int, type(None)]
-    def _percent_change(self, value): assert type(value) in [float, int, type(None)]
-
-tt = TypeTester()
-
 def assert_types(res):
-    assert type(res) == list
+    map_types = {
+        "name":               str,
+        "symbol":             str,
+        "added":              str,
+        "market_cap":         str,
+        "price":              str,
+        "circulating_supply": str,
+        "volume_24h":         str,
+        "percent_change":     str
+    }
+
+    assert isinstance(res, list)
     for currency in res:
-        assert type(currency) == dict
+        assert isinstance(currency, dict)
         for key, value in currency.items():
-            for key, value in currency.items():
-                eval("tt._{}({})".format(
-                    key,  # Strings need to be "quoted":
-                    value if type(value) != str else '"%s"' % value
-                ))
+                type_test(map_types, key, value)
 
 def test_types():
     assert_types(pym.recently())

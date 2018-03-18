@@ -6,34 +6,30 @@
 from time import sleep
 from random import choice
 
+from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 all_badges = list(pym.ticker_badges)
 all_badges.remove("USD")
 
-class TypeTester:
-    def _active_assets(self, value): assert type(value) == int
-    def _active_currencies(self, value): assert type(value) == int
-    def _active_markets(self, value): assert type(value) == int
-    def _bitcoin_percentage_of_market_cap(self, value): assert type(value) == float
-    def _last_updated(self, value): assert type(value) == int
-    def _total_24h_volume_usd(self, value): assert type(value) == float
-    def _total_market_cap_usd(self, value): assert type(value) == float
-
-tt = TypeTester()
-
 def teardown_function(function):
     sleep(1)
 
 def assert_types(res):
-    assert type(res) == dict
+    int_type_fields = [
+        "active_assets",
+        "active_currencies",
+        "active_markets",
+        "last_updated",
+    ]
+
+    assert isinstance(res, dict)
     for key, value in res.items():
-        assert type(key) == str
-        if "_%s" % key in dir(tt):
-            eval("tt._{}({})".format(key, value))
+        if key in int_type_fields:
+            assert isinstance(value, int)
         else:
-            assert type(value) == float
+            assert isinstance(value, float)
 
 def test_types():
     res = pym.stats()

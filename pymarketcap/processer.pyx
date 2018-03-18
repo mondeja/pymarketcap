@@ -299,7 +299,7 @@ cpdef exchanges(res, convert):
                 "pair": links_pairs[i-1][1],
                 "volume": vol,
                 "price": price,
-                "perc_volume": float(perc_volumes[i-1])
+                "percent_volume": float(perc_volumes[i-1])
             })
 
             try:
@@ -367,4 +367,3 @@ cpdef graphs(res, start, end):
                 group.append([tmp, data])
         response[key] = group
     return response
-

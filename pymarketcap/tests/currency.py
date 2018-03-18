@@ -6,7 +6,7 @@
 from pymarketcap.tests import type_test
 
 def assert_types(res):
-    type_tester = {
+    map_types = {
         "symbol":                   str,
         "slug":                     str,
         "source_code":              (str, type(None)),
@@ -27,7 +27,7 @@ def assert_types(res):
     }
     assert isinstance(res, dict)
     for key, value in res.items():
-        type_test(type_tester, key, value)
+        type_test(map_types, key, value)
 
 def assert_consistence(res):
     keys = list(res.keys())

@@ -17,7 +17,7 @@ def test_USD_to_USD():
     res = pym.convert(value, "USD", "USD")
 
     # Test types
-    assert type(res) == float
+    assert isinstance(res, float)
 
     # Test consistence
     assert res == value
@@ -28,7 +28,7 @@ def test_USD_to_x():
     res = pym.convert(value, "USD", symbol)
 
     # Test types
-    assert type(res) == float
+    assert isinstance(res, float)
 
     # Test consistence
     rates = pym.currency_exchange_rates
@@ -42,7 +42,7 @@ def test_x_to_USD():
     res = pym.convert(value, symbol, "USD")
 
     # Test types
-    assert type(res) == float
+    assert isinstance(res, float)
 
     # Test consistence
     rates = pym.currency_exchange_rates
@@ -57,7 +57,7 @@ def test_x_to_y():
     res = pym.convert(value, symbol_1, symbol_2)
 
     # Test types
-    assert type(res) == float
+    assert isinstance(res, float)
 
     # Test consistence
     rates = pym.currency_exchange_rates

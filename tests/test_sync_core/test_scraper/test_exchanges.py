@@ -4,32 +4,28 @@
 from re import findall as re_findall
 from urllib.request import urlopen
 
+from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-class TypeTester:
-    def _name(self, value): assert type(value) == str
-    def _web(self, value): assert type(value) == str
-    def _pair(self, value): assert type(value) == str
-    def _volume(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) == float
-    def _perc_volume(self, value): assert type(value) == float
-
-tt = TypeTester()
-
 def assert_types(res):
-    assert type(res) == list
+    map_types = {
+        "name":           str,
+        "web":            str,
+        "pair":           str,
+        "volume":         (float, type(None)),
+        "price":          float,
+        "percent_volume": float
+    }
+
+    assert isinstance(res, list)
     for exc in res:
-        assert type(exc) == dict
-        assert type(exc["name"]) == str
-        assert type(exc["markets"]) == list
+        assert isinstance(exc, dict)
+        assert isinstance(exc["name"], str)
+        assert isinstance(exc["markets"], list)
         for market in exc["markets"]:
             for key, value in market.items():
-                assert type(key) == str
-                eval("tt._{}({})".format(
-                    key,
-                    value if type(value) != str else '"%s"' % value
-                ))
+                type_test(map_types, key, value)
 
 def assert_number_of_exchanges(res):
     req = urlopen("https://coinmarketcap.com/exchanges/volume/24-hour/all/")

@@ -8,7 +8,7 @@ from datetime import datetime
 from pymarketcap.tests import type_test
 
 def assert_types(res):
-    type_tester = {
+    map_types = {
         "date":       datetime,
         "open":       float,
         "high":       float,
@@ -25,7 +25,7 @@ def assert_types(res):
     for tick in res["history"]:
         assert isinstance(tick, dict)
         for key, value in tick.items():
-            type_test(type_tester, key, value)
+            type_test(map_types, key, value)
 
 def assert_consistence(res):
     for i, tick in enumerate(res["history"]):

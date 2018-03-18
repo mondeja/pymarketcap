@@ -3,9 +3,9 @@
 
 """Shared interfaces tests modules."""
 
-def type_test(type_tester, key, value):
+def type_test(map_types, key, value):
     try:
-        assert isinstance(value, type_tester[key])
+        assert isinstance(value, map_types[key])
     except AssertionError as err:
         print("Key: %s\nValue: %r\n" % (key, value))
         raise err
