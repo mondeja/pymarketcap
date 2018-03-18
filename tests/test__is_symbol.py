@@ -3,7 +3,7 @@
 
 from random import choice
 
-from pymarketcap.consts import exceptional_coin_slugs_keys
+from pymarketcap.consts import EXCEPTIONAL_COIN_SLUGS_KEYS
 from pymarketcap import Pymarketcap
 
 pym = Pymarketcap()
@@ -27,7 +27,7 @@ def test_consistence():
 
     # Eceptional symbol existent
     symbol = None
-    for symbol in exceptional_coin_slugs_keys:
+    for symbol in EXCEPTIONAL_COIN_SLUGS_KEYS:
         if symbol in pym.symbols:
             assert pym._is_symbol(symbol)
             break

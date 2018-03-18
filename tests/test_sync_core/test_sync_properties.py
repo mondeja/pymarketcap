@@ -3,7 +3,7 @@
 
 """Test wrapper properties"""
 
-from pymarketcap.consts import invalid_coins
+from pymarketcap.consts import INVALID_COINS
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -52,7 +52,7 @@ def test_coins():
         assert type(coin) == str
 
     # Test consistence
-    for invalid_coin in invalid_coins:
+    for invalid_coin in INVALID_COINS:
         assert invalid_coin not in res
     assert len(res) > 0
 
