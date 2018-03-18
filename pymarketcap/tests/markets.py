@@ -3,6 +3,8 @@
 
 """``markets()`` shared method test module."""
 
+from pymarketcap.tests import type_test
+
 def assert_types(res):
     type_tester = {
         "source":         str,
@@ -19,7 +21,7 @@ def assert_types(res):
     for source in res["markets"]:
         assert isinstance(source, dict)
         for key, value in source.items():
-            assert isinstance(value, type_tester[key])
+            type_test(type_tester, key, value)
 
 def assert_consistence(res):
     for source in res["markets"]:

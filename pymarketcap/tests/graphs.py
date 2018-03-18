@@ -14,4 +14,4 @@ def assert_types(res):
             assert isinstance(values, list)
             for tmp, value in values:
                 assert isinstance(tmp, datetime)
-                assert isinstance(value, [float, int])
+                assert isinstance(value, (float, int))

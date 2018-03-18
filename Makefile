@@ -1,4 +1,7 @@
-.IPHONY: install builds dist install install-light dev-install uninstall reinstall clean test test-end2end precompile-sources restore-sources docs-html
+.IPHONY:
+	install builds dist install install-light dev-install \
+	uninstall reinstall clean test test-end2end \
+	precompile-sources restore-sources docs-html version
 
 builds:
 	sudo python3 setup.py build_ext -fi
@@ -34,7 +37,7 @@ clean:
 	sudo find . -type d -name "_build" -exec rm -r {} +
 
 test:
-	pytest tests -vs --cov
+	pytest tests -vs
 
 test-end2end:
 	pytest tests -vs --end2end --cov
@@ -48,3 +51,6 @@ restore-sources:
 
 docs-html:
 	cd docs && make html && cd ..
+
+version:
+	cd .. && python3 -c "import pymarketcap;print(pymarketcap.__version__);" cd pymarketcap

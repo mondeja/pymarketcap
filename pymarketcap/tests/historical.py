@@ -5,15 +5,17 @@
 
 from datetime import datetime
 
+from pymarketcap.tests import type_test
+
 def assert_types(res):
     type_tester = {
         "date":       datetime,
         "open":       float,
         "high":       float,
         "low":        float,
-        "close":      [float, type(None)],
-        "volume":     [float, type(None)],
-        "market_cap": [float, type(None)],
+        "close":      (float, type(None)),
+        "volume":     (float, type(None)),
+        "market_cap": (float, type(None)),
         "name":       str
     }
 
@@ -23,7 +25,7 @@ def assert_types(res):
     for tick in res["history"]:
         assert isinstance(tick, dict)
         for key, value in tick.items():
-            assert isinstance(value, type_tester[key])
+            type_test(type_tester, key, value)
 
 def assert_consistence(res):
     for i, tick in enumerate(res["history"]):

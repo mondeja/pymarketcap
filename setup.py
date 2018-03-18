@@ -164,18 +164,22 @@ ext_modules = cythonize(ext_modules,
 LONG_DESC = "pymarketcap is library for retrieve data from coinmarketcap.com" \
           + " API and website. Consist of a cythonized scraper and API wrapper built" \
           + " with curl C library, but is possible to compile a lightweight version" \
-          + " with standard urllib library instead. Actually, only works in Python>=3.6"
+          + " with standard urllib library instead. Actually, only works in Python>=3.6."
 
 with open(REQ_PATH, "r") as f:
-    REQ = f.readlines()
+    REQ = [line.strip("\n") for line in f.readlines()]
 
-setup(
+author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
+
+install = setup(
     name = "pymarketcap",
-    version = "3.9.139",
+    version = "3.9.141",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
-    author = "Álvaro Mondéjar Rubio",
-    author_email = "mondejar1994@gmail.com",
+    author = author,
+    maintainer = author,
+    author_email = author_email,
+    maintainer_email = author_email,
     license = "BSD License",
     description = "Python3 API and web scraper for coinmarketcap.com.",
     long_description = LONG_DESC,
@@ -201,10 +205,10 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     zip_safe = True,
-    provides = ["setup_template_cython"],
-    project_urls = {
-        'Documentation': 'http://pymarketcap.readthedocs.io/',
-        'Source': 'https://github.com/mondeja/pymarketcap',
-        'Tracker': 'https://github.com/mondeja/pymarketcap/issues',
-    }
+    provides = ["setup_template_cython"]
+)
+
+print(
+    "\n%s v%s installation finished succesfully." \
+    % (install.get_name().capitalize(), install.get_version())
 )

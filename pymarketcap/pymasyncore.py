@@ -186,7 +186,7 @@ class AsyncPymarketcap(ClientSession):
                      range(num_of_consumers or self.connector_limit)]
         dlq_consumers = [ensure_future(
             self._consumer(dlq, dlq, responses)) for _ in range(num_of_consumers)]
-        produce = await self._producer(itr, build_url_callback, queue, desc=desc)
+        await self._producer(itr, build_url_callback, queue, desc=desc)
         await queue.join()
         await dlq.join()
 

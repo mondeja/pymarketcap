@@ -1,5 +1,3 @@
-# cython: linetrace=True
-# distutils: define_macros=CYTHON_TRACE=1
 
 """This module process all core scraper methods raw responses."""
 
@@ -143,12 +141,18 @@ cpdef historical(res, start, end, revert):
             continue
         else:
             if date <= end:
-                try: close = float(ohlc[i3+3])
-                except ValueError: close = None
-                try: volume = float(vol_marketcap[i2-1])
-                except ValueError: volume = None
-                try: market_cap = float(vol_marketcap[i2])
-                except ValueError: market_cap = None
+                try:
+                    close = float(ohlc[i3+3])
+                except ValueError:
+                    close = None
+                try:
+                    volume = float(vol_marketcap[i2-1])
+                except ValueError:
+                    volume = None
+                try:
+                    market_cap = float(vol_marketcap[i2])
+                except ValueError:
+                    market_cap = None
 
                 response.append({
                     "date": date,
@@ -182,14 +186,23 @@ def recently(res, convert):
     for n, sym, add, mcp, pr, sup, vol, perc in zip(
             names, symbols, added, mcap, prices, supply, vol_24h, p_change
         ):
-        try: perc_change = float(perc[0])
-        except ValueError: perc_change = None
-        try: market_cap = float(mcp)
-        except ValueError: market_cap = None
-        try: csupply = float(sup)
-        except ValueError: csupply = None
-        try: volume_24h = float(vol)
-        except ValueError: volume_24h = None
+        try:
+            perc_change = float(perc[0])
+        except ValueError:
+            perc_change = None
+        try:
+            market_cap = float(mcp)
+        except ValueError:
+            market_cap = None
+        try:
+            csupply = float(sup)
+        except ValueError:
+            csupply = None
+        try:
+            volume_24h = float(vol)
+        except ValueError:
+            volume_24h = None
+
         yield {
             "name": n,
             "symbol": sym,

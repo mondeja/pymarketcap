@@ -6,7 +6,7 @@
 import time
 
 from pymarketcap import Pymarketcap
-from pymarketcap.consts import exceptional_coin_slugs
+from pymarketcap.consts import EXCEPTIONAL_COIN_SLUGS
 pym = Pymarketcap()
 
 def test_types():
@@ -31,7 +31,7 @@ def test_consistence():
                 assert ch.islower()
         for ch in value:
             assert ch.islower() or ch.isnumeric() or ch in ["-"]
-    for original, correct in exceptional_coin_slugs.items():
+    for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
         assert res[original] == correct
 
 
