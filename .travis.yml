@@ -22,5 +22,3 @@ script:
 branches:
   only:
     - master
-after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then coveralls; fi
