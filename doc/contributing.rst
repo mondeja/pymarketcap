@@ -20,7 +20,7 @@ You can run tests with ``pytest`` command:
     + Run ``every_historical()`` async scraper method's consistence: ``pytest tests/test_async_core/test_scraper/test_every_historical.py``
 
 
-Also, if your system is Unix, you can use ``make`` for run tests, install, precompile/restore source code, build and clean the whole directory (see `Makefile <https://github.com/mondeja/pymarketcap/blob/master/Makefile>`__).
+Also, if your system is Unix, you can use ``make`` for run tests, install, precompile/restore source code, build and clean the whole directory (see `Makefile <https://github.com/mondeja/pymarketcap/blob/master/Makefile>`__):
 
 --------------
 

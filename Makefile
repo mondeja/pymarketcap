@@ -50,10 +50,16 @@ restore-sources:
 	python3 -c "from precompiler import run_unbuilder;run_unbuilder()"
 
 doc-html:
-	cd docs && make html && cd ..
+	cd doc && make html && cd ..
 
-build-doc:
+build-meta:
+	# Build metadata for the project (README.rst)
 	bash scripts/build_doc.sh
+
+show-doc:
+	if [ ! -f doc/build/html/index.html ]; then make doc-html; fi
+	see "doc/_build/html/index.html"
+
 
 version:
 	cd .. && python3 -c "import pymarketcap;print(pymarketcap.__version__);" cd pymarketcap
