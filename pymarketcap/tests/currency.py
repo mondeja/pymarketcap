@@ -7,23 +7,23 @@ from pymarketcap.tests import type_test
 
 def assert_types(res):
     map_types = {
-        "symbol":                   str,
-        "slug":                     str,
-        "source_code":              (str, type(None)),
-        "announcement":             (str, type(None)),
-        "explorers":                list,
-        "total_markets_volume_24h": (float, type(None)),
-        "price":                    (float, type(None)),
-        "rank":                     int,
-        "total_markets_cap":        (float, type(None)),
-        "chats":                    list,
-        "message_boards":           list,
-        "circulating_supply":       (float, type(None)),
-        "total_supply":             (float, type(None)),
-        "max_supply":               (float, type(None)),
-        "mineable":                 bool,
-        "webs":                     list,
-        "name":                     str
+        "symbol":             str,
+        "slug":               str,
+        "source_code":        (str, type(None)),
+        "announcement":       (str, type(None)),
+        "explorers":          list,
+        "markets_volume_24h": (float, type(None)),
+        "price":              (float, type(None)),
+        "rank":               int,
+        "markets_cap":        (float, type(None)),
+        "chats":              list,
+        "message_boards":     list,
+        "circulating_supply": (float, type(None)),
+        "total_supply":       (float, type(None)),
+        "max_supply":         (float, type(None)),
+        "mineable":           bool,
+        "webs":               list,
+        "name":               str
     }
     assert isinstance(res, dict)
     for key, value in res.items():

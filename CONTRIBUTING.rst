@@ -44,8 +44,6 @@ TODO
 ~~~~
 - Add posibility of return asynchronous responses in ``pandas.DataFrames`` objects or download it in ``.csv`` format.
 - Include links to source code in documentation reference.
-- Assert names consistence in responses fields between methods.
-- Reintegrate support for Python3.6.4
 --------------
 
 How does pymarketcap works in depth?

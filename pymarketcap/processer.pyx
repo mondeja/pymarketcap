@@ -39,8 +39,8 @@ cpdef currency(res, convert):
     try: price = float(_price.group(1))
     except ValueError: price = "?"
 
-    response = {"total_markets_cap": float(total_cap) if total_cap != "?" else None,
-                "total_markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
+    response = {"markets_cap": float(total_cap) if total_cap != "?" else None,
+                "markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
                 "price": price if price != "?" else None}
 
     # Circulating, total and maximum supply
@@ -260,7 +260,7 @@ cpdef exchange(res, convert):
 
     return {
         "name": formatted_name,
-        "website": web.group(1) if web else None,
+        "web": web.group(1) if web else None,
         "volume": total_volume,
         "social": {
             "twitter": {
