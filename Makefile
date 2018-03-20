@@ -49,8 +49,11 @@ precompile-sources:
 restore-sources:
 	python3 -c "from precompiler import run_unbuilder;run_unbuilder()"
 
-docs-html:
+doc-html:
 	cd docs && make html && cd ..
+
+build-doc:
+	bash scripts/build_doc.sh
 
 version:
 	cd .. && python3 -c "import pymarketcap;print(pymarketcap.__version__);" cd pymarketcap

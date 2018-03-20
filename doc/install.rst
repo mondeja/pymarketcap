@@ -22,3 +22,5 @@ From source
 
 - To force installation with libcurl, use ``--force-curl`` in last command.
 - To install with urllib, use ``--no-curl``.
+
+

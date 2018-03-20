@@ -8,7 +8,6 @@ dist/
 
 # Local files
 NOTES.md
-scripts/
 
 # Local test development
 builder_checks.py

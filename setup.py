@@ -38,8 +38,8 @@ except ImportError:   # Cython required
     print("Cython not found. You need to install Cython before pymarketcap.")
     sys.exit(1)
 
-REQ_PATH = os.path.join(os.path.dirname(__file__),
-                        "requirements.txt")
+CURR_DIR = os.path.dirname(__file__)
+REQ_PATH = os.path.join(CURR_DIR, "requirements.txt")
 
 code = 1
 base_call = "pip3 install -r %s" % REQ_PATH
@@ -92,7 +92,7 @@ if PYTHON_VERSION < (3,6):
                     print("Installing pymarketcap...")
                     break
     else:
-        print("You need almost Python3.6 version to install pymarketcap.")
+        print("You need almost Python3.5 version to install pymarketcap.")
         sys.exit(1)
 
 
@@ -160,10 +160,10 @@ ext_modules = cythonize(ext_modules)
 
 
 # ===========  Package metadata  ===========
-LONG_DESC = "pymarketcap is library for retrieve data from coinmarketcap.com" \
-          + " API and website. Consist of a cythonized scraper and API wrapper built" \
-          + " with curl C library, but is possible to compile a lightweight version" \
-          + " with standard urllib library instead. Actually, only works in Python>=3.6."
+
+LONG_DESC_PATH = os.path.join(CURR_DIR, "doc/meta/long_desc_raw.txt")
+with open(LONG_DESC_PATH, "r") as f:
+    LONG_DESC = f.read()
 
 with open(REQ_PATH, "r") as f:
     REQ = [line.strip("\n") for line in f.readlines()]
@@ -172,7 +172,7 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name = "pymarketcap",
-    version = "3.9.146",
+    version = "3.9.147",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = author,

@@ -1,46 +1,43 @@
 .. raw:: html
 
-   <h1>
-
 pymarketcap
+===========
 
-.. raw:: html
-
-   </h1>
 
 |Build Status| |AppVeyor| |ReadTheDocs| |Binder|
 
 |PyPI| |PyPI Versions| |LICENSE|
 
-**pymarketcap** is a library for retrieve data from
+
+pymarketcap is a library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
 of a cythonized scraper and and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
-library instead. Only works in Python3.6+
+
 
 Install
--------
+=======
 
-You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__ before pymarketcap. Try ``pip3 install Cython`` and then:
+You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__ before pymarketcap. Try: ``pip3 install Cython`` and then:
 
 ::
 
-    pip3 install pymarketcap
+pip3 install pymarketcap
 
-- On windows will be used ``urllib`` library to make synchronous requests and on Linux/Mac will be build against `libcurl <https://curl.haxx.se/docs/install.html>`__ C library. You can control manually this (see below):
+- On Windows will be used ``urllib`` library to make synchronous requests and on Linux/Mac will be build against `libcurl <https://curl.haxx.se/docs/install.html>`__ C library. You can control mannually this (see below):
 
 
 From source
-~~~~~~~~~~~
+-----------
 
 ::
 
-    git clone https://github.com/mondeja/pymarketcap.git
-    cd pymarketcap
-    pip3 install -r requirements.txt
-    python setup.py install
+git clone https://github.com/mondeja/pymarketcap.git
+cd pymarketcap
+pip3 install -r requirements.txt
+python setup.py install
 
-- To force installation with libcurl, add ``--force-curl`` in last command.
+- To force installation with libcurl, use ``--force-curl`` in last command.
 - To install with urllib, use ``--no-curl``.
 
 
@@ -63,23 +60,10 @@ Documentation
 Support
 ~~~~~~~
 
--  Issue Tracker: https://github.com/mondeja/pymarketcap/issues
--  If you want contact me → mondejar1994@gmail.com
+- Issue Tracker: https://github.com/mondeja/pymarketcap/issues
+- If you want contact me → mondejar1994@gmail.com
 
---------------
 
-Buy me a coffee?
-^^^^^^^^^^^^^^^^
-
-If you feel like buying me a coffee (or a beer?), donations are welcome:
-
-::
-
-    BTC: 1LnPPp7nEF7fHNMtHvVaEFNaHmPKji1uCo
-    BCH: qp40gr5y9usdyqh62hac7umvcqe5n2nc9vpff4der5
-    ETH: 0x3284674cC02d18395a00546ee77DBdaA391Aec23
-    LTC: LXSXiczN1ZYyf3WoeawraL7G1d31vVWgXK
-    STEEM: @mondeja
 
 .. |Build Status| image:: https://travis-ci.org/mondeja/pymarketcap.svg?branch=master
    :target: https://cnhv.co/1xgw5
@@ -95,3 +79,5 @@ If you feel like buying me a coffee (or a beer?), donations are welcome:
    :target: https://cnhv.co/1xgx7
 .. |LICENSE| image:: https://img.shields.io/pypi/l/pymarketcap.svg
    :target: https://cnhv.co/1xgxd
+
+
