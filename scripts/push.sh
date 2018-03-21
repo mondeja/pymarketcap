@@ -20,16 +20,16 @@ sudo python3 setup.py install
 
 # Unittesting
 if [[ $TESTS -eq 1 ]]; then
-	echo "Testing pymarketcap..."
-	pytest tests -vs --end2end
+    echo "Testing pymarketcap..."
+    pytest tests -vs --end2end
 
-	if [ $? -eq 1 ] # Tests failed?
-	then
-	  exit 1
-	else
-	  echo "Tests passed."
-	fi
-	echo
+    if [ $? -eq 1 ] # Tests failed?
+    then
+      exit 1
+    else
+      echo "Tests passed."
+    fi
+    echo
 fi
 
 make clean
