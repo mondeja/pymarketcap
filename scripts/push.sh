@@ -7,7 +7,7 @@ then
 fi
 
 TESTS=1
-if [[ $1 = "no-tests" ]]; then
+if [[ $1 = "no-tests" || $1 = "no-test" ]]; then
     TESTS=0
 fi
 
@@ -43,7 +43,9 @@ echo
 # Upload to PyPi
 echo "Uploading to Pypi..."
 sudo python3 setup.py sdist
+make restore-sources
 sudo twine upload dist/pymarketcap-$version.tar.gz
+make clean
 
 if [ $? -eq 1 ] # Upload failed?
 then

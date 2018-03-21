@@ -56,20 +56,21 @@ else:
 
 
 # ===========  Precompiler  ===========
-from precompiler import run_builder, run_unbuilder
+if not "sdist" in sys.argv:
+    from precompiler import run_builder, run_unbuilder
 
-source = os.path.join(os.getcwd(), "pymarketcap", "core.pyx")
-built = run_builder(source)
-if not built:
-    if run_unbuilder():
-        if run_builder(source):
-            pass
+    source = os.path.join(os.getcwd(), "pymarketcap", "core.pyx")
+    built = run_builder(source)
+    if not built:
+        if run_unbuilder():
+            if run_builder(source):
+                pass
+            else:
+                print("Error building pymarketcap.")
+                sys.exit(1)
         else:
             print("Error building pymarketcap.")
             sys.exit(1)
-    else:
-        print("Error building pymarketcap.")
-        sys.exit(1)
 
 # Check if minimum Python3.6
 PYTHON_VERSION = sys.version_info
@@ -171,7 +172,7 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name = "pymarketcap",
-    version = "3.9.150",
+    version = "3.9.152",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = author,

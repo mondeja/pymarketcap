@@ -4,9 +4,8 @@
 """Asynchronous Pymarketcap interface module."""
 
 # Standard Python modules
-from time import time
 import logging
-from json import loads, dumps
+from json import loads
 from json.decoder import JSONDecodeError
 from datetime import datetime
 from asyncio import (
@@ -59,10 +58,6 @@ class AsyncPymarketcap(ClientSession):
         debug (bool, optional): If ``True``, the logger
             level will be setted as :data:`~logging.DEBUG`.
             As default ``False``.
-        json (str, optional): If ``json != None``, asynchronous
-            responses will be stored in a ``.json`` file located
-            at folder passed as value for this attribute.
-            As default ``None``.
         **kwargs: arguments that corresponds to the
             :class:`aiohttp.client.ClientSession <~aiohttp.ClientSession>`
             parent class.
@@ -83,9 +78,6 @@ class AsyncPymarketcap(ClientSession):
         self._responses = []
         self.progress_bar = progress_bar
         self.consumers = consumers
-
-        # File storage
-        self.json = json
 
         self.graphs = type("Graphs", (), self._graphs_interface)
 
@@ -232,21 +224,6 @@ class AsyncPymarketcap(ClientSession):
                 await dlq.put(url)
                 main_queue.task_done()
 
-    def store_res_as_json(self, indicator, res, slug):
-        """Internal function to store async responses as JSON files.
-
-        Args:
-            indicator (str): The files will be saved with the next schema
-                as filename: ``<folder>/<indicator>_<slug>_<int(time.time())>.json``.
-                ``folder`` must be specified in ``self.json`` class atttribute.
-            res (dict/list): Data to store in the file.
-            slug (str): Name of the exchange/currency to store.
-        """
-        filename = "%s/%s_%s_%d.json" \
-             % (self.json, indicator, slug, int(time()))
-        with open(filename, "w") as f:
-            f.write(dumps(res, indent=4))
-
     # SCRAPER
     async def _base_currency_url(self, name):
         if self._is_symbol(name):
@@ -294,9 +271,6 @@ class AsyncPymarketcap(ClientSession):
                 if slug == response["slug"]:
                     response["symbol"] = symbol
                     break
-            if self.json:
-                self.store_res_as_json("currency", response,
-                                       response["slug"])
             yield response
 
     async def markets(self, name, convert="USD"):
@@ -341,9 +315,6 @@ class AsyncPymarketcap(ClientSession):
                 if slug == response["slug"]:
                     response["symbol"] = symbol
                     break
-            if self.json:
-                self.store_res_as_json("markets", response,
-                                       response["slug"])
             yield response
 
     async def ranks(self):
@@ -418,9 +389,6 @@ class AsyncPymarketcap(ClientSession):
                 if slug == response["slug"]:
                     response["symbol"] = symbol
                     break
-            if self.json:
-                self.store_res_as_json("historical", response,
-                                       response["slug"])
             yield response
 
     async def recently(self, convert="USD"):
@@ -472,9 +440,6 @@ class AsyncPymarketcap(ClientSession):
         for url, raw_res in res:
             response = processer.exchange(raw_res, convert)
             response["slug"] = url.split("/")[-1]
-            if self.json:
-                self.store_res_as_json("exchange", response,
-                                       response["slug"])
             yield response
 
     async def exchanges(self, convert="USD"):
@@ -541,9 +506,6 @@ class AsyncPymarketcap(ClientSession):
                 if slug == response["slug"]:
                     response["symbol"] = symbol
                     break
-            if self.json:
-                self.store_res_as_json("graphs_currency", response,
-                                       response["slug"])
             yield response
 
     async def _global_cap(self, bitcoin=True, start=None, end=None):
