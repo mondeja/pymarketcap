@@ -12,6 +12,7 @@ Pymarketcap's documentation
 
    Install <install>
    Basic Usage <usage>
-   Contributing and testing <contributing>
+   Contributing <contributing>
+   Testing <testing>
    reference
    changelog

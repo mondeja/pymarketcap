@@ -1,3 +1,5 @@
-|Build Status| |AppVeyor| |ReadTheDocs| |Binder|
+|TravisCI| |AppVeyor| |Status|
+
+|ReadTheDocs| |Binder|
 
 |PyPI| |PyPI Versions| |LICENSE|
