@@ -27,7 +27,7 @@ done
 # Fix :targets
 i=1
 cat $R | while read line; do
-    if [[ $line = ":target:"* ]]; then
+    if [[ $line = ":target:"* || $line = "pip3 install pymarketcap"* ]]; then
         line="   $line"
     fi
     if [[ $i -eq 1 ]]; then
