@@ -43,12 +43,15 @@ pymarketcap.core
 pymarketcap.pymasyncore
 -----------------------
 .. autoclass:: pymarketcap.pymasyncore.AsyncPymarketcap
+    :show-inheritance:
 
     .. note:: All scraper methods described in ``Pymarketcap`` object and almost all the properties also exists in ``AsyncPymarketcap``.
+
     .. automethod:: every_currency
     .. automethod:: every_markets
     .. automethod:: every_historical
     .. automethod:: every_exchange
+
     .. note:: The next method can be called also as ``graphs.every_currency()``.
     .. automethod:: _every_currency
 

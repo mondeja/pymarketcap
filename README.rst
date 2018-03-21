@@ -1,5 +1,3 @@
-.. raw:: html
-
 pymarketcap
 ===========
 

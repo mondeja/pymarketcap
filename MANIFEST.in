@@ -1,5 +1,6 @@
 include requirements.txt
 include dev-requirements.txt
+include README.rst
 include pymarketcap/*
 recursive-include tests/ *.py
 include precompiler/*.py

@@ -6,11 +6,17 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 
+import os, sys
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
+
+sys.path.append(
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "pymarketcap")
+)
 
 # -- Project information -----------------------------------------------------
 
@@ -18,11 +24,11 @@ project = 'pymarketcap'
 copyright = '2018, Álvaro Mondéjar Rubio'
 author = 'Álvaro Mondéjar Rubio'
 
-# The short X.Y version
-version = '4.0'
-# The full version, including alpha/beta/rc tags
-release = '4.0.0'
 
+# The full version, including alpha/beta/rc tags
+release = "3.9.150"
+# The short X.Y version
+version = ".".join(release.split(".")[:-1])
 
 # -- General configuration ---------------------------------------------------
 
@@ -36,9 +42,10 @@ release = '4.0.0'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.todo',
     'sphinx.ext.napoleon',
+    'sphinx.ext.intersphinx',
 ]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -177,7 +184,10 @@ epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
 
-# -- Options for todo extension ----------------------------------------------
-
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+# Intersphinx projects docs linking
+intersphinx_mapping = {
+    'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
+    'asyncio': ('https://docs.python.org/3/library/asyncio.html', None),
+    'logging': ('https://docs.python.org/3/library/logging.html', None),
+    'python': ('https://docs.python.org/3', None)
+}

@@ -43,9 +43,6 @@ cdef class Pymarketcap:
             As default ``20``.
         debug: (bool, optional): Show low level data in get requests.
             As default, ``False``.
-        cache (bool, optional): Enable or disable cache at instantiation
-            time. If disabled, some methods couldn't be called, use
-            this attribute with caution. As default, ``True``.
     """
     cdef readonly dict _correspondences
     cdef readonly dict _ids_correspondences
@@ -221,10 +218,12 @@ cdef class Pymarketcap:
     cpdef __currencies_to_convert(self):
         """Internal function for get currencies from and to convert
             values in convert() method. Don't use this, but cached
-            ``currencies_to_convert`` instance attribute instead.
+            :attr:`~pymarketcap.core.Pymarketcap.currencies_to_convert`
+            instance attribute instead.
 
         Returns (list):
-            All currencies that could be passed to convert() method.
+            All currencies that could be passed to
+            :meth:`~pymarketcap.core.Pymarketcap.convert`.
         """
         res = self._get(b"https://coinmarketcap.com")
         currencies = re_findall(r'data-([a-z]+)="\d', res[-10000:-2000])

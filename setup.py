@@ -161,10 +161,8 @@ ext_modules = cythonize(ext_modules)
 
 # ===========  Package metadata  ===========
 
-LONG_DESC = """pymarketcap is a library for retrieve data from http://coinmarketcap.com \n
-API and website. Consist of a cythonized scraper and and API wrapper built \n
-with libcurl, but is posible to compile a lightweight version with standard \n
-urllib library instead. Only works in Python3.6+"""
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
+    LONG_DESC = f.read()
 
 with open(REQ_PATH, "r") as f:
     REQ = [line.strip("\n") for line in f.readlines()]
@@ -173,13 +171,14 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name = "pymarketcap",
-    version = "3.9.149",
+    version = "3.9.150",
     url = "https://github.com/mondeja/pymarketcap",
     download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
     author = author,
     maintainer = author,
     author_email = author_email,
     maintainer_email = author_email,
+    platforms=['any'],
     license = "BSD License",
     description = "Python3 API and web scraper for coinmarketcap.com.",
     long_description = LONG_DESC,

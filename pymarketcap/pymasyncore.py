@@ -44,27 +44,28 @@ class AsyncPymarketcap(ClientSession):
         queue_size (int): Number of maximum simultanenous
            get requests performing together in methods
            involving several requests. As default ``10``.
-        progress_bar(bool): Select ``True`` or ``False`` if you
+        progress_bar (bool): Select ``True`` or ``False`` if you
             want to show a progress bar in methods involving
-            processing of several requests (requires ``tqdm``
+            processing of several requests (requires :mod:`tqdm`
             module). As default, ``True``.
-        consumers(int): Number of consumers resolving http
-            requests in from an internal ``asyncio.Queue``.
+        consumers (int): Number of consumers resolving HTTP
+            requests from an internal
+            :class:`asyncio.Queue <~asyncio.Queue>`.
             As default, ``10``.
         timeout (int/float, optional): Limit max time
             waiting for a response. As default, ``15``.
-        logger (logging.logger): As default with a logging
-            with a ``logging.StreamHandler()`` handler.
+        logger (logging.logger): As default is a logger
+            with a :class:`~python.logging.StreamHandler`.
         debug (bool, optional): If ``True``, the logger
-            level will be setted as ``logging.DEBUG``.
+            level will be setted as :data:`~logging.DEBUG`.
             As default ``False``.
         json (str, optional): If ``json != None``, asynchronous
             responses will be stored in a ``.json`` file located
             at folder passed as value for this attribute.
             As default ``None``.
         **kwargs: arguments that corresponds to the
-            ``aiohttp.ClientSession`` parent class.
-
+            :class:`aiohttp.client.ClientSession <~aiohttp.ClientSession>`
+            parent class.
     """
 
     def __init__(self, queue_size=10, progress_bar=True,
@@ -266,12 +267,14 @@ class AsyncPymarketcap(ClientSession):
         Args:
             currencies (list, optional): Iterator with all the
                 currencies that you want to retrieve.
-                As default ``None`` (``self.coins`` will be used).
+                As default ``None`` (:meth:`pymarketcap.Pymarketcap.coins`
+                will be used in that case).
             convert (str, optional): Convert prices in response
                 between "USD" and BTC. As default ``"USD"``.
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
-                As default ``None`` (``self.consumers``).
+                As default ``None``
+                (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
         Returns (list): Data for all currencies.
         """
@@ -310,14 +313,15 @@ class AsyncPymarketcap(ClientSession):
         Args:
             currencies (list, optional): Iterator with
                 all the currencies that you want to retrieve.
-                As default ``None`` (``self.coins`` will be
-                used in that case).
+                As default ``None`` (:meth:`pymarketcap.Pymarketcap.coins`
+                will be used in that case).
             convert (str, optional): Convert prices in
                 response between "USD" and BTC.
                 As default ``"USD"``.
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
-                As default ``None`` (``self.consumers``).
+                As default ``None``
+                (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
         Returns (async iterator): Data for all currencies.
         """
@@ -377,8 +381,8 @@ class AsyncPymarketcap(ClientSession):
         Args:
             currencies (list, optional): Iterator with all
                 the currencies that you want to retrieve.
-                As default ``None`` (``self.coins`` will
-                be used in that case).
+                As default ``None`` (:meth:`pymarketcap.Pymarketcap.coins`
+                will be used in that case).
             start (date, optional): Time to start scraping
                 periods as ``datetime.datetime`` type.
                 As default ``datetime(2008, 8, 18)``.
@@ -390,7 +394,8 @@ class AsyncPymarketcap(ClientSession):
                 reversed list of periods. As default ``False``.
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
-                As default ``None`` (``self.consumers``).
+                As default ``None``
+                (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
         Returns (async iterator):
             Historical data for all currencies.
@@ -441,14 +446,16 @@ class AsyncPymarketcap(ClientSession):
         Args:
             exchanges (list, optional): Iterator with all
                 the exchanges that you want to retrieve.
-                As default ``None`` (``self.exchange_slugs``
-                is used in that case).
+                As default ``None``
+                (:meth:`pymarketcap.Pymarketcap.exchange_slugs`
+                will be used in that case).
             convert (str, optional): Convert market_caps, prices,
                 volumes and percent_changes between USD and BTC.
                 As default ``"USD"``.
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
-                As default ``None`` (``self.consumers``).
+                As default ``None``
+                (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
         Returns (async iterator):
             General data from all exchanges.
@@ -502,15 +509,16 @@ class AsyncPymarketcap(ClientSession):
         Args:
             currencies (list, optional): Iterator with all
                 the currencies that you want to retrieve.
-                As default ``None`` (``self.coins`` will
-                be used in that case).
+                As default ``None`` (:meth:`pymarketcap.Pymarketcap.coins`
+                will be used in that case).
             start (datetime, optional): Time to start retrieving
                 graphs data in datetime. As default ``None``.
             end (datetime, optional): Time to end retrieving
                 graphs data in datetime. As default ``None``.
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
-                As default ``None`` (``self.consumers``).
+                As default ``None``
+                (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
         Returns (async iterator): Graphs data from all currencies.
         """

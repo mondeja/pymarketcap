@@ -24,6 +24,10 @@ new_version_targets = [
     {
         "filepath": os.path.join(BASEDIR, "pymarketcap", "curl.pyx"),
         "regex": r'\*user_agent\s=\s"pymarketcap\s(.+)"'
+    },
+    {
+        "filepath": os.path.join(BASEDIR, "doc", "conf.py"),
+        "regex": r'release\s=\s"(.+)"'
     }
 ]
 
