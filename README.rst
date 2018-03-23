@@ -9,7 +9,7 @@ pymarketcap
 |PyPI| |PyPI Versions| |LICENSE|
 
 
-pymarketcap pymarketcap.egg-info is a library for retrieve data from
+pymarketcap is a library for retrieve data from
 `coinmarketcap <http://coinmarketcap.com/>`__ API and website. Consist
 of a cythonized scraper and and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
@@ -32,10 +32,10 @@ From source
 
 ::
 
-   git clone https://github.com/mondeja/pymarketcap.git
-   cd pymarketcap
-   pip3 install -r requirements.txt
-   python setup.py install
+git clone https://github.com/mondeja/pymarketcap.git
+cd pymarketcap
+pip3 install -r requirements.txt
+python setup.py install
 
 - To force installation with libcurl, use ``--force-curl`` in last command.
 - To install with urllib, use ``--no-curl``.
