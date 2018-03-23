@@ -28,7 +28,7 @@ How does pymarketcap works in depth?
 
 -  Some pieces of code are precompiled before compile with Cython, so if
    you see missing parts on the source code before install (like the
-   property method ``ticker_badges``), understand that they aren't bugs.
+   property method ``ticker_badges``), understand that these are not bugs.
    Run ``make precompile-sources`` to do manual code precompilation and
    ``make restore-sources`` for restore souce code to original state.
 -  The numerical values returned by the scraper are the real values with

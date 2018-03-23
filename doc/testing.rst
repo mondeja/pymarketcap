@@ -20,6 +20,9 @@ You can run tests with ``pytest`` command:
 Also, if your system is Unix, you can use ``make`` for run tests, install, precompile/restore source code, build and clean the whole directory (see `Makefile <https://github.com/mondeja/pymarketcap/blob/master/Makefile>`__).
 
 
+You can see online the tests for Linux/Mac and Windows at TravisCI and AppVeyor:
 
+- `TravisCI <https://travis-ci.org/mondeja/pymarketcap>`__
+- `AppVeyor <https://ci.appveyor.com/project/mondeja/pymarketcap>`__
 
 

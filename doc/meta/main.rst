@@ -1,7 +1,7 @@
 Documentation
 -------------
 - `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
-- `Static documentation at Readthedocs <https://cnhv.co/1y9f0>`__.
+- `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`__.
 
 `Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/contributing.rst>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
