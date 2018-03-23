@@ -17,8 +17,7 @@ pym = Pymarketcap()
 @pytest.mark.end2end
 def test_every_exchange(event_loop):
     async def wrapper():
-        async with AsyncPymarketcap(debug=True,
-                                    queue_size=50,
+        async with AsyncPymarketcap(queue_size=50,
                                     consumers=50) as apym:
             res = []
             show_msg = True

@@ -189,5 +189,6 @@ intersphinx_mapping = {
     'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
     'asyncio': ('https://docs.python.org/3/library/asyncio.html', None),
     'logging': ('https://docs.python.org/3/library/logging.html', None),
-    'python': ('https://docs.python.org/3', None)
+    'python': ('https://docs.python.org/3', None),
+    'tqdm': ('https://pypi.python.org/pypi/tqdm', None)
 }

@@ -44,7 +44,7 @@ class AsyncPymarketcap(ClientSession):
            get requests performing together in methods
            involving several requests. As default ``10``.
         progress_bar (bool): Select ``True`` or ``False`` if you
-            want to show a progress bar in methods involving
+            want to show a progress bar in methods that involve
             processing of several requests (requires :mod:`tqdm`
             module). As default, ``True``.
         consumers (int): Number of consumers resolving HTTP
