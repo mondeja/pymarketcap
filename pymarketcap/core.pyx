@@ -36,7 +36,7 @@ http_error_numbers = [int(number) for number in http_errors_map.keys()]
 
 
 cdef class Pymarketcap:
-    """Unique class for retrieve data from coinmarketcap.com
+    """Synchronous class for retrieve data from coinmarketcap.com
 
     Args:
         timeout (int, optional): Set timeout value for get requests.

@@ -87,7 +87,7 @@ if PYTHON_VERSION < (3,6):
                     print("Installation cancelled.")
                     sys.exit(0)
                     break
-                elif cont != "s":
+                elif cont != "y":
                     print("Invalid option.")
                 else:
                     print("Installing pymarketcap...")
