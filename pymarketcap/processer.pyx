@@ -72,7 +72,10 @@ cpdef currency(res, convert):
 
     response["mineable"] = True if re.search(r'label-warning">Mineable', res) else False
 
-    response["rank"] = int(re.search(r'Rank (\d+)</span>', res).group(1))
+    try:
+        response["rank"] = int(re.search(r'Rank (\d+)</span>', res).group(1))
+    except AttributeError:
+        response["rank"] = None
 
     announcement = re.search(r'<a href="(.+)" target="_blank">Announcement</a>', res)
     response["announcement"] = announcement.group(1) if announcement else None

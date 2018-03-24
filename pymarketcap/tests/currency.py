@@ -14,7 +14,7 @@ def assert_types(res):
         "explorers":          list,
         "markets_volume_24h": (float, type(None)),
         "price":              (float, type(None)),
-        "rank":               int,
+        "rank":               (int, type(None)),
         "markets_cap":        (float, type(None)),
         "chats":              list,
         "message_boards":     list,
