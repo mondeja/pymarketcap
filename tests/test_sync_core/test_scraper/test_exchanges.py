@@ -4,7 +4,10 @@
 from re import findall as re_findall
 from urllib.request import urlopen
 
-from pymarketcap.tests import type_test
+from pymarketcap.tests import (
+    type_test,
+    restart_if_http_error
+)
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -27,11 +30,13 @@ def assert_types(res):
             for key, value in market.items():
                 type_test(map_types, key, value)
 
+@restart_if_http_error
 def assert_number_of_exchanges(res):
     req = urlopen("https://coinmarketcap.com/exchanges/volume/24-hour/all/")
     data = req.read()
     req.close()
     indexes = re_findall(r'"volume-header">(\d+)\.', data.decode())
+    print(indexes)
     assert len(res) == int(indexes[-1])
 
 def assert_consistence(res):
