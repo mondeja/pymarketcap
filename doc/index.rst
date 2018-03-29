@@ -16,3 +16,4 @@ Pymarketcap's documentation
    Testing <testing>
    reference
    changelog
+   core

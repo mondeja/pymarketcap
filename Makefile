@@ -1,13 +1,17 @@
 .IPHONY:
 	install builds dist install install-light dev-install \
 	uninstall reinstall clean test test-end2end \
-	precompile-sources restore-sources docs-html version
+	precompile-sources restore-sources docs-html \
+	build-meta show-doc version
 
 builds:
 	sudo python3 setup.py build_ext -fi
 
 dist:
 	python3 setup.py dist
+
+sdist:
+	python3 setup.py sdist
 
 install:
 	pip3 install -r requirements.txt
@@ -59,7 +63,6 @@ build-meta:
 show-doc:
 	if [ ! -f doc/build/html/index.html ]; then make doc-html; fi
 	see "doc/_build/html/index.html"
-
 
 version:
 	cd .. && python3 -c "import pymarketcap;print(pymarketcap.__version__);" cd pymarketcap

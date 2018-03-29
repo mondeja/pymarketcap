@@ -19,7 +19,11 @@ def assert_number_of_markets(res):
     data = req.read()
     req.close()
     indexes = findall(r'<td class="text-right">(.+)</td>', data.decode())
-    assert len(res["markets"]) == int(indexes[-1])
+    assert len(res["markets"]) in [
+        int(indexes[-1])+1,
+        int(indexes[-1]),
+        int(indexes[-1])-1
+    ]
 
 def test_without_convert():
     coin = choice(pym.coins)
