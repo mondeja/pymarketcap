@@ -181,10 +181,7 @@ def recently(res, convert):
     prices = re.findall(r'price" .*data-%s="(\d+\.*[\d|e|-|\+]*)"' % convert, res)
     supply = re.findall(r'data-supply="(\?|\d+\.*[\d|e|-|\+]*)"', res)
     vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
-    p_change = re.findall(
-        r'change .*data-%s="(\?|-*\d+\.*[\d|e|-|\+]*)"|<td class="text-right">(\?)</td>' \
-        % convert, res
-    )
+    p_change = re.findall(r'data-symbol=".+" data-sort="(-*\d+\.\d*)"', res)
 
     for n, sym, add, mcp, pr, sup, vol, perc in zip(
             names, symbols, added, mcap, prices, supply, vol_24h, p_change

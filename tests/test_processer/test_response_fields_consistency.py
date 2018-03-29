@@ -58,7 +58,7 @@ def test_fields():
                 elif method[0] == "exchanges":
                     keys_from_method = list(res[0]["markets"][0].keys())
                     keys.extend(keys_from_method)
-                elif method[0] in ["ticker", "tokens"]:
+                elif method[0] in ["ticker", "tokens", "recently"]:
                     keys_from_method = list(res[0].keys())
                     keys.extend(keys_from_method)
                 else:

@@ -12,14 +12,15 @@ def assert_types(res):
         "name":               str,
         "symbol":             str,
         "added":              str,
-        "market_cap":         str,
-        "price":              str,
-        "circulating_supply": str,
-        "volume_24h":         str,
-        "percent_change":     str
+        "market_cap":         (float, type(None)),
+        "price":              float,
+        "circulating_supply": (float, type(None)),
+        "volume_24h":         (float, type(None)),
+        "percent_change":     (float, type(None)),
     }
 
     assert isinstance(res, list)
+    assert len(res) > 0
     for currency in res:
         assert isinstance(currency, dict)
         for key, value in currency.items():
