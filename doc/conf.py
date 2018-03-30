@@ -15,7 +15,9 @@ import os, sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 sys.path.append(
-    os.path.join(os.path.dirname(os.path.dirname(__file__)), "pymarketcap")
+    os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "pymarketcap")
+    )
 )
 
 # -- Project information -----------------------------------------------------
@@ -26,7 +28,7 @@ author = 'Álvaro Mondéjar Rubio'
 
 
 # The full version, including alpha/beta/rc tags
-release = "3.9.156"
+release = "3.9.157"
 # The short X.Y version
 version = ".".join(release.split(".")[:-1])
 

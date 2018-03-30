@@ -31,6 +31,8 @@ def get_to_memory(url, timeout, debug):
         req = urlopen(req, timeout=timeout)
     except HTTPError as err:
         return Response(b"", err.code, url)
+    except OSError:
+        return Response(b"", 404, url)
     else:
         data = req.read()
         if debug:

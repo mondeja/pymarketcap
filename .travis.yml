@@ -13,12 +13,13 @@ python:
 install:
   # urllib version in Python3.6
   - pip install -r dev-requirements.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make install-light; else make install; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make install-light; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6.4"]]; then pip install pymarketcap; else make install; fi
 before_script:
   - python -m pip install --upgrade pip
   - echo $TRAVIS_PYTHON_VERSION
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make test-end2end; else make test; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6" || $TRAVIS_PYTHON_VERSION == "3.7-dev" ]]; then make test-end2end; else make test; fi
 branches:
   only:
     - master

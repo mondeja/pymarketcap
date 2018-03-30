@@ -297,7 +297,8 @@ class AsyncPymarketcap(ClientSession):
                 As default ``None``
                 (see :attr:`pymarketcap.AsyncPymarketcap.consumers`).
 
-        Returns (async iterator): Data for all currencies.
+        Returns (async iterator):
+                Data for all currencies.
         """
         convert = convert.lower()
         currencies = currencies if currencies else self.coins
