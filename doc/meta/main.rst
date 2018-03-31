@@ -4,10 +4,10 @@ Documentation
 - `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`__.
 
 `Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/contributing.rst>`__
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------------------------------------------------
 
 `Testing <https://github.com/mondeja/pymarketcap/blob/master/doc/testing.rst>`__
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------------------------------------------
 
 `Changelog <https://cnhv.co/1y9ex>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

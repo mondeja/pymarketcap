@@ -1,9 +1,28 @@
 Contributing
 ============
 
-|Issues| |Percentage of issues still open| |Average time solving issues|
+|Issues| |Percentage of issues still open| |Closed issues|
 
-`TODO <https://github.com/mondeja/pymarketcap/milestone/2>`__
+|Average time solving issues| |Issues closed in|
+
+|Contributors| |Codetriage| |Last commit|
+
+Known issues and enhacements
+----------------------------
+
+`TODO list <https://github.com/mondeja/pymarketcap/milestone/2>`__
+
+Enhacements
+~~~~~~~~~~~
+
+|Enhancement|
+
+Bugs
+~~~~
+
+- Total: |Total bugs|
+- Tests: |Test bugs|
+
 
 Basic guidelines
 ----------------
@@ -26,6 +45,8 @@ benchmarks results are stored: run ``python3 bench/main.py --help``.
 How does pymarketcap works in depth?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+|Repo size| |Code size|
+
 -  Some pieces of code are precompiled before compile with Cython, so if
    you see missing parts on the source code before install (like the
    property method ``ticker_badges``), understand that these are not bugs.
@@ -40,5 +61,22 @@ How does pymarketcap works in depth?
    :target: https://github.com/mondeja/pymarketcap/issues
 .. |Percentage of issues still open| image:: http://isitmaintained.com/badge/open/mondeja/pymarketcap.svg
    :target: http://isitmaintained.com/project/mondeja/pymarketcap
+.. |Closed issues| image:: https://img.shields.io/github/issues-closed/mondeja/pymarketcap.svg
+   :target: https://github.com/mondeja/pymarketcap/issues?q=is%3Aissue+is%3Aclosed
 .. |Average time solving issues| image:: http://isitmaintained.com/badge/resolution/mondeja/pymarketcap.svg
    :target: https://github.com/mondeja/pymarketcap/issues
+.. |Issues closed in| image:: https://img.shields.io/issuestats/i/long/github/mondeja/pymarketcap.svg
+   :target: https://github.com/mondeja/pymarketcap/issues
+.. |Contributors| image:: https://img.shields.io/github/contributors/mondeja/pymarketcap.svg
+   :target: https://github.com/mondeja/pymarketcap/graphs/contributors
+.. |Codetriage| image:: https://www.codetriage.com/mondeja/pymarketcap/badges/users.svg
+   :target: https://www.codetriage.com/mondeja/pymarketcap
+.. |Last commit| image:: https://img.shields.io/github/last-commit/mondeja/pymarketcap.svg
+.. |Enhancement| image:: https://img.shields.io/github/issues/mondeja/pymarketcap/enhancement.svg
+   :target: https://github.com/mondeja/pymarketcap/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement
+.. |Test bugs| image:: https://img.shields.io/github/issues/mondeja/pymarketcap/test_bug.svg
+   :target: https://github.com/mondeja/pymarketcap/issues?q=is%3Aissue+is%3Aopen+label%3Atest_bug
+.. |Total bugs| image:: https://img.shields.io/github/issues/mondeja/pymarketcap/bug.svg
+   :target: https://github.com/mondeja/pymarketcap/issues?q=is%3Aissue+is%3Aopen+label%3Abug
+.. |Repo size| image:: https://img.shields.io/github/repo-size/mondeja/pymarketcap.svg
+.. |Code size| image:: https://img.shields.io/github/languages/code-size/mondeja/pymarketcap.svg

@@ -26,6 +26,15 @@ def test_start_end():
 
     res = pym.graphs.dominance(start=days_ago)
     key = list(res.keys())[0]
-    assert res[key][-1][0].day == today.day
-    assert res[key][0][0].day in [days_ago.day,
-                                  (days_ago+timedelta(days=1)).day]
+    possible_days_ago = [
+        days_ago.day,
+        (days_ago+timedelta(days=1)).day,
+        (days_ago-timedelta(days=1)).day
+    ]
+    possible_days_today = [
+        today.day,
+        (today-timedelta(days=1)).day,
+        (today+timedelta(days=1)).day
+    ]
+    assert res[key][-1][0].day in possible_days_today
+    assert res[key][0][0].day in possible_days_ago

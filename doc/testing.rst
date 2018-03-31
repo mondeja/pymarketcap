@@ -1,6 +1,8 @@
 Testing
 =======
 
+|TravisCI| |AppVeyor|
+
 You need to install ``pytest`` for run unittests and ``tox`` for run
 tests against different versions:
 
@@ -25,4 +27,7 @@ You can see online the tests for Linux/Mac and Windows at TravisCI and AppVeyor:
 - `TravisCI <https://travis-ci.org/mondeja/pymarketcap>`__
 - `AppVeyor <https://ci.appveyor.com/project/mondeja/pymarketcap>`__
 
-
+.. |TravisCI| image:: https://travis-ci.org/mondeja/pymarketcap.svg?branch=master
+   :target: https://travis-ci.org/mondeja/pymarketcap
+.. |AppVeyor| image:: https://ci.appveyor.com/api/projects/status/puy2p0qhjna4hosc?svg=true
+   :target: https://ci.appveyor.com/project/mondeja/pymarketcap

@@ -4,6 +4,19 @@
 """Shared interfaces tests modules."""
 
 def type_test(map_types, key, value):
+    """Test every type of the dictionary pairs
+    key-values.
+
+    Args:
+        map_types (dict): Name of the keys and type
+            or types that will be tested against it
+            using ``isinstance(value, map_types[key])``
+        key (str): Key that will be tested.
+        value (str): Value name that will be tested.
+
+    Raises:
+       ``AssertionError`` if types and keys doesn't match.
+    """
     try:
         assert isinstance(value, map_types[key])
     except AssertionError as err:

@@ -25,10 +25,16 @@ def test_start_end():
     days_ago = today - timedelta(days=randint(1, 15))
 
     res = pym.graphs.global_cap(start=days_ago)
-    assert res["market_cap_by_available_supply"][-1][0].day == today.day
-    assert res["market_cap_by_available_supply"][0][0].day in \
-        [
-         days_ago.day,
-         (days_ago+timedelta(days=1)).day,
-         (days_ago-timedelta(days=1)).day
-        ]
+    possible_days_ago = [
+        days_ago.day,
+        (days_ago+timedelta(days=1)).day,
+        (days_ago-timedelta(days=1)).day
+    ]
+    possible_days_today = [
+        today.day,
+        (today-timedelta(days=1)).day,
+        (today+timedelta(days=1)).day
+    ]
+    assert res["market_cap_by_available_supply"][-1][0].day == possible_days_today
+    assert res["market_cap_by_available_supply"][0][0].day in possible_days_ago
+        
