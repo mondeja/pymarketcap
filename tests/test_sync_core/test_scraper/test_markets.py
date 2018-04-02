@@ -11,9 +11,11 @@ from pymarketcap.tests.markets import (
     assert_types,
     assert_consistence
 )
+from pymarketcap.tests import restart_if_http_error
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
+@restart_if_http_error
 def assert_number_of_markets(res):
     req = urlopen("https://coinmarketcap.com/currencies/%s" % res["slug"])
     data = req.read()
