@@ -3,7 +3,6 @@
 
 from random import choice, randint
 from datetime import datetime, timedelta
-from pprint import pprint
 
 from pymarketcap.tests.graphs import assert_types
 from pymarketcap import Pymarketcap

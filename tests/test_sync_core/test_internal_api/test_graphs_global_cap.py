@@ -35,6 +35,6 @@ def test_start_end():
         (today-timedelta(days=1)).day,
         (today+timedelta(days=1)).day
     ]
-    assert res["market_cap_by_available_supply"][-1][0].day == possible_days_today
+    assert res["market_cap_by_available_supply"][-1][0].day in possible_days_today
     assert res["market_cap_by_available_supply"][0][0].day in possible_days_ago
-        
+
