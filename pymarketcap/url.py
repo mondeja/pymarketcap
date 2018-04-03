@@ -4,8 +4,10 @@
 
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
+from socket import timeout
 
 from pymarketcap import __version__
+from pymarketcap.errors import CoinmarketcapHTTPError408
 
 class Response:
     """Internal response object for encapsulate responses
@@ -33,6 +35,8 @@ def get_to_memory(url, timeout, debug):
         return Response(b"", err.code, url)
     except OSError:
         return Response(b"", 404, url)
+    except timeout:
+        raise CoinmarketcapHTTPError408("Request timeout exceed (%d seconds)" % timeout)
     else:
         data = req.read()
         if debug:
