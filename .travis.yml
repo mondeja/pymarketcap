@@ -5,17 +5,17 @@ os:
 
 python:
   - "3.6"
-  - "3.6.3"
-  - "3.6.4"
-  - "nightly"
+  - "3.6.5"
+  - "3.6-dev"
   - "3.7-dev"
+  - "nightly"
 
 install:
   # urllib version in Python3.6
   - pip install -r dev-requirements.txt
   - if [[ $TRAVIS_PYTHON_VERSION == "3.6" ]]; then make install-light; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6.4" || $TRAVIS_PYTHON_VERSION == "3.7-dev" ]]; then pip install pymarketcap; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6.3" || $TRAVIS_PYTHON_VERSION == "nightly" ]]; then make install; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6.5" || $TRAVIS_PYTHON_VERSION == "3.6-dev" ]]; then pip install pymarketcap; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.7-dev" || $TRAVIS_PYTHON_VERSION == "nightly" ]]; then make install; fi
 before_script:
   - python -m pip install --upgrade pip
   - echo $TRAVIS_PYTHON_VERSION

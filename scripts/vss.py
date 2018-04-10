@@ -13,10 +13,7 @@ original_version = {
 }
 
 new_version_targets = [
-    {
-        "filepath": os.path.join(BASEDIR, "pymarketcap", "__init__.py"),
-        "regex": r'__version__\s=\s"(.+?)"\n'
-    },
+    original_version,
     {
         "filepath": os.path.join(BASEDIR, "setup.py"),
         "regex": r'version\s=\s"(.+?)",'
