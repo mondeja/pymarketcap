@@ -36,10 +36,10 @@ http_error_numbers = [int(number) for number in http_errors_map.keys()]
 
 
 cdef class Pymarketcap:
-    """Synchronous class for retrieve data from coinmarketcap.com
+    """Synchronous class for retrieve data from https://coinmarketcap.com.
 
     Args:
-        timeout (int, optional): Set timeout value for get requests.
+        timeout (int, optional): Set timeout value for requests.
             As default ``20``.
         debug: (bool, optional): Show low level data in get requests.
             As default, ``False``.
@@ -238,7 +238,9 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_names = sorted(list(self.__exchange_names_slugs().keys()))
+            self._exchange_names = sorted(
+                list(self.__exchange_names_slugs().keys())
+            )
             return self._exchange_names
 
     cpdef __exchange_names_slugs(self):
@@ -249,7 +251,9 @@ cdef class Pymarketcap:
         Returns (list):
             All exchanges names formatted in coinmarketcap.
         """
-        res = self._get(b"https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json")
+        res = self._get(
+            b"https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json"
+        )
         return {exc["name"]: exc["slug"] for exc in loads(res)}
 
     @property
@@ -259,7 +263,9 @@ cdef class Pymarketcap:
         if res:
             return res
         else:
-            self._exchange_slugs = sorted(list(self.__exchange_names_slugs().values()))
+            self._exchange_slugs = sorted(
+                list(self.__exchange_names_slugs().values())
+            )
             return self._exchange_slugs
 
     @property
@@ -341,7 +347,8 @@ cdef class Pymarketcap:
                 Only works if ``currency == None``. As default ``0``.
             convert (str, optional): Allows to convert prices, 24h volumes
                 and market capitalizations in terms of one of badges
-                returned by ``ticker_badges`` property. As default, ``"USD"``.
+                returned by ``ticker_badges`` property.
+                As default, ``"USD"``.
 
         Returns (dict/list):
             The type depends if currency param is provided or not.
@@ -380,7 +387,9 @@ cdef class Pymarketcap:
             the prices shown.
         """
         res = self._get(b"https://coinmarketcap.com")
-        rates = re_findall(r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000])
+        rates = re_findall(
+            r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000]
+        )
         response = {currency.upper(): float(rate) for currency, rate in rates}
         for currency in self.ticker():
             try:
@@ -413,12 +422,12 @@ cdef class Pymarketcap:
             else:
                 rates = self.converter_cache[0]
                 return value * rates[currency_in] / rates[currency_out]
-        except KeyError:
+        except KeyError as err:
             msg = "Invalid currency: '%s'. See currencies_to_convert instance attribute."
             for param in [currency_in, currency_out]:
                 if param not in self.currencies_to_convert:
                     raise ValueError(msg % param)
-            raise NotImplementedError
+            raise err
 
     cpdef currency(self, unicode name, convert="USD"):
         """Get currency metadata like total markets capitalization,
@@ -667,7 +676,8 @@ cdef class Pymarketcap:
         if self._is_symbol(name):
             name = self.correspondences[name]
 
-        url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % name.encode()
+        url = b"https://graphs2.coinmarketcap.com/currencies/%s/" \
+                  % name.encode()
         res = loads(self._get(url))
 
         return processer.graphs(res, start, end)

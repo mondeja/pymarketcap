@@ -4,7 +4,7 @@
 
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
-from socket import timeout
+from socket import timeout as TimeoutHTTPError
 
 from pymarketcap import __version__
 from pymarketcap.errors import CoinmarketcapHTTPError408
@@ -21,6 +21,7 @@ def get_to_memory(url, timeout, debug):
     """GET request stored in memory.
 
     Args:
+        url: Url to send GET request.
         timeout (int): Number of seconds until
             expiration time cancels the request.
         debug (bool): See code response or not.
@@ -35,8 +36,10 @@ def get_to_memory(url, timeout, debug):
         return Response(b"", err.code, url)
     except OSError:
         return Response(b"", 404, url)
-    except timeout:
-        raise CoinmarketcapHTTPError408("Request timeout exceed (%d seconds)" % timeout)
+    except TimeoutHTTPError:
+        raise CoinmarketcapHTTPError408(
+            "Request timeout exceed (%d seconds)" % timeout
+        )
     else:
         data = req.read()
         if debug:

@@ -184,7 +184,11 @@ class AsyncPymarketcap(ClientSession):
     async def _async_multiget(self, itr, build_url_callback,
                               num_of_consumers=None, desc=""):
         queue, dlq, responses = Queue(maxsize=self.queue_size), Queue(), []
-        num_of_consumers = num_of_consumers or min(self.connector_limit, self.try_get_itr_len(itr))
+        try:
+            itr_len = len(itr)
+        except TypeError:
+            itr_len = 1000000
+        num_of_consumers = num_of_consumers or min(self.connector_limit, itr_len)
         consumers = [ensure_future(
             self._consumer(main_queue=queue, dlq=dlq, responses=responses)) for _ in
                      range(num_of_consumers or self.connector_limit)]
@@ -199,12 +203,6 @@ class AsyncPymarketcap(ClientSession):
         for consumer in all_consumers:
             consumer.cancel()
         return responses
-
-    def try_get_itr_len(self, itr):
-        try:
-            return len(itr)
-        except TypeError:
-            return 1000000
 
     async def _producer(self, items,
                         build_url_callback,
