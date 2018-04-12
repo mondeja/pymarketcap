@@ -226,7 +226,7 @@ cpdef exchange(res, convert):
     twitter_link = re.findall(r'"(https://twitter.com/[^\s]+)"', res) \
         if twitter_username else None
 
-    formatted_name = re.search(r'<h1 class="text-large">\s*(.+)\s*</h1>', res).group(1)
+    formatted_name = re.search(r'class="logo-.+" alt="(.+)">', res).group(1)
     web = re.search(r'title="Website">.*href="\s*([^\s|"]+)', res)
 
     markets = []

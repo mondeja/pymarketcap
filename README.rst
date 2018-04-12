@@ -32,10 +32,10 @@ From source
 
 ::
 
-   git clone https://github.com/mondeja/pymarketcap.git
-   cd pymarketcap
-   pip3 install -r requirements.txt
-   python setup.py install
+git clone https://github.com/mondeja/pymarketcap.git
+cd pymarketcap
+pip3 install -r requirements.txt
+python setup.py install
 
 - To force installation with libcurl, use ``--force-curl`` in last command.
 - To install with urllib, use ``--no-curl``.
@@ -83,4 +83,5 @@ Support
 .. |LICENSE| image:: https://img.shields.io/pypi/l/pymarketcap.svg
    :target: https://cnhv.co/1xgxd
 .. |Ask me anything| image:: https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg
+
 

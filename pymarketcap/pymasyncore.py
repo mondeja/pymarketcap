@@ -130,7 +130,7 @@ class AsyncPymarketcap(ClientSession):
 
     @property
     def total_currencies(self):
-        """Get all exchange raw names provided by coinmarketcap."""
+        """Get all currency names provided by coinmarketcap."""
         try:
             return self._total_currencies
         except AttributeError:
@@ -263,6 +263,7 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
+            self.logger.debug("Processing data from %s" % url)
             response = processer.currency(raw_res[20000:], convert)
             response["slug"] = url.split("/")[-1]
             for symbol, slug in self.correspondences.items():
@@ -308,6 +309,7 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
+            self.logger.debug("Processing data from %s" % url)
             response = {"markets": processer.markets(raw_res[20000:], convert),
                         "slug": url.split("/")[-1]}
             for symbol, slug in self.correspondences.items():
@@ -381,6 +383,7 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
+            self.logger.debug("Processing data from %s" % url)
             response = {"history": processer.historical(raw_res[50000:],
                                                         start, end, revert),
                         "slug": url.split("/historical-data")[0].split("/")[-1]}
@@ -437,6 +440,7 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d exchanges from coinmarketcap" % len(exchanges)
         )
         for url, raw_res in res:
+            self.logger.debug("Processing data from %s" % url)
             response = processer.exchange(raw_res, convert)
             response["slug"] = url.split("/")[-1]
             yield response
@@ -495,6 +499,7 @@ class AsyncPymarketcap(ClientSession):
                  + "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
+            self.logger.debug("Processing data from %s" % url)
             try:
                 raw_res = loads(raw_res)
             except JSONDecodeError:  # Ignore 404 responses

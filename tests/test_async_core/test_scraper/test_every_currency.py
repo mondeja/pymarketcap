@@ -3,6 +3,7 @@
 
 import pytest
 
+from pymarketcap.tests.consts import asyncparms
 from pymarketcap.tests.currency import (
     assert_types,
     assert_consistence
@@ -16,8 +17,7 @@ pym = Pymarketcap()
 @pytest.mark.end2end
 def test_every_currency(event_loop):
     async def wrapper():
-        async with AsyncPymarketcap(queue_size=50,
-                                    consumers=50) as apym:
+        async with AsyncPymarketcap(**asyncparms) as apym:
             res = []
             show_msg = True
             async for (currency) in apym.every_currency():

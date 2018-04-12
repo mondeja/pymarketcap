@@ -44,7 +44,7 @@ test:
 	pytest tests -vs
 
 test-end2end:
-	pytest tests -vs --end2end --cov
+	pytest tests -vs --end2end
 
 precompile-sources:
 	python3 -c "from precompiler import run_builder;import os; \
