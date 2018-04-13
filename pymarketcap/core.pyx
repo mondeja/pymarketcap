@@ -346,10 +346,7 @@ cdef class Pymarketcap:
     @property
     def ticker_badges(self):
         """Badges in wich you can convert prices in ``ticker()`` method."""
-        return ["AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK",
-                "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY",
-                "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN",
-                "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "USD", "ZAR"]
+        return
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.

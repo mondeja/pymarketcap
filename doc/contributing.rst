@@ -52,7 +52,7 @@ How does pymarketcap works in depth?
    property method ``ticker_badges``), understand that these are not bugs.
    Run ``make precompile-sources`` to do manual code precompilation and
    ``make restore-sources`` for restore souce code to original state.
--  The numerical values returned by the scraper are the real values with
+-  Numerical values returned by the scraper are real values with
    which coinmarketcap.com works, not the values displayed on their
    frontend (see source HTML code of the web).
 
