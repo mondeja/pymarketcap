@@ -4,35 +4,40 @@
 	precompile-sources restore-sources docs-html \
 	build-meta show-doc version
 
+python = python3
+run-setup = $(python) setup.py
+pip = pip3
+pip-install = $(pip) install
+
 builds:
-	sudo python3 setup.py build_ext -fi
+	$(run-setup) build_ext -fi
 
 dist:
-	python3 setup.py dist
+	$(run-setup) dist
 
 sdist:
-	python3 setup.py sdist
+	$(run-setup) sdist
 
 install:
-	pip3 install -r requirements.txt
-	python3 setup.py install
+	$(pip install) -r requirements.txt
+	$(run-setup) install
 
 install-light:
-	pip3 install -r requirements.txt
-	python3 setup.py install --no-curl
+	$(pip install) -r requirements.txt
+	$(run-setup) install --no-curl
 
 dev-install:
-	sudo pip3 install -r dev-requirements.txt
-	sudo python3 setup.py install
+	$(pip install) -r dev-requirements.txt
+	$(run-setup) install
 
 uninstall:
-	sudo pip3 uninstall pymarketcap -y
+	$(pip) uninstall pymarketcap -y
 	make restore-sources
 
 reinstall:
 	make clean
 	make uninstall
-	sudo python3 setup.py install -f
+	$(run-setup) install -f
 
 clean:
 	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/ htmlcov/
@@ -47,11 +52,11 @@ test-end2end:
 	pytest tests -vs --end2end
 
 precompile-sources:
-	python3 -c "from precompiler import run_builder;import os; \
+	$(python) -c "from precompiler import run_builder;import os; \
 		run_builder(os.path.join(os.getcwd(), 'pymarketcap', 'core.pyx'))"
 
 restore-sources:
-	python3 -c "from precompiler import run_unbuilder;run_unbuilder()"
+	$(python) -c "from precompiler import run_unbuilder;run_unbuilder()"
 
 doc-html:
 	cd doc && make html && cd ..
@@ -65,4 +70,6 @@ show-doc:
 	see "doc/_build/html/index.html"
 
 version:
-	cd .. && python3 -c "import pymarketcap;print(pymarketcap.__version__);" cd pymarketcap
+	cd ..
+	$(python) -c "import pymarketcap as p;print(p.__version__);"
+	cd pymarketcap

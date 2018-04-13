@@ -55,6 +55,7 @@ cdef class Pymarketcap:
     cdef readonly list _exchange_names
     cdef readonly list _exchange_slugs
     cdef readonly dict __repeated_symbols
+    cdef readonly list _exchange_names_slugs_ids
 
     cdef public long timeout
     cdef public object graphs
@@ -128,10 +129,16 @@ cdef class Pymarketcap:
             response = 1
         return response
 
-    cpdef _quick_search(self):
-        """Internal pymarketcap JSON cache file ``quick_search.json``."""
+    cpdef _quick_search(self, exchanges=False):
+        """Internal pymarketcap JSON cache files
+        ``https://s2.coinmarketcap.com/generated/search/quick_search.json``
+        ``https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json``
+        """
         cdef bytes url
-        url = b"https://s2.coinmarketcap.com/generated/search/quick_search.json"
+        if exchanges:
+            url = b"https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json"
+        else:
+            url = b"https://s2.coinmarketcap.com/generated/search/quick_search.json"
         return loads(self._get(url))
 
     cpdef _cache_symbols_ids(self):
@@ -153,6 +160,17 @@ cdef class Pymarketcap:
         for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
             symbols_slugs[original] = correct
         return (symbols_slugs, symbols_ids)
+
+    cpdef _cache_exchanges_ids(self):
+        names_slugs_ids = []
+        for exchange in self._quick_search(exchanges=True):
+            name_slug_id = []
+            name_slug_id.extend([
+                exchange["name"], exchange["slug"], exchange["id"]
+            ])
+            names_slugs_ids.append(name_slug_id)
+        self._exchange_names_slugs_ids = names_slugs_ids
+        return self._exchange_names_slugs_ids
 
     @property
     def symbols(self):
@@ -738,7 +756,8 @@ cdef class Pymarketcap:
             size (int, optional): Size in pixels. Valid sizes are:
                 ``[16, 32, 64, 128, 200]``. As default ``128``.
             filename (str, optional): Filename for store the logo.
-                Must be in ``.png`` extension. As default ``None``.
+                Doesn't include the extension (will be ".png").
+                As default ``None``.
 
         Returns (str):
             Filename of downloaded file if all was correct.
@@ -773,3 +792,87 @@ cdef class Pymarketcap:
             raise e
         else:
             return filename
+
+    cpdef download_exchange_logo(self, unicode name, size=32, filename=None):
+        """Download a exchange logo passing his name or
+        slug as first parameter and optionally a filename
+        without extension.
+
+        Args:
+            name (str): Exchange slug to download logo.
+            filename (str, optional): Filename for store the logo.
+                Doesn't include the extension (will be ".png").
+                As default ``None``.
+
+        Returns (str):
+            Filename of downloaded file if all was correct.
+        """
+
+        if name[0].isupper() and not name[1].isupper():
+            if name.islower():  # Is slug
+                exc_found = False
+                for exc in self._exchange_names_slugs_ids:
+                    if name in exc:
+                        exc_found = True
+                        if exc.index(name) == 1:
+                            _id = exc[2]
+                            _slug = exc[1]
+                            _name = exc[0]
+                            break
+                        else:
+                            print("exc = %s" % exc)
+                            raise Exception(
+                                "Slug catched but not found" \
+                                + " in slug index pos (1)"
+                            )
+                if not exc_found:
+                    raise ValueError(
+                        "Exchange %s not found." % name
+                    )
+            else:
+                raise NotImplementedError(
+                    "Name not lower and not capitalize styled."
+                )
+        else:
+            exc_found = False
+            for exc in self._exchange_names_slugs_ids:
+                if name in exc:
+                    exc_found = True
+                    if exc.index(name) == 0:
+                        _id = exc[2]
+                        _slug = exc[1]
+                        _name = exc[0]
+                        break
+                    else:
+                        print("exc = %s" % exc)
+                        raise Exception(
+                            "Exchange name catched but not found" \
+                            + " in name index pos (0)"
+                        )
+            if not exc_found:
+                raise ValueError(
+                    "Exchange %s not found." % name
+                )
+
+        filename = "%s.png" % _slug if not filename else "%s.png" % filename
+
+        url = "https://s2.coinmarketcap.com/static/img/exchanges/32x32/%s.png" % \
+             (_id, size)
+
+        try:
+            res = urlretrieve(url, filename)
+        except HTTPError as e:
+            if e.code == 403:
+                valid_sizes = [16, 32, 64, 128, 200]
+                if size in valid_sizes:
+                    raise ValueError(
+                        ("Seems that %s exchange doesn't allows to be downloaded with " \
+                        + "size %dx%d. Try another size.") % (name, size, size)
+                    )
+                else:
+                    raise ValueError("%dx%d is not a valid size." % (size, size))
+            raise e
+        else:
+            return filename
+
+
