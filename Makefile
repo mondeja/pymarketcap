@@ -35,7 +35,7 @@ reinstall:
 	sudo python3 setup.py install -f
 
 clean:
-	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/
+	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/ htmlcov/
 	sudo find . -type d -name "__pycache__" -exec rm -r {} +
 	sudo find . -type d -name "_build" -exec rm -r {} +
 	sudo rm pymarketcap/*.c pymarketcap/*.so

@@ -14,14 +14,14 @@ Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/m
 .. centered:: Asynchronous Scraper
 .. code-block:: python
 
-   from pymarketcap import AsyncPymarketcap
-   import asyncio
+    import asyncio
+    from pymarketcap import AsyncPymarketcap
 
-   res = []
-   async def get_every_exchange():
-       async for exc in AsyncPymarketcap() as apym:
-           res.append(exc)
+    async def main():
+        async with AsyncPymarketcap() as apym:
+            async for currency in apym.every_currency():
+                print(currency)
 
-   loop = asyncio.get_event_loop()
-   loop.run_until_complete(get_every_exchange())
-   print(res)
+    if __name__ == '__main__':
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
