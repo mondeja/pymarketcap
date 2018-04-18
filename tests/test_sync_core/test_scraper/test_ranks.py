@@ -8,12 +8,12 @@ pym = Pymarketcap()
 def assert_types(data):
     map_types = {
         "name":           str,
+        "slug":           str,
         "symbol":         str,
         "volume_24h":     float,
         "price":          float,
         "percent_change": float,
     }
-
     assert isinstance(data, dict)
     for rank, rdata in data.items():
         assert isinstance(rank, str)
@@ -27,15 +27,25 @@ def assert_types(data):
                     type_test(map_types, key, value)
 
 def test_types():
-    assert_types(pym.ranks())
-
-def assert_currencies_order(data):
-    # Assert if currencies are in order
-    for rank, rdata in data.items():
-        for period, pdata in rdata.items():
-            for i, currency in enumerate(pdata):
-                if i < len(pdata)-1:
-                    assert pdata[i+1]["percent_change"] >= currency["percent_change"]
+    res = pym.ranks()
+    assert_types(res)
 
 def test_consistence():
-    assert_currencies_order(pym.ranks())
+    res = pym.ranks()
+
+    # Check if a currency is repeated
+    for rank, rdata in res.items():
+        assert rank in ["gainers", "losers"]
+        for period, pdata in rdata.items():
+            assert period in ["1h", "24h", "7d"]
+            symbols, slugs, names = ([], [], [])
+            for currency in pdata:
+                symbol = currency["symbol"]
+                slug = currency["slug"]
+                name = currency["name"]
+                assert symbol not in symbols
+                assert slug not in slugs
+                assert name not in names
+                symbols.append(symbol)
+                slugs.append(slug)
+                names.append(name)

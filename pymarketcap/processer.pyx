@@ -103,9 +103,9 @@ cpdef markets(res, convert):
     ]
 
 cpdef ranks(res):
-    cdef int i = 30
+    cdef int rank_len = 30
 
-    names = re.findall(r'<a href="/currencies/.+/">(.+)</a>.*', res)[6:]
+    names_slugs = re.findall(r'<a href="/currencies/(.+)/">(.+)</a>', res)[6:]
     symbols = re.findall(r'<td class="text-left">(\w+)</td>', res)
     volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
     price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
@@ -117,12 +117,13 @@ cpdef ranks(res):
     }
 
     return {rank: {period: [{
-        "name": names[index_map[rank][period]],
-        "symbol": symbols[index_map[rank][period]],
-        "volume_24h": float(volume_24h[index_map[rank][period]]),
-        "price": float(price[index_map[rank][period]]),
-        "percent_change": float(percent_change[index_map[rank][period]])
-    } for _ in range(i)] \
+        "name": names_slugs[index_map[rank][period]+i][1],
+        "slug": names_slugs[index_map[rank][period]+i][0],
+        "symbol": symbols[index_map[rank][period]+i],
+        "volume_24h": float(volume_24h[index_map[rank][period]+i]),
+        "price": float(price[index_map[rank][period]+i]),
+        "percent_change": float(percent_change[index_map[rank][period]+i])
+    } for i in range(rank_len)] \
          for period in ["1h", "24h", "7d"] } for rank in ["gainers", "losers"]}
 
 cpdef historical(res, start, end, revert):
