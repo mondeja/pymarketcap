@@ -36,7 +36,6 @@ def assert_number_of_exchanges(res):
     data = req.read()
     req.close()
     indexes = re_findall(r'"volume-header">(\d+)\.', data.decode())
-    print(indexes)
     assert len(res) == int(indexes[-1])
 
 def assert_consistence(res):
@@ -49,7 +48,8 @@ def test_types():
     assert_types(pym.exchanges())
 
 def test_consistence():
-    assert_consistence(pym.exchanges())
+    res = pym.exchanges()
+    assert_consistence(res)
 
 def test_convert():
     assert_types(pym.exchanges(convert="BTC"))

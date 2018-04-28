@@ -274,7 +274,7 @@ cpdef exchange(res, convert):
 
 cpdef exchanges(res, convert):
     cdef int i
-    exchanges = re.findall(r'\. <a href="/exchanges/.+/">(.+)</a>', res)
+    exchanges = re.findall(r'<a href="/exchanges/.+/">(.+)</a>', res)
     indexes = re.findall(r'<td>(\d+)</td>', res)
     currencies = re.findall(r'/currencies/.+/">(.+)</a>', res)[2:]
     links_pairs = re.findall(r'<a href="(.*)" .*_blank">(%s)</a>' % PAIRS_REGEX, res)

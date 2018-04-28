@@ -12,7 +12,7 @@ if [[ $1 = "no-tests" || $1 = "no-test" ]]; then
 fi
 
 # Build documentation
-bash scripts/build_doc.sh
+#bash scripts/build_doc.sh
 
 
 # Install new library version
