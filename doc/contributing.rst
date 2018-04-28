@@ -59,9 +59,25 @@ How does pymarketcap works in depth?
 --------------
 
 Contributors
-~~~~~~~~~~~~
+------------
 
--  @run2dev
+Pull requesters
+~~~~~~~~~~~~~~~
+
+- `badele <https://github.com/badele>`__
+- `wilcollins <https://github.com/wilcollins>`__
+
+Bug hunters
+~~~~~~~~~~~
+
+- `Abolah <https://github.com/Abolah>`__
+- `badele <https://github.com/badele>`__
+- `Bragegs <https://github.com/Bragegs>`__
+- `criptonaut1357 <https://github.com/criptonaut1357>`__
+- `Prophetic-Pariah <https://github.com/Prophetic-Pariah>`__
+- `reteps <https://github.com/reteps>`__
+- `run2dev <https://github.com/run2dev>`__
+- `Wingie <https://github.com/Wingie>`__
 
 .. |Issues| image:: https://img.shields.io/github/issues/mondeja/pymarketcap.svg
    :target: https://github.com/mondeja/pymarketcap/issues
