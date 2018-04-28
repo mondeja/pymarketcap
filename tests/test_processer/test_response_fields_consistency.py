@@ -34,7 +34,10 @@ def test_fields():
     for method in tqdm(METHODS, desc="Testing all response names consistency"):
         _exec = "pym.%s(%s)" % (method[0], '"%s"' % method[1] if len(method) == 2 else "")
         tqdm.write(_exec)
-        res = eval(_exec)
+        try:
+            res = eval(_exec)
+        except IndexError:
+            continue
 
         attempts = 5
         while attempts > 0:
@@ -79,6 +82,9 @@ def test_fields():
         "total_markets_cap",
         "total_markets_volume_24h"
     ]
+
+    # Useful for maintainance
+    #print(set(keys))
 
     for key in set(keys):
         if key in stops:
