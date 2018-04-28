@@ -53,9 +53,15 @@ How does pymarketcap works in depth?
    Run ``make precompile-sources`` to do manual code precompilation and
    ``make restore-sources`` for restore souce code to original state.
 -  Numerical values returned by the scraper are real values with
-   which coinmarketcap.com works, not the values displayed on their
+   which `coinmarketcap.com <https://www.coinmarketcap.com>`__ works, not the values displayed on their
    frontend (see source HTML code of the web).
 
+--------------
+
+Contributors
+~~~~~~~~~~~~
+
+-  @run2dev
 
 .. |Issues| image:: https://img.shields.io/github/issues/mondeja/pymarketcap.svg
    :target: https://github.com/mondeja/pymarketcap/issues

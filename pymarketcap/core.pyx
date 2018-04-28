@@ -790,13 +790,15 @@ cdef class Pymarketcap:
         else:
             return filename
 
-    cpdef download_exchange_logo(self, unicode name, size=32, filename=None):
+    cpdef download_exchange_logo(self, unicode name, size=64, filename=None):
         """Download a exchange logo passing his name or
         slug as first parameter and optionally a filename
         without extension.
 
         Args:
             name (str): Exchange slug to download logo.
+            size (int): Size in pixels. Valid values are:
+                ``[16, 32, 64, 128, 200]``.
             filename (str, optional): Filename for store the logo.
                 Doesn't include the extension (will be ".png").
                 As default ``None``.
@@ -804,34 +806,28 @@ cdef class Pymarketcap:
         Returns (str):
             Filename of downloaded file if all was correct.
         """
+        # Ensure exchanges - names - ids correspondences are cached
+        exc_names_slugs_ids = self._exchange_names_slugs_ids
+        if not exc_names_slugs_ids:  # Not cached yet
+            self._cache_exchanges_ids()
 
-        if name[0].isupper() and not name[1].isupper():
-            if name.islower():  # Is slug
-                exc_found = False
-                for exc in self._exchange_names_slugs_ids:
-                    if name in exc:
-                        exc_found = True
-                        if exc.index(name) == 1:
-                            _id = exc[2]
-                            _slug = exc[1]
-                            _name = exc[0]
-                            break
-                        else:
-                            print("exc = %s" % exc)
-                            raise Exception(
-                                "Slug catched but not found" \
-                                + " in slug index pos (1)"
-                            )
-                if not exc_found:
-                    raise ValueError(
-                        "Exchange %s not found." % name
-                    )
-            else:
-                raise NotImplementedError(
-                    "Name not lower and not capitalize styled."
-                )
+        exc_found = False
+        if name.islower():  # Is slug
+            for exc in self._exchange_names_slugs_ids:
+                if name in exc:
+                    exc_found = True
+                    if exc.index(name) == 1:
+                        _id = exc[2]
+                        _slug = exc[1]
+                        _name = exc[0]
+                        break
+                    else:
+                        print("exc = %s" % exc)
+                        raise NotImplementedError(
+                            "Slug catched but not found" \
+                            + " in slug index position (1)."
+                        )
         else:
-            exc_found = False
             for exc in self._exchange_names_slugs_ids:
                 if name in exc:
                     exc_found = True
@@ -842,19 +838,19 @@ cdef class Pymarketcap:
                         break
                     else:
                         print("exc = %s" % exc)
-                        raise Exception(
+                        raise NotImplementedError(
                             "Exchange name catched but not found" \
-                            + " in name index pos (0)"
+                            + " in name index position (0)."
                         )
-            if not exc_found:
-                raise ValueError(
-                    "Exchange %s not found." % name
-                )
 
-        filename = "%s.png" % _slug if not filename else "%s.png" % filename
+        if not exc_found:
+            raise ValueError("Exchange %s not found." % name)
 
-        url = "https://s2.coinmarketcap.com/static/img/exchanges/32x32/%s.png" % \
-             (_id, size)
+        filename = "%s_%dx%d.png" % (_slug, size, size) if not filename \
+            else "%s.png" % filename
+
+        url = "https://s2.coinmarketcap.com/static/img/exchanges/%dx%d/%s.png" % \
+             (size, size, _id)
 
         try:
             res = urlretrieve(url, filename)

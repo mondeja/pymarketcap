@@ -13,9 +13,9 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def test_consistence():
-    print("tests/test_scraper/test_download_logo.py::test_consistence")
+    print("")
     for size in tqdm([16, 32, 64, 128, 200],
-                     desc="Testing logo downloads for all sizes"):
+                     desc="Testing currency logo downloads for all sizes"):
         attempts = 20
         while attempts > 0:
             _assert = True
@@ -39,7 +39,7 @@ def test_consistence():
             os.remove(res)
             assert os.path.exists(res) == False
         if attempts == 0:
-            raise AssertionError("0 coins downloaded. Check it!")
+            raise AssertionError("0 currency logos downloaded. Check it!")
 
 def test_invalid():
     # Invalid currencies

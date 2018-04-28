@@ -39,6 +39,7 @@ pymarketcap.core
 
     .. automethod:: convert
     .. automethod:: download_logo
+    .. automethod:: download_exchange_logo
 
 pymarketcap.pymasyncore
 -----------------------

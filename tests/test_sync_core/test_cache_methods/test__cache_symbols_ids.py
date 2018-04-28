@@ -10,6 +10,7 @@ pym = Pymarketcap()
 def test_types():
     res = pym._cache_symbols_ids()
     assert isinstance(res, tuple)
+    assert len(res) > 0
     for i, _property in enumerate(res):
         assert isinstance(_property, dict)
         for key, value in _property.items():

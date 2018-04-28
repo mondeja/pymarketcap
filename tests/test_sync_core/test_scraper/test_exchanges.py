@@ -39,6 +39,7 @@ def assert_number_of_exchanges(res):
     assert len(res) == int(indexes[-1])
 
 def assert_consistence(res):
+    assert len(res) > 0
     assert_number_of_exchanges(res)
     for exc in res:
         for market in exc["markets"]:

@@ -105,9 +105,20 @@ def test_exchange_slugs():
     # Test types
     res = pym.exchange_slugs
     assert type(res) == list
+    assert len(res) > 0
     for exc in res:
         assert type(exc) == str
 
     # Test consistence
     assert len(res) > 0
     assert len(res) == len(pym.__exchange_names_slugs())
+
+def test_exchange_names_slugs_ids():
+    res = pym._exchange_names_slugs_ids
+    assert res == None
+
+    # Not cached yet
+    pym._cache_exchanges_ids()
+
+    res = pym._exchange_names_slugs_ids
+    assert res != None
