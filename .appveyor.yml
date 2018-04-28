@@ -6,6 +6,7 @@ environment:
 install:
   - echo "Installed Python versions:"
   - dir c:\Python*
+  - dir c:\projects\pymarketcap
   - python -m pip install --upgrade pip
   - "%PYTHON%\\python -m pip install -r dev-requirements.txt"
   - "%PYTHON%\\python setup.py install"

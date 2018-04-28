@@ -106,7 +106,7 @@ cpdef ranks(res):
     cdef int rank_len = 30
 
     names_slugs = re.findall(r'<a href="/currencies/(.+)/">(.+)</a>', res)[6:]
-    symbols = re.findall(r'<td class="text-left">(\w+)</td>', res)
+    symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
     volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
     price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
     percent_change = re.findall(r'right" .*data-usd="(-*\d+\.*[\d|e|-]*)"', res)
