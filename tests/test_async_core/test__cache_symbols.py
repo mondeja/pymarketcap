@@ -4,10 +4,11 @@
 import pytest
 
 from pymarketcap import AsyncPymarketcap
+from pymarketcap.tests.consts import asyncparms
 
 def test_types(event_loop):
     async def wrapper():
-        async with AsyncPymarketcap(debug=True) as apym:
+        async with AsyncPymarketcap(**asyncparms) as apym:
             res = await apym._cache_symbols()
 
             assert type(res) == dict

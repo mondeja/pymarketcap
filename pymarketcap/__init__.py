@@ -5,7 +5,7 @@
 import sys
 
 __title__ = "pymarketcap"
-__version__ = "3.9.172"
+__version__ = "3.9.173"
 __version_info__ = (int(num) for num in __version__.split("."))
 __author__ = "Álvaro Mondéjar Rubio <mondejar1994@gmail.com>"
 __repo__ = "https://github.com/mondeja/pymarketcap"

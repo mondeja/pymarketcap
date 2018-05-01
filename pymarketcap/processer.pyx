@@ -53,7 +53,7 @@ cpdef currency(res, convert):
     if len(supply) > 2:
         response["total_supply"] = float(supply[1])
 
-    response["webs"] = re.findall(r'<a href="(.+)" target="_blank">Website\s*\d*</a>', res)
+    response["webs"] = re.findall(r'<a href="(.+)" target="_blank".*>Website\s*\d*</a>', res)
 
     response["explorers"] = re.findall(
         r'<a href="(.+)" target="_blank">Explorer\s*\d*</a>', res
