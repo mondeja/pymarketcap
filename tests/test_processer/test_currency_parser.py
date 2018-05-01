@@ -44,7 +44,7 @@ def assert_any_field_in_response(field, readable_field):
         elif isinstance(value, str):
             if value != "":
                 found = True
-        elif isinstance(value, [int, float]):
+        elif isinstance(value, (int, float)):
             found = True
         elif isinstance(value, bool):
             if value == True:
