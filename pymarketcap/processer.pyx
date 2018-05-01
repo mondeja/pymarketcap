@@ -47,11 +47,16 @@ cpdef currency(res, convert):
     supply = re.findall(
         r'data-format-supply.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
     )
+
     response["circulating_supply"] = float(supply[0]) if supply[0] != "?" else None
     if len(supply) > 1:
         response["max_supply"] = float(supply[-1])
+    else:
+        response["max_supply"] = None
     if len(supply) > 2:
         response["total_supply"] = float(supply[1])
+    else:
+        response["total_supply"] = None
 
     response["webs"] = re.findall(r'<a href="(.+)" target="_blank".*>Website\s*\d*</a>', res)
 
