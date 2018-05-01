@@ -14,7 +14,6 @@ from pymarketcap import (
 )
 pym = Pymarketcap()
 
-
 @pytest.mark.end2end
 def test_every_exchange(event_loop):
     async def wrapper():
@@ -31,6 +30,3 @@ def test_every_exchange(event_loop):
                 assert_consistence(exc)
             assert type(res) == list
     event_loop.run_until_complete(wrapper())
-
-
-

@@ -31,7 +31,7 @@ endpoints = [
                                "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"]),
     ("graphs.dominance",       "https://graphs2.coinmarketcap.com/global/dominance/"),
     ("download_logo",          "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"),
-    ("download_exchange_logo", "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")
+    ("download_exchange_logo", "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png")
 ]
 
 def assert_up(ep):

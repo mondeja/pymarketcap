@@ -8,6 +8,10 @@ import pytest
 
 sys.path.append(os.path.join(os.getcwd(), "pymarketcap"))
 
+tests_cache_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "cache")
+if not os.path.exists(tests_cache_dir):
+    os.mkdir(tests_cache_dir)
+
 def pytest_addoption(parser):
     parser.addoption("--end2end", action="store_true",
                      default=False, help="Run slower tests.")

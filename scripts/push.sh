@@ -1,13 +1,12 @@
 #!/bin/bash
 
 CURRENT_DIR=${PWD##*/}
-if [ $CURRENT_DIR = "scripts" ]
-then
+if [ $CURRENT_DIR = "scripts" ]; then
   cd ..
 fi
 
 TESTS=1
-if [[ $1 = "no-tests" || $1 = "no-test" ]]; then
+if [[ $1 = "no-test" || $1 = "--no-tests" ]]; then
     TESTS=0
 fi
 
@@ -23,8 +22,7 @@ if [[ $TESTS -eq 1 ]]; then
     echo "Testing pymarketcap..."
     pytest tests -vs --end2end
 
-    if [ $? -eq 1 ] # Tests failed?
-    then
+    if [ $? -eq 1 ]; then  # Tests failed?
       exit 1
     else
       echo "Tests passed."
@@ -49,7 +47,7 @@ make clean
 
 if [ $? -eq 1 ] # Upload failed?
 then
-  echo "Upload failed"
+  echo "Pypi upload failed."
   exit 1
 fi
 

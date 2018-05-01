@@ -44,3 +44,9 @@ def restart_if_http_error(res):
             return response
         return wrapper
     return real_decorator
+
+def disabled_decorator(func):
+    """This decorator disables the provided function, and does nothing."""
+    def empty_func(*args,**kargs):
+        pass
+    return empty_func

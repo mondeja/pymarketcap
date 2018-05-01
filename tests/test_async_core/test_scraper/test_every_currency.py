@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import json
+
 import pytest
 
 from pymarketcap.tests.consts import asyncparms
@@ -13,6 +16,8 @@ from pymarketcap import (
     Pymarketcap
 )
 pym = Pymarketcap()
+
+cache_file = os.path.join("tests", "cache", "every_currency.json")
 
 @pytest.mark.end2end
 def test_every_currency(event_loop):
@@ -30,6 +35,10 @@ def test_every_currency(event_loop):
                 assert_types(currency)
                 assert_consistence(currency)
             assert type(res) == list
+
+        with open(cache_file, "w") as f:
+            f.write(json.dumps(res, ensure_ascii=False))
+
     event_loop.run_until_complete(wrapper())
 
 

@@ -56,18 +56,18 @@ cpdef currency(res, convert):
     response["webs"] = re.findall(r'<a href="(.+)" target="_blank".*>Website\s*\d*</a>', res)
 
     response["explorers"] = re.findall(
-        r'<a href="(.+)" target="_blank">Explorer\s*\d*</a>', res
+        r'<a href="(.+)" target="_blank.*">Explorer\s*\d*</a>', res
     )
 
-    source_code = re.search(r'<a href="(.+)" target="_blank">Source Code</a>', res)
+    source_code = re.search(r'<a href="(.+)" target="_blank".*>Source Code</a>', res)
     response["source_code"] = source_code.group(1) if source_code else None
 
     response["message_boards"] = re.findall(
-        r'<a href="(.+)" target="_blank">Message Board\s*\d*</a>', res
+        r'<a href="(.+)" target="_blank".*>Message Board\s*\d*</a>', res
     )
 
     response["chats"] = re.findall(
-        r'<a href="(.+)" target="_blank">Chat\s*\d*</a>', res
+        r'<a href="(.+)" target="_blank".*>Chat\s*\d*</a>', res
     )
 
     response["mineable"] = True if re.search(r'label-warning">Mineable', res) else False
@@ -77,7 +77,7 @@ cpdef currency(res, convert):
     except AttributeError:
         response["rank"] = None
 
-    announcement = re.search(r'<a href="(.+)" target="_blank">Announcement</a>', res)
+    announcement = re.search(r'<a href="(.+)" target="_blank".*>Announcement</a>', res)
     response["announcement"] = announcement.group(1) if announcement else None
 
     return response

@@ -29,4 +29,3 @@ def test_cached_properties(event_loop):
                 assert isinstance(res, list)
                 assert len(res) > 0
     event_loop.run_until_complete(wrapper())
-

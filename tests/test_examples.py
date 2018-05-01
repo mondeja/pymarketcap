@@ -7,8 +7,6 @@ from subprocess import check_call
 
 import pytest
 
-from pymarketcap import __title__
-
 examples_folder = os.path.join(
 	os.path.abspath(os.path.dirname(os.path.dirname(__file__))),
 	"examples"
@@ -33,4 +31,3 @@ def test_basic_async_scraper():
 @pytest.mark.end2end
 def test_fast_async_scraper():
     assert_exec("fast_async_scraper.py")
-

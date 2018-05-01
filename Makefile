@@ -40,10 +40,11 @@ reinstall:
 	$(run-setup) install -f
 
 clean:
-	sudo rm -Rf .pytest_cache/ .tox/ build/ dist/ pymarketcap.egg-info/ htmlcov/
+	sudo rm -Rf .pytest_cache/ .tox/ build/ \
+		dist/ pymarketcap.egg-info/ htmlcov/
 	sudo find . -type d -name "__pycache__" -exec rm -r {} +
 	sudo find . -type d -name "_build" -exec rm -r {} +
-	sudo rm pymarketcap/*.c pymarketcap/*.so
+	sudo rm pymarketcap/*.c pymarketcap/*.so tests/cache/*.json
 
 test:
 	pytest tests -vs
@@ -73,3 +74,9 @@ version:
 	cd ..
 	$(python) -c "import pymarketcap as p;print(p.__version__);"
 	cd pymarketcap
+
+push:
+	bash scripts/push.sh
+
+push-no-test:
+	bash scripts/push.sh --no-tests
