@@ -56,10 +56,12 @@ class Builder:
         # Get badges from coinmarketcap docs
         badges = recopiler.get_badges_list()
 
+
         def return_ticker_badges(stream, badges):
             # Get source
             searcher = re.compile(r"\s{4}def ticker_badges.*return\n^$",
             	                  re.MULTILINE | re.DOTALL)
+
             original_func = searcher.search(stream).group()[:-1]
 
             badges_formatted = format_list_as_string(badges, 8, 16)
@@ -92,7 +94,7 @@ class Builder:
     def unbuild(self):
         """Restaure original state of the code"""
         def return_ticker_badges(stream):
-            searcher = re.compile(r"def ticker_badges.+\n.+\n.+return(\s.+\n.+\n.+\n.+)")
+            searcher = re.compile(r"def ticker_badges.+\n.+\n.+return(\s.+\n.+\n.+\n.+\n.+)")
             original_func = searcher.search(stream).group(1)
             return stream.replace(original_func, "", 1)
 

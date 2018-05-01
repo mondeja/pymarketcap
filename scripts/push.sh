@@ -6,7 +6,7 @@ if [ $CURRENT_DIR = "scripts" ]; then
 fi
 
 TESTS=1
-if [[ $1 = "no-test" || $1 = "--no-tests" ]]; then
+if [[ $1 = "--no-test" || $1 = "--no-tests" ]]; then
     TESTS=0
 fi
 
