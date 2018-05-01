@@ -38,14 +38,4 @@ def test_consistence():
         assert rank in ["gainers", "losers"]
         for period, pdata in rdata.items():
             assert period in ["1h", "24h", "7d"]
-            symbols, slugs, names = ([], [], [])
-            for currency in pdata:
-                symbol = currency["symbol"]
-                slug = currency["slug"]
-                name = currency["name"]
-                assert symbol not in symbols
-                assert slug not in slugs
-                assert name not in names
-                symbols.append(symbol)
-                slugs.append(slug)
-                names.append(name)
+

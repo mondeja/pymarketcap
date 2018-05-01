@@ -30,7 +30,8 @@ endpoints = [
     ("graphs.global_cap",     ["https://graphs2.coinmarketcap.com/global/marketcap-total/",
                                "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"]),
     ("graphs.dominance",       "https://graphs2.coinmarketcap.com/global/dominance/"),
-    ("download_logo",          "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")
+    ("download_logo",          "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"),
+    ("download_exchange_logo", "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png")
 ]
 
 def assert_up(ep):
@@ -46,6 +47,6 @@ def test_endpoints():
         if type(eps) != list:
             eps = [eps]
         for ep in eps:
-            tqdm.write("%18s() --> %s" % (method, ep))
+            tqdm.write("%23s() --> %s" % (method, ep))
             assert_up(ep)
             sleep(.1)

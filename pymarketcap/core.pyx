@@ -538,10 +538,10 @@ cdef class Pymarketcap:
 
         return processer.ranks(res)
 
-    def historical(self, unicode name,
-                   start=datetime(2008, 8, 18),
-                   end=datetime.now(),
-                   revert=False):
+    cpdef historical(self, unicode name,
+                     start=datetime(2008, 8, 18),
+                     end=datetime.now(),
+                     revert=False):
         """Get historical data for a currency.
 
         Args:
@@ -588,7 +588,7 @@ cdef class Pymarketcap:
         response["history"] = processer.historical(res, start, end, revert)
         return response
 
-    def recently(self, convert="USD"):
+    cpdef recently(self, convert="USD"):
         """Get recently added currencies along with other metadata.
 
         Args:
@@ -816,7 +816,7 @@ cdef class Pymarketcap:
             for exc in self._exchange_names_slugs_ids:
                 if name in exc:
                     exc_found = True
-                    if exc.index(name) == 1:
+                    if exc.index(name) <= 1:
                         _id = exc[2]
                         _slug = exc[1]
                         _name = exc[0]

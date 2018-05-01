@@ -40,12 +40,12 @@ def test_start_end():
     start = datetime.now() - days_ago
     end = datetime.now()
     symbol = choice(all_symbols)
-    print("(Currency: %s | Start: %r)" % (symbol, start), end=" ")
+    print("(Currency: %s | Start: %r | End: %r)" % (symbol, start, end),
+          end=" ")
     for startend in [True , False]:
         params = {"start": start, "end": end}
         if not startend:
-            params["start"] = None
-            params["end"] = None
+            params["start"], params["end"] = (None, None)
         res = pym.graphs.currency(choice(pym.symbols), **params)
 
         # Test types
@@ -58,13 +58,9 @@ def test_start_end():
                 assert type(value) in [int, float]
 
         # Test consistence
-        assert end.day >= res["price_btc"][-1][0].day
+        if end.day > 1:
+            assert end.day >= res["price_btc"][-1][0].day
         if startend:
             first_day = res["price_usd"][0][0]
             next_day = res["price_usd"][0][0] + timedelta(days=1)
             assert start <= next_day
-
-
-
-
-
