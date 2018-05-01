@@ -12,7 +12,10 @@ from pymarketcap.tests.consts import asyncparms
 
 asyncparms["debug"] = False
 
-cache_file = os.path.join("tests", "cache", "every_currency.json")
+cache_file = os.path.join(
+    os.path.abspath(os.path.dirname(os.path.dirname(__file__))),
+    "cache", "every_currency.json"
+)
 exists_cache_file = os.path.exists(cache_file)
 
 res = []

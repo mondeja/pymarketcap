@@ -17,7 +17,10 @@ from pymarketcap import (
 )
 pym = Pymarketcap()
 
-cache_file = os.path.join("tests", "cache", "every_currency.json")
+cache_file = os.path.join(
+    os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+    "cache", "every_currency.json"
+)
 
 @pytest.mark.end2end
 def test_every_currency(event_loop):
