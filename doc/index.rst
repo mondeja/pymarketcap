@@ -7,13 +7,18 @@ Pymarketcap's documentation
 ===========================
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Contents:
+   :maxdepth: 4
+   :caption: User's guide
 
-   Install <install>
-   Basic Usage <usage>
-   Contributing <contributing>
-   Testing <testing>
-   reference
-   changelog
-   source_code
+   Install <user_guide/install>
+   Usage <user_guide/usage>
+   Reference <user_guide/reference>
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Developers's guide
+
+   Contributing <dev_guide/contributing>
+   Testing <dev_guide/testing>
+   Changelog <dev_guide/changelog>

@@ -20,7 +20,8 @@ def assert_types(res):
     assert isinstance(res, dict)
 
     assert isinstance(res["name"], str)
-    assert isinstance(res["web"], (str, type(None)))
+    assert isinstance(res["website_slug"], str)
+    assert isinstance(res["id"], int)
     assert isinstance(res["volume"], (float, type(None)))
     assert isinstance(res["social"], dict)
 

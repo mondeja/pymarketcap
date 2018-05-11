@@ -3,66 +3,35 @@
 
 """Test wrapper properties"""
 
-from pymarketcap.consts import INVALID_COINS
 from pymarketcap import Pymarketcap
+from pymarketcap.tests import assert_cryptocurrency_or_exchange_types
 pym = Pymarketcap()
 
 
 ###   API METHOD CACHERS   ###
 
-def test_correspondences():
-    res = pym.correspondences
+def test_cryptoexchanges():
+    res = pym.cryptoexchanges
 
     # Test types
-    assert type(res) == dict
-    for key, value in res.items():
-        assert type(key) == str
-        assert type(value) == str
-
-    # Test consistence
-    assert res == pym._cache_symbols_ids()[0]
-
-def test_ids_correspondences():
-    res = pym.ids_correspondences
-
-    # Test types
-    assert type(res) == dict
-    for key, value in res.items():
-        assert type(key) == str
-        assert type(value) == int
-
-    # Test consistence
-    assert res == pym._cache_symbols_ids()[1]
-
-def test_symbols():
-    res = pym.symbols
-
-    # Test types
-    assert type(res) == list
-
-    # Test consistence
+    assert isinstance(res, list)
+    for exchange in res:
+        assert_cryptocurrency_or_exchange_types(exchange)
+        # Test consistency
+        for field in ["website_slug", "id", "name"]:
+            assert field in exchange
     assert len(res) > 0
 
-def test_coins():
-    res = pym.coins
+def test_cryptocurrencies():
+    res = pym.cryptocurrencies
 
     # Test types
-    assert type(res) == list
-    for coin in res:
-        assert type(coin) == str
-
-    # Test consistence
-    for invalid_coin in INVALID_COINS:
-        assert invalid_coin not in res
+    assert isinstance(res, list)
+    for currency in res:
+        assert_cryptocurrency_or_exchange_types(currency)
+        for field in ["website_slug", "id", "name", "symbol"]:
+            assert field in currency
     assert len(res) > 0
-
-def test_total_currencies():
-    # Test types
-    res = pym.total_currencies
-    assert type(res) == int
-
-    # Test consistence
-    assert res == len(pym.ticker())
 
 
 ###   WEB SCRAPER METHOD CACHERS   ###
@@ -71,54 +40,15 @@ def test_currency_exchange_rates():
     # Test types
     res = pym.currency_exchange_rates
     for key, value in res.items():
-        assert type(key) == str
-        assert type(value) == float
-
-    # Test consistence
-    ctc = pym.currencies_to_convert
-    for symbol in list(res.keys()):
-        assert symbol in ctc
+        assert isinstance(key, str)
+        assert isinstance(value, float)
 
 def test_currencies_to_convert():
     # Test types
     currencies = pym.currencies_to_convert
-    assert type(currencies) == list
+    assert isinstance(currencies,  list)
     for curr in currencies:
-        assert type(curr) == str
+        assert isinstance(curr, str)
 
     # Test consistence
     assert len(currencies) > 0
-
-def test_exchange_names():
-    # Test types
-    res = pym.exchange_names
-    assert type(res) == list
-    assert len(res) > 0
-    for exc in res:
-        assert type(exc) == str
-
-    # Test consistence
-    assert len(res) > 0
-    assert len(res) == len(pym.__exchange_names_slugs())
-
-def test_exchange_slugs():
-    # Test types
-    res = pym.exchange_slugs
-    assert type(res) == list
-    assert len(res) > 0
-    for exc in res:
-        assert type(exc) == str
-
-    # Test consistence
-    assert len(res) > 0
-    assert len(res) == len(pym.__exchange_names_slugs())
-
-def test_exchange_names_slugs_ids():
-    res = pym._exchange_names_slugs_ids
-    assert res == None
-
-    # Not cached yet
-    pym._cache_exchanges_ids()
-
-    res = pym._exchange_names_slugs_ids
-    assert res != None

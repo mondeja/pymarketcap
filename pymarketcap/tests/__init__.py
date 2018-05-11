@@ -2,6 +2,8 @@
 
 """Shared interfaces tests modules."""
 
+from pymarketcap.errors import CoinmarketcapHTTPError
+
 def type_test(map_types, key, value):
     """Test every type of the dictionary pairs
     key-values.
@@ -22,6 +24,13 @@ def type_test(map_types, key, value):
         print("Key: %s\nValue: %r\n" % (key, value))
         raise err
 
+def assert_cryptocurrency_or_exchange_types(res):
+    for key, value in res.items():
+        if key == "id":
+            assert isinstance(value, int)
+        else:
+            assert isinstance(value, str)
+
 def restart_if_http_error(res):
     def real_decorator(func):
         def wrapper(*args, **kwargs):
@@ -37,6 +46,8 @@ def restart_if_http_error(res):
                             "Maximum number of attempts reached"
                         )
                 except IndexError:
+                    sleep(THROTTLE)
+                except CoinmarketcapHTTPError:
                     sleep(THROTTLE)
                 else:
                     error = False

@@ -8,10 +8,10 @@ pymarketcap.core
 
     .. centered:: Coinmarketcap API
 
+    .. automethod:: listings
     .. automethod:: stats
     .. automethod:: ticker
-    .. autoattribute:: symbols
-    .. autoattribute:: coins
+    .. autoattribute:: cryptocurrencies
     .. autoattribute:: ticker_badges
 
     .. centered:: Web scraper
@@ -19,11 +19,9 @@ pymarketcap.core
     .. automethod:: currency
     .. automethod:: exchange
     .. automethod:: exchanges
-    .. autoattribute:: exchange_slugs
-    .. autoattribute:: exchange_names
+    .. autoattribute:: cryptoexchanges
     .. automethod:: historical
     .. automethod:: markets
-    .. automethod:: exchange
     .. automethod:: ranks
     .. automethod:: recently
     .. automethod:: tokens

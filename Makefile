@@ -1,4 +1,4 @@
-.IPHONY:
+.PHONY:
 	install builds dist install install-light dev-install \
 	uninstall reinstall clean test test-end2end \
 	precompile-sources restore-sources docs-html \

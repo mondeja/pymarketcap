@@ -4,27 +4,9 @@
 from re import findall as re_findall
 from urllib.request import urlopen
 
+from pymarketcap.tests.tokens import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
-
-class TypeTester:
-    def _name(self, value): assert type(value) == str
-    def _symbol(self, value): assert type(value) == str
-    def _platform(self, value): assert type(value) in [str, type(None)]
-    def _market_cap(self, value): assert type(value) in [float, type(None)]
-    def _price(self, value): assert type(value) in [float, type(None)]
-    def _circulating_supply(self, value): assert type(value) in [float, type(None)]
-    def _volume_24h(self, value): assert type(value) in [float, type(None)]
-
-tt = TypeTester()
-
-def assert_types(res):
-    for currency in res:
-        for key, value in currency.items():
-            eval("tt._{}({})".format(
-                key,  # Strings need to be "quoted":
-                value if type(value) != str else '"%s"' % value
-            ))
 
 def test_types():
     res = pym.tokens()

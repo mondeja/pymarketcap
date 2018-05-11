@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""``markets()`` shared method test module."""
+"""``markets()`` synchronous method test module."""
 
 from pymarketcap.tests import type_test
 
@@ -13,11 +13,12 @@ def assert_types(res):
         "price":          float,
         "percent_volume": float,
         "updated":        bool,
+        "markets":        list,
+        "symbol":         str,
+        "website_slug":   str,
+        "id":             int
     }
 
-    assert isinstance(res["markets"], list)
-    assert isinstance(res["symbol"], str)
-    assert isinstance(res["slug"], str)
     for source in res["markets"]:
         assert isinstance(source, dict)
         for key, value in source.items():

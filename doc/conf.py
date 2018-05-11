@@ -15,9 +15,7 @@ import os, sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.dirname(os.path.dirname(__file__)), "pymarketcap")
-    )
+    os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 )
 
 # -- Project information -----------------------------------------------------
@@ -28,7 +26,7 @@ author = 'Álvaro Mondéjar Rubio'
 
 
 # The full version, including alpha/beta/rc tags
-release = "3.9.178"
+release = "4.0.001"
 # The short X.Y version
 version = ".".join(release.split(".")[:-1])
 
@@ -188,9 +186,6 @@ epub_exclude_files = ['search.html']
 
 # Intersphinx projects docs linking
 intersphinx_mapping = {
-    'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
-    'asyncio': ('https://docs.python.org/3/library/asyncio.html', None),
-    'logging': ('https://docs.python.org/3/library/logging.html', None),
-    'python': ('https://docs.python.org/3', None),
-    'tqdm': ('https://pypi.python.org/pypi/tqdm', None)
+    'https://aiohttp.readthedocs.io/en/stable/': None,
+    'https://docs.python.org/3': None
 }

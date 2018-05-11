@@ -23,11 +23,7 @@ from pymarketcap import Pymarketcap
 from pymarketcap import processer
 
 # Internal Python modules
-from pymarketcap.consts import (
-    DEFAULT_TIMEOUT,
-    EXCEPTIONAL_COIN_SLUGS,
-    DEFAULT_FORMATTER
-)
+from pymarketcap.consts import DEFAULT_FORMATTER
 
 # Logging initialization
 LOGGER_NAME = "/pymarketcap%s" % __file__.split("pymarketcap")[-1]
@@ -58,19 +54,21 @@ class AsyncPymarketcap(ClientSession):
         debug (bool, optional): If ``True``, the logger
             level will be setted as :data:`~logging.DEBUG`.
             As default ``False``.
+        sync (object, optional): Synchronous version instance
+            of pymarketcap. As default
+            :py:class:`pymarketcap.core.Pymarketcap`
         **kwargs: arguments that corresponds to the
             :class:`aiohttp.client.ClientSession <~aiohttp.ClientSession>`
             parent class.
     """
-
     def __init__(self, queue_size=10, progress_bar=True,
-                 consumers=10, timeout=DEFAULT_TIMEOUT,
-                 logger=LOGGER, debug=False, json=None,
+                 consumers=10, timeout=15, logger=LOGGER,
+                 debug=False, json=None, sync=Pymarketcap(),
                  **kwargs):
         super(AsyncPymarketcap, self).__init__(**kwargs)
         self.timeout = timeout
         self.logger = logger
-        self.sync = Pymarketcap()
+        self.sync = sync
 
         # Async queue
         self.queue_size = queue_size
@@ -84,68 +82,6 @@ class AsyncPymarketcap(ClientSession):
         if debug:
             self.logger.setLevel(logging.DEBUG)
 
-    # PROPERTIES
-
-    @property
-    def correspondences(self):
-        try:
-            return self._correspondences
-        except AttributeError:
-            self._correspondences = self.sync._cache_symbols_ids()[0]
-            return self._correspondences
-
-    @property
-    def symbols(self):
-        try:
-            return self._symbols
-        except AttributeError:
-            self._symbols = self.sync.symbols
-            return self._symbols
-
-    @property
-    def coins(self):
-        try:
-            return self._coins
-        except AttributeError:
-            self._coins = self.sync.coins
-            return self._coins
-
-    @property
-    def exchange_names(self):
-        """Get all exchange formatted names provided by coinmarketcap."""
-        try:
-            return self._exchange_names
-        except AttributeError:
-            self._exchange_names = self.sync.exchange_names
-            return self._exchange_names
-
-    @property
-    def exchange_slugs(self):
-        """Get all exchange raw names provided by coinmarketcap."""
-        try:
-            return self._exchange_slugs
-        except AttributeError:
-            self._exchange_slugs = self.sync.exchange_slugs
-            return self._exchange_slugs
-
-    @property
-    def total_currencies(self):
-        """Get all currency names provided by coinmarketcap."""
-        try:
-            return self._total_currencies
-        except AttributeError:
-            self._total_currencies = self.sync.total_currencies
-            return self._total_currencies
-
-    @property
-    def total_exchanges(self):
-        """Get all exchange raw names provided by coinmarketcap."""
-        try:
-            return self._total_exchanges
-        except AttributeError:
-            self._total_exchanges = self.sync.total_exchanges
-            return self._total_exchanges
-
     # UTILS
 
     @property
@@ -156,26 +92,6 @@ class AsyncPymarketcap(ClientSession):
             "global_cap": self._global_cap,
             "dominance": self._dominance
         }
-
-    def _is_symbol(self, currency):
-        if currency.isupper() or currency in EXCEPTIONAL_COIN_SLUGS:
-            if currency in self.sync.__repeated_symbols:
-                msg = 'The symbol "%s" has more than one correspondence ' % currency \
-                    + "with coin slugs in Coinmarketcap. Please get this currency as slug. " \
-                    + "\nPossible valid slug names: %r." % self.sync.__repeated_symbols[currency]
-                raise ValueError(msg)
-            return True
-        return False
-
-    async def _cache_symbols(self):
-        url = "https://s2.coinmarketcap.com/generated/search/quick_search.json"
-        res = await self._get(url)
-        symbols = {}
-        for currency in loads(res):
-            symbols[currency["symbol"]] = currency["slug"].replace(" ", "")
-        for original, correct in EXCEPTIONAL_COIN_SLUGS.items():
-            symbols[original] = correct
-        return symbols
 
     async def _get(self, url):
         async with self.get(url, timeout=self.timeout) as response:
@@ -223,15 +139,16 @@ class AsyncPymarketcap(ClientSession):
                 main_queue.task_done()
 
     # SCRAPER
-    async def _base_currency_url(self, name):
-        if self._is_symbol(name):
-            name = self.correspondences[name]
-        return "https://coinmarketcap.com/currencies/%s" % name
-
-    async def currency(self, name, convert="USD"):
-        res = await self._get(self._base_currency_url(name))
-        convert = convert.lower()
-        return processer.currency(res[20000:], convert)
+    async def _base_currency_url(self, curr):
+        parms = (self.sync.field_type(curr), curr)
+        response = self.sync.cryptocurrency_by_field_value(*parms)
+        if not response:
+            raise ValueError(
+                "Any cryptocurrency found matching %s == %r." % parms
+            )
+        else:
+            curr = response["website_slug"]
+        return "https://coinmarketcap.com/currencies/%s" % curr
 
     async def every_currency(self, currencies=None,
                              convert="USD", consumers=None):
@@ -253,8 +170,8 @@ class AsyncPymarketcap(ClientSession):
 
         Returns (list): Data for all currencies.
         """
-        convert = convert.lower()
-        currencies = currencies if currencies else self.coins
+        currencies = currencies if currencies else \
+             [curr["website_slug"] for curr in self.sync.cryptocurrencies]
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
@@ -264,18 +181,13 @@ class AsyncPymarketcap(ClientSession):
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
-            response = processer.currency(raw_res[20000:], convert)
-            response["slug"] = url.split("/")[-1]
-            for symbol, slug in self.correspondences.items():
-                if slug == response["slug"]:
-                    response["symbol"] = symbol
-                    break
+            response = processer.currency(raw_res[20000:], convert.lower())
+            response.update(
+                self.sync.cryptocurrency_by_field_value(
+                    "website_slug", url.split("/")[-1]
+                )
+            )
             yield response
-
-    async def markets(self, name, convert="USD"):
-        res = await self._get(self._base_currency_url(name))
-        convert = convert.lower()
-        return processer.markets(res[20000:], convert)
 
     async def every_markets(self, currencies=None,
                             convert="USD", consumers=None):
@@ -299,8 +211,8 @@ class AsyncPymarketcap(ClientSession):
         Returns (async iterator):
                 Data for all currencies.
         """
-        convert = convert.lower()
-        currencies = currencies if currencies else self.coins
+        currencies = currencies if currencies else \
+            [curr["website_slug"] for curr in self.sync.cryptocurrencies]
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
@@ -310,7 +222,7 @@ class AsyncPymarketcap(ClientSession):
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
-            response = {"markets": processer.markets(raw_res[20000:], convert),
+            response = {"markets": processer.markets(raw_res[20000:], convert.lower()),
                         "slug": url.split("/")[-1]}
             for symbol, slug in self.correspondences.items():
                 if slug == response["slug"]:

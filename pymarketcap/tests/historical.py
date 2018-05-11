@@ -21,7 +21,9 @@ def assert_types(res):
 
     assert isinstance(res["history"], list)
     assert isinstance(res["symbol"], str)
-    assert isinstance(res["slug"], str)
+    assert isinstance(res["website_slug"], str)
+    assert isinstance(res["name"], str)
+    assert isinstance(res["id"], int)
     for tick in res["history"]:
         assert isinstance(tick, dict)
         for key, value in tick.items():

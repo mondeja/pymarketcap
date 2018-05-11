@@ -3,57 +3,47 @@
 
 """Tests for stats() method"""
 
-from time import sleep
-from random import choice
-
 from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_badges = list(pym.ticker_badges)
-all_badges.remove("USD")
-
-def teardown_function(function):
-    sleep(1)
-
-def assert_types(res):
-    int_type_fields = [
-        "active_assets",
-        "active_currencies",
-        "active_markets",
-        "last_updated",
-    ]
+def assert_types(res, convert=None):
+    map_types = {
+        "active_cryptocurrencies":          int,
+        "active_markets":                   int,
+        "bitcoin_percentage_of_market_cap": float,
+        "quotes":                           dict,
+        "last_updated":                     int,
+    }
+    quotes_map_types = {
+        "total_market_cap": float,
+        "total_volume_24h": float
+    }
 
     assert isinstance(res, dict)
     for key, value in res.items():
-        if key in int_type_fields:
-            assert isinstance(value, int)
-        else:
-            assert isinstance(value, float)
+        type_test(map_types, key, value)
+
+    for key, value in res["quotes"]["USD"].items():
+        type_test(quotes_map_types, key, value)
+
+    if convert:
+        for key, value in res["quotes"][convert].items():
+            type_test(quotes_map_types, key, value)
 
 def test_types():
-    res = pym.stats()
+    res = pym.stats()["data"]
     assert_types(res)
 
-def assert_consistence(res, with_convert=False):
-    if with_convert:
-        assert len(res) == 9
-    else:
-        assert len(res) == 7
+def assert_consistence(res):
+    assert len(res) == 5
 
 def test_consistence():
-    res = pym.stats()
+    res = pym.stats()["data"]
     assert_consistence(res)
 
 def test_convert():
-    badge = choice(all_badges)
-    res = pym.stats(convert=badge)
-
-    keys_with_badge = 0
-    for key in res:
-        if badge.lower() in key:
-            keys_with_badge += 1
-    assert keys_with_badge == 2
-
-    assert_types(res)
-    assert_consistence(res, with_convert=True)
+    fiat_curr = "EUR"
+    res = pym.stats(convert=fiat_curr)["data"]
+    assert_types(res, convert=fiat_curr)
+    assert_consistence(res)

@@ -8,7 +8,7 @@ from pymarketcap.tests import type_test
 def assert_types(res):
     map_types = {
         "symbol":             str,
-        "slug":               str,
+        "website_slug":       str,
         "source_code":        (str, type(None)),
         "announcement":       (str, type(None)),
         "explorers":          list,
@@ -23,14 +23,12 @@ def assert_types(res):
         "max_supply":         (float, type(None)),
         "mineable":           bool,
         "webs":               list,
-        "name":               str
+        "name":               str,
+        "id":                 int
     }
     assert isinstance(res, dict)
     for key, value in res.items():
         type_test(map_types, key, value)
 
 def assert_consistence(res):
-    keys = list(res.keys())
-    assert len(keys) in list(range(14, 17))
-    assert "symbol" in keys
-    assert "slug" in keys
+    assert len(list(res.keys())) == 18

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from random import choice
-
 import pytest
 
+from pymarketcap.tests.utils import random_cryptocurrency
 from pymarketcap.tests.currency import (
     assert_types,
     assert_consistence
@@ -13,28 +12,28 @@ from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
 def test_types():
-    coin = choice(pym.coins)
-    print("(Currency: %s)" % coin, end=" ")
-    res = pym.currency(coin)
+    website_slug = random_cryptocurrency(pym)["website_slug"]
+    print('(<currency>["website_slug"] == "%s")' % website_slug, end=" ")
+    res = pym.currency(website_slug)
     assert_types(res)
 
 def test_consistence():
-    coin = choice(pym.coins)
-    print("(Currency: %s)" % coin, end=" ")
-    res = pym.currency(coin)
+    website_slug = random_cryptocurrency(pym)["website_slug"]
+    print('(<currency>["website_slug"] == "%s")' % website_slug, end=" ")
+    res = pym.currency(website_slug)
     assert_consistence(res)
 
 def test_convert():
-    coin = choice(pym.coins)
-    print("(Currency: %s)" % coin, end=" ")
-    res = pym.currency(coin, convert="BTC")
+    website_slug = random_cryptocurrency(pym)["website_slug"]
+    print('(<currency>["website_slug"] == "%s")' % website_slug, end=" ")
+    res = pym.currency(website_slug, convert="BTC")
 
     assert_types(res)
     assert_consistence(res)
 
 def test_invalid():
-    symbol = "BDAD)DAAS&/9324423OUVibb"
+    name = "BDAD)DAAS&/9324423OUVibb"
     with pytest.raises(ValueError) as excinfo:
-        res = pym.currency(symbol)
-    assert "See 'symbols' or 'coins' properties" in str(excinfo)
-
+        res = pym.currency(name)
+    expected_msg = "Any cryptocurrency found matching name == %r." % name
+    assert expected_msg in str(excinfo)

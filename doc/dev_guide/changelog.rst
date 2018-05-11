@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+4.0.0
+~~~~~
+
+-  `Coinmarketcap API <https://coinmarketcap.com/es/api/>`__ is updated to version 2  providing the `listing endpoint <https://api.coinmarketcap.com/v2/listings/>`__ in their API. Also, parameters like ``usd_market_cap`` have been missing and instead a ``quotes`` field list prices by currencies in responses.
+-  Some methods of ``Pymarketcap`` class have been deprecated: ``correspondences``, ``ids_correspondences``, ``_is_symbol``, ``_cache_symbols_ids``, ``_cache_exchanges_ids``, ``symbols``, ``coins``, ``total_currencies``, ``exchange_names``, ``__exchange_names_slugs``, ``exchange_slugs`` and ``total_exchanges``.
+-  Next methods have been added instead: ``cryptocurrencies``, ``cryptocurrency_by_field_value``, ``cryptoexchanges``, ``exchange_by_field_value``, ``field_type`` and ``listings``. All methods listed in previous point have been replaced by these 6 methods, simplifying the process of access to cryptocurrencies and exchanges and allowing to retrieve them through any field: ``name``, ``symbol``, ``website_slug`` and ``id``.
+
+
 3.9.0
 ~~~~~
 

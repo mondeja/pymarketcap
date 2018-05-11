@@ -5,11 +5,6 @@
 import re
 from datetime import datetime
 
-# Internal Python modules
-from pymarketcap.consts import (
-    EXCEPTIONAL_COIN_SLUGS_KEYS
-)
-
 # RegEx parsing
 PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
@@ -92,7 +87,10 @@ cpdef markets(res, convert):
     markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
     volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
     price = re.findall(r'"price" .*data-%s="(\?|\d+\.*\d*e*[-|+]*\d*)' % convert, res)
-    perc_volume = re.findall(r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">', res)
+    perc_volume = re.findall(
+        r'[^(]<span data-format-percentage data-format-value="(-*\d+\.*[\d|e|-]*[\d|e|-]*)">',
+        res
+    )
     updated = re.findall(r'text-right\s.*">(.+)</td>', res)
 
     return [

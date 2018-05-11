@@ -9,6 +9,7 @@ from urllib.error import HTTPError
 import pytest
 from tqdm import tqdm
 
+from pymarketcap.tests.utils import random_cryptocurrency
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
@@ -19,10 +20,12 @@ def test_consistence():
         attempts = 20
         while attempts > 0:
             _assert = True
-            symbol = choice(pym.symbols)
-            tqdm.write("(Currency: %s | Size: %d)" % (symbol, size))
+            website_slug = random_cryptocurrency(pym)["website_slug"]
+            tqdm.write(('<currency>["website_slug"] == "%s" | Size: %d)' \
+                % (website_slug, size))
+            )
             try:
-                res = pym.download_logo(symbol, size=size)
+                res = pym.download_logo(website_slug, size=size)
             except ValueError as e:
                 print(e)
                 attempts -= 1
@@ -32,7 +35,7 @@ def test_consistence():
             else:
                 break
         if _assert:
-            assert res == "%s_%dx%d.png" % (pym.correspondences[symbol], size, size)
+            assert res == "%s_%dx%d.png" % (website_slug, size, size)
             sleep(.5)
 
             assert os.path.exists(res)
@@ -43,9 +46,11 @@ def test_consistence():
 
 def test_invalid():
     # Invalid currencies
+    symbol = "OADVDOVASDYIV"
     with pytest.raises(ValueError) as excinfo:
-        pym.download_logo("OADVDOVASDYIV")
-    assert "See 'symbols' instance attribute." in str(excinfo)
+        pym.download_logo(symbol)
+    expected_msg = "Any cryptocurrency found matching symbol == %r." % symbol
+    assert expected_msg in str(excinfo)
 
     # Invalid size
     size = 250

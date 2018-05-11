@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from random import choice, randint
+from random import randint
 from datetime import datetime, timedelta
 
+from pymarketcap.tests.utils import random_cryptocurrency
 from pymarketcap.tests.graphs import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
@@ -11,16 +12,16 @@ pym = Pymarketcap()
 all_symbols = pym.symbols
 
 def test_types():
-    symbol = choice(all_symbols)
-    res = pym.graphs.currency(symbol)
-    print("(Currency: %s)" % symbol, end=" ")
+    curr = random_cryptocurrency(pym)["website_slug"]
+    res = pym.graphs.currency(curr)
+    print('(<currency>["website_slug"] == "%s")' % curr, end=" ")
 
     assert_types(res)
 
 def test_consistence():
-    symbol = choice(all_symbols)
-    res = pym.graphs.currency(symbol)
-    print("(Currency: %s)" % symbol, end=" ")
+    curr = random_cryptocurrency(pym)["website_slug"]
+    res = pym.graphs.currency(curr)
+    print('(<currency>["website_slug"] == "%s")' % curr, end=" ")
 
     assert len(res) in [4, 5]
 
@@ -39,14 +40,14 @@ def test_start_end():
     days_ago = timedelta(days=randint(1, 15))
     start = datetime.now() - days_ago
     end = datetime.now()
-    symbol = choice(all_symbols)
-    print("(Currency: %s | Start: %r | End: %r)" % (symbol, start, end),
+    curr = random_cryptocurrency(pym)["website_slug"]
+    print('(<currency>["website_slug"] == %s | Start: %r | End: %r)' % (curr, start, end),
           end=" ")
     for startend in [True , False]:
         params = {"start": start, "end": end}
         if not startend:
             params["start"], params["end"] = (None, None)
-        res = pym.graphs.currency(choice(pym.symbols), **params)
+        res = pym.graphs.currency(curr, **params)
 
         # Test types
         assert type(res) == dict
@@ -58,7 +59,7 @@ def test_start_end():
                 assert type(value) in [int, float]
 
         # Test consistence
-        if end.day > 1:
+        if end.day > 2:
             assert end.day >= res["price_btc"][-1][0].day
         if startend:
             first_day = res["price_usd"][0][0]

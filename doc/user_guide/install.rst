@@ -1,5 +1,6 @@
+#######
 Install
-=======
+#######
 
 You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__ before pymarketcap. Try: ``pip3 install Cython`` and then:
 
@@ -10,8 +11,9 @@ You need to install `cython <http://cython.readthedocs.io/en/latest/src/quicksta
 - On Windows will be used ``urllib`` library to make synchronous requests and on Linux/Mac will be build against `libcurl <https://curl.haxx.se/docs/install.html>`__ C library. You can control this (see below):
 
 
+***********
 From source
------------
+***********
 
 ::
 

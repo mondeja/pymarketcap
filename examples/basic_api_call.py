@@ -8,7 +8,7 @@ def main():
 
     # Get all currencies ranked by volume
     currencies = cmc.ticker()
-    print(currencies[0])  # Show first currency
+    print(currencies)
 
 if __name__ == "__main__":
     main()

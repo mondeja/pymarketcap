@@ -14,24 +14,34 @@ pym = Pymarketcap()
 coin = choice(pym.coins)
 exchange = choice(pym.exchange_slugs)
 
+base_public_api_url = "https://api.coinmarketcap.com/v2/"
+base_web_url = "https://coinmarketcap.com/"
+base_internal_api_url = "https://s2.coinmarketcap.com/"
+base_graphs_api_url = "https://graphs2.coinmarketcap.com/"
+
 endpoints = [
-    ("_cache_symbols_ids",     "https://s2.coinmarketcap.com/generated/search/quick_search.json"),
-    ("_exchange_names_slugs",  "https://s2.coinmarketcap.com/generated/search/quick_search_exchanges.json"),
-    ("ticker",                ["https://api.coinmarketcap.com/v1/ticker/",
-                               "https://api.coinmarketcap.com/v1/ticker/%s" % coin]),
-    ("markets",                "https://coinmarketcap.com/currencies/%s/" % coin),
-    ("ranks",                  "https://coinmarketcap.com/gainers-losers/"),
-    ("historical",             "https://coinmarketcap.com/currencies/%s/historical-data/" % coin),
-    ("recently",               "https://coinmarketcap.com/new/"),
-    ("exchange",               "https://coinmarketcap.com/exchanges/%s/" % exchange),
-    ("exchanges",              "https://coinmarketcap.com/exchanges/volume/24-hour/all/"),
-    ("tokens",                 "https://coinmarketcap.com/tokens/views/all/"),
-    ("graphs.currency",        "https://graphs2.coinmarketcap.com/currencies/%s/" % coin),
-    ("graphs.global_cap",     ["https://graphs2.coinmarketcap.com/global/marketcap-total/",
-                               "https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"]),
-    ("graphs.dominance",       "https://graphs2.coinmarketcap.com/global/dominance/"),
-    ("download_logo",          "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"),
-    ("download_exchange_logo", "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png")
+    ("_quick_search",           "%sgenerated/search/quick_search.json" % base_internal_api_url),
+    ("_quick_search_exchanges", "%sgenerated/search/quick_search_exchanges.json" % base_internal_api_url),
+    ("download_logo",           "%sstatic/img/coins/64x64/1.png" % base_internal_api_url),
+    ("download_exchange_logo",  "%sstatic/img/exchanges/64x64/270.png" % base_internal_api_url),
+
+    ("listings",                "%slistings/" % base_public_api_url),
+    ("stats",                   "%sglobal/" % base_public_api_url),
+    ("ticker",                 ["%sticker/" % base_public_api_url,
+                                "%sticker/%s" % (base_public_api_url, coin)]),
+
+    ("markets",                 "%scurrencies/%s/" % (base_web_url, coin)),
+    ("ranks",                   "%sgainers-losers/" % base_web_url),
+    ("historical",              "%scurrencies/%s/historical-data/" % (base_web_url, coin)),
+    ("recently",                "%snew/" % base_web_url),
+    ("exchange",                "%sexchanges/%s/" % (base_web_url, exchange)),
+    ("exchanges",               "%sexchanges/volume/24-hour/all/" % base_web_url),
+    ("tokens",                  "%stokens/views/all/" % base_web_url),
+
+    ("graphs.currency",         "%scurrencies/%s/" % (base_graphs_api_url, coin)),
+    ("graphs.dominance",        "%sglobal/dominance/" % base_graphs_api_url),
+    ("graphs.global_cap",      ["%sglobal/marketcap-total/" % base_graphs_api_url,
+                                "%sglobal/marketcap-altcoin/" % base_graphs_api_url]),
 ]
 
 def assert_up(ep):

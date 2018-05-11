@@ -1,5 +1,22 @@
-Basic usage
-===========
+#####
+Usage
+#####
+
+Next explained terms are useful retrieving data from coinmarketcap interface. These are used consistently in order to maintain a vocabulary.
+
+.. glossary::
+
+   cryptocurrency
+      Represents a cryptocurrency in coinmarketcap. A criptocurrency is an object with next attributes: ``"id"``, ``"name"``, ``"symbol"`` and ``"website_slug"``.
+
+   fiatcurrency
+      Represents a fiat currency in coinmarketcap.
+
+   
+
+********
+Examples
+********
 
 Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 
