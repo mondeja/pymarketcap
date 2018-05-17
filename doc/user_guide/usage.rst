@@ -2,25 +2,13 @@
 Usage
 #####
 
-Next explained terms are useful retrieving data from coinmarketcap interface. These are used consistently in order to maintain a vocabulary.
-
-.. glossary::
-
-   cryptocurrency
-      Represents a cryptocurrency in coinmarketcap. A criptocurrency is an object with next attributes: ``"id"``, ``"name"``, ``"symbol"`` and ``"website_slug"``.
-
-   fiatcurrency
-      Represents a fiat currency in coinmarketcap.
-
-   
-
-********
-Examples
-********
-
 Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 
-.. centered:: Synchronous Interface
+**************
+Basic examples
+**************
+
+.. rubric:: Synchronous Interface
 .. code-block:: python
 
    from pymarketcap import Pymarketcap
@@ -28,17 +16,17 @@ Check out `complete live demos hosted at Binderhub <https://mybinder.org/v2/gh/m
 
    cmc.exchanges()
 
-.. centered:: Asynchronous Scraper
+.. rubric:: Asynchronous Scraper
 .. code-block:: python
 
-    import asyncio
-    from pymarketcap import AsyncPymarketcap
+   import asyncio
+   from pymarketcap import AsyncPymarketcap
 
-    async def main():
-        async with AsyncPymarketcap() as apym:
-            async for currency in apym.every_currency():
-                print(currency)
+   async def main():
+       async with AsyncPymarketcap() as apym:
+           async for currency in apym.every_currency():
+               print(currency)
 
-    if __name__ == '__main__':
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
+   if __name__ == '__main__':
+       loop = asyncio.get_event_loop()
+       loop.run_until_complete(main())
