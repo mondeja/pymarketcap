@@ -9,10 +9,14 @@ from tqdm import tqdm
 import pytest
 
 from pymarketcap import Pymarketcap
+from pymarketcap.tests.utils import (
+    random_cryptocurrency,
+    random_exchange
+)
 pym = Pymarketcap()
 
-coin = choice(pym.coins)
-exchange = choice(pym.exchange_slugs)
+cryptocurrency = random_cryptocurrency(pym)
+exchange = random_exchange(pym)["website_slug"]
 
 base_public_api_url = "https://api.coinmarketcap.com/v2/"
 base_web_url = "https://coinmarketcap.com/"
@@ -28,17 +32,17 @@ endpoints = [
     ("listings",                "%slistings/" % base_public_api_url),
     ("stats",                   "%sglobal/" % base_public_api_url),
     ("ticker",                 ["%sticker/" % base_public_api_url,
-                                "%sticker/%s" % (base_public_api_url, coin)]),
+                                "%sticker/%s" % (base_public_api_url, cryptocurrency["id"])]),
 
-    ("markets",                 "%scurrencies/%s/" % (base_web_url, coin)),
+    ("markets",                 "%scurrencies/%s/" % (base_web_url, cryptocurrency["website_slug"])),
     ("ranks",                   "%sgainers-losers/" % base_web_url),
-    ("historical",              "%scurrencies/%s/historical-data/" % (base_web_url, coin)),
+    ("historical",              "%scurrencies/%s/historical-data/" % (base_web_url, cryptocurrency["website_slug"])),
     ("recently",                "%snew/" % base_web_url),
     ("exchange",                "%sexchanges/%s/" % (base_web_url, exchange)),
     ("exchanges",               "%sexchanges/volume/24-hour/all/" % base_web_url),
     ("tokens",                  "%stokens/views/all/" % base_web_url),
 
-    ("graphs.currency",         "%scurrencies/%s/" % (base_graphs_api_url, coin)),
+    ("graphs.currency",         "%scurrencies/%s/" % (base_graphs_api_url, cryptocurrency["website_slug"])),
     ("graphs.dominance",        "%sglobal/dominance/" % base_graphs_api_url),
     ("graphs.global_cap",      ["%sglobal/marketcap-total/" % base_graphs_api_url,
                                 "%sglobal/marketcap-altcoin/" % base_graphs_api_url]),

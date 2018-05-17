@@ -19,7 +19,7 @@ New version 4.0.0
 
 - See `changelog <http://pymarketcap.readthedocs.io/changelog.html>`__ for more details.
 
-``AsyncPymarketcap`` scraper is not working after `coinmarketcap update <https://coinmarketcap.com/es/api/>`__, but ``Pymarketcap`` class have been updated. This introduce some breaking changes (see `Readthedocs reference <http://pymarketcap.readthedocs.io/reference.html>`__).
+This new version introduce some breaking changes (see `Documentation reference <http://pymarketcap.readthedocs.io/reference.html>`__).
 
 
 Install
@@ -50,8 +50,8 @@ From source
 
 Documentation
 -------------
-- `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 - `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`__.
+- `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 
 `Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/contributing.rst>`__
 ------------------------------------------------------------------------------------------

@@ -25,6 +25,10 @@ def test_basic_sync_scraper():
     assert_exec("basic_sync_scraper.py")
 
 @pytest.mark.end2end
+def test_ticker_pagination():
+    assert_exec("ticker_pagination.py")
+
+@pytest.mark.end2end
 def test_basic_async_scraper():
     assert_exec("basic_async_scraper.py")
 

@@ -1,29 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from random import choice
+
 from pprint import pprint
 
 from tqdm import tqdm
 
+from pymarketcap.tests.utils import (
+    random_cryptocurrency,
+    random_exchange
+)
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-def random_coin():
-    return choice(pym.coins)
-
-def random_exchange():
-    return choice(pym.exchange_slugs)
-
 METHODS = [
     ["exchanges"],
-    ["exchange", random_exchange()],
-    ["currency", random_coin()],
-    ["markets", random_coin()],
+    ["exchange", random_exchange(pym)["website_slug"]],
+    ["currency", random_cryptocurrency(pym)["website_slug"]],
+    ["markets", random_cryptocurrency(pym)["website_slug"]],
     ["ranks"],
     ["recently"],
     ["tokens"],
-    ["graphs.currency", random_coin()],
+    ["graphs.currency", random_cryptocurrency(pym)["website_slug"]],
     ["graphs.global_cap"],
     ["graphs.dominance"]
 ]
@@ -46,7 +44,7 @@ def test_fields():
                     keys_from_method = list(res["gainers"]["1h"][0].keys())
                     keys.extend(keys_from_method)
                 elif method[0] == "markets":
-                    keys_from_method =list(res["markets"][0].keys())
+                    keys_from_method = list(res["markets"][0].keys())
                     keys.extend(keys_from_method)
                 elif method[0] in ["currency", "stats",
                                    "graphs.currency",

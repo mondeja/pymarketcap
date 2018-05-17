@@ -9,8 +9,6 @@ from pymarketcap.tests.graphs import assert_types
 from pymarketcap import Pymarketcap
 pym = Pymarketcap()
 
-all_symbols = pym.symbols
-
 def test_types():
     curr = random_cryptocurrency(pym)["website_slug"]
     res = pym.graphs.currency(curr)

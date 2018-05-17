@@ -43,7 +43,7 @@ cdef class Pymarketcap:
             As default, ``False``.
     """
     cdef readonly dict _cryptocurrencies
-    cdef readonly list _exchanges
+    cdef readonly list _cryptoexchanges
     cdef readonly list _currencies_to_convert
     cdef readonly list _converter_cache
 
@@ -128,14 +128,17 @@ cdef class Pymarketcap:
         as dictionaries with ``"name"``, ``"id"`` and
         ``"website_slug"`` keys.
         """
-        response = []
-        for exchange in self._quick_search(exchanges=True):
-            response.append({
-                "name": exchange["name"],
-                "id":   exchange["id"],
-                "website_slug": exchange["slug"]
-            })
-        self._exchanges = response
+        if not self._cryptoexchanges:
+            response = []
+            for exchange in self._quick_search(exchanges=True):
+                response.append({
+                    "name": exchange["name"],
+                    "id":   exchange["id"],
+                    "website_slug": exchange["slug"]
+                })
+            self._cryptoexchanges = response
+        else:
+            response = self._cryptoexchanges
         return response
 
     cpdef exchange_by_field_value(self, unicode field, unicode value):
@@ -604,7 +607,7 @@ cdef class Pymarketcap:
 
     # ====================================================================
 
-                       #######   INTERNAL API   #######
+                       #######   GRAPHS API   #######
 
     cpdef _currency(self, unicode curr, start=None, end=None):
         """Get graphs data of a currency.
@@ -679,6 +682,10 @@ cdef class Pymarketcap:
 
         res = loads(self._get(url))
         return processer.graphs(res, start, end)
+
+    # ====================================================================
+
+                       #######   INTERNAL API   #######
 
     cpdef download_logo(self, unicode curr, size=64, filename=None):
         """Download a currency image logo providing their size.
