@@ -23,6 +23,7 @@ res = []
 end2end_marked_if_not_cache = \
     pytest.mark.end2end if not exists_cache_file else disabled_decorator
 
+@pytest.mark.order1
 @end2end_marked_if_not_cache
 def test_all_currencies(event_loop):
     async def get_all_currencies():
@@ -47,11 +48,8 @@ def assert_any_field_in_response(field, readable_field):
         elif isinstance(value, str):
             if value != "":
                 found = True
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, (int, float, bool)):
             found = True
-        elif isinstance(value, bool):
-            if value == True:
-                found = True
         elif value == None:
             continue
         else:
