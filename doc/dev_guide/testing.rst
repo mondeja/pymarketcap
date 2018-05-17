@@ -3,8 +3,7 @@ Testing
 
 |TravisCI| |AppVeyor|
 
-You need to install ``pytest`` for run unittests and ``tox`` for run
-tests against different versions:
+You need to install ``pytest`` for run unittests:
 
 ::
 
