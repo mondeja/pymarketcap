@@ -20,7 +20,6 @@ def test_types():
     res = pym.historical(curr)
     assert_types(res)
 
-
 def test_consistence():
     curr = random_cryptocurrency(pym)["website_slug"]
     print('(<currency>["website_slug"] == "%s")' % curr, end=" ")

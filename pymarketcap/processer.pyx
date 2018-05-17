@@ -121,7 +121,7 @@ cpdef ranks(res):
 
     return {rank: {period: [{
         "name": names_slugs[index_map[rank][period]+i][1],
-        "slug": names_slugs[index_map[rank][period]+i][0],
+        "website_slug": names_slugs[index_map[rank][period]+i][0],
         "symbol": symbols[index_map[rank][period]+i],
         "volume_24h": float(volume_24h[index_map[rank][period]+i]),
         "price": float(price[index_map[rank][period]+i]),

@@ -27,10 +27,8 @@ def assert_types(res):
                 type_test(map_types, key, value)
 
 def test_types():
-    assert_types(pym.recently())
-
-def test_consistence():
-    res = list(pym.recently())
+    res = pym.recently()
+    assert_types(res)
 
 def test_convert():
     res_btc = pym.recently(convert="BTC")

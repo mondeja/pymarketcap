@@ -14,7 +14,7 @@ asyncparms["debug"] = False
 
 cache_file = os.path.join(
     os.path.abspath(os.path.dirname(os.path.dirname(__file__))),
-    "cache", "every_exchange.json"
+    "cache", "every_historical.json"
 )
 exists_cache_file = os.path.exists(cache_file)
 
@@ -25,22 +25,22 @@ end2end_marked_if_not_cache = \
 
 @pytest.mark.order1
 @end2end_marked_if_not_cache
-def test_all_exchanges(event_loop):
-    async def get_all_exchanges():
+def test_all_historical(event_loop):
+    async def get_all_historical():
         async with AsyncPymarketcap(**asyncparms) as apym:
-            async for currency in apym.every_exchange():
+            async for currency in apym.every_historical():
                 res.append(currency)
     if exists_cache_file:
         with open(cache_file, "r") as f:
-            for exc in json.loads(f.read()):
-                res.append(exc)
+            for curr in json.loads(f.read()):
+                res.append(curr)
     else:
-        event_loop.run_until_complete(get_all_exchanges())
+        event_loop.run_until_complete(get_all_historical())
 
 def assert_any_field_in_response(field, readable_field):
     found = False
-    for exc in res:
-        value = exc[field]
+    for curr in res:
+        value = curr[field]
 
         if isinstance(value, str):
             if value != "":
@@ -58,31 +58,22 @@ def assert_any_field_in_response(field, readable_field):
     try:
         assert found == True
     except AssertionError as err:
-        print("Any %s found searching all exchanges." % readable_field \
-              + "Check 'processer:exchange()' function.")
+        print("Any %s found searching all currencies." % readable_field \
+              + "Check 'processer:markets()' function.")
         raise err
-
 
 @end2end_marked_if_not_cache
 def test_name():
-    assert_any_field_in_response("name", "exchange name")
+    assert_any_field_in_response("name", "currency name")
 
 @end2end_marked_if_not_cache
 def test_website_slug():
     assert_any_field_in_response("website_slug", "website_slug")
 
 @end2end_marked_if_not_cache
-def test_markets():
-    assert_any_field_in_response("markets", "market")
+def test_symbol():
+    assert_any_field_in_response("symbol", "currency symbol")
 
 @end2end_marked_if_not_cache
-def test_social():
-    assert_any_field_in_response("social", "social links")
-
-@end2end_marked_if_not_cache
-def test_volume():
-    assert_any_field_in_response("volume", "volume")
-
-@end2end_marked_if_not_cache
-def test_web():
-    assert_any_field_in_response("web", "web link")
+def test_id():
+    assert_any_field_in_response("id", "currency id")

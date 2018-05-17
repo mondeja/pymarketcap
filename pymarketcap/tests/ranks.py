@@ -8,7 +8,7 @@ from pymarketcap.tests import type_test
 def assert_types(data):
     map_types = {
         "name":           str,
-        "slug":           str,
+        "website_slug":   str,
         "symbol":         str,
         "volume_24h":     float,
         "price":          float,

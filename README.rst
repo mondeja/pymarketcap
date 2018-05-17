@@ -17,7 +17,7 @@ posible to compile a lightweight version with standard ``urllib``
 New version 4.0.0
 -----------------
 
-- See `changelog <http://pymarketcap.readthedocs.io/changelog.html>`__ for more details.
+- See `changelog <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>`__ for more details.
 
 This new version introduce some breaking changes (see `Documentation reference <http://pymarketcap.readthedocs.io/reference.html>`__).
 

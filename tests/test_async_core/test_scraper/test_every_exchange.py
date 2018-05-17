@@ -22,11 +22,12 @@ cache_file = os.path.join(
     "cache", "every_exchange.json"
 )
 
+res = []
+
 @pytest.mark.end2end
 def test_every_exchange(event_loop):
     async def wrapper():
         async with AsyncPymarketcap(**asyncparms) as apym:
-            res = []
             show_msg = True
             async for exc in apym.every_exchange():
                 if show_msg:
@@ -41,4 +42,14 @@ def test_every_exchange(event_loop):
         with open(cache_file, "w") as f:
             f.write(json.dumps(res, ensure_ascii=False))
 
-    event_loop.run_until_complete(wrapper())
+    if os.path.exists(cache_file):
+        with open(cache_file, "r") as f:
+            for curr in json.loads(f.read()):
+                res.append(curr)
+
+        assert type(res) == list
+        for currency in res:
+            assert_types(currency)
+            assert_consistence(currency)
+    else:
+        event_loop.run_until_complete(wrapper())

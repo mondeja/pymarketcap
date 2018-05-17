@@ -42,4 +42,14 @@ def test_every_markets(event_loop):
         with open(cache_file, "w") as f:
             f.write(json.dumps(res, ensure_ascii=False))
 
-    event_loop.run_until_complete(wrapper())
+    if os.path.exists(cache_file):
+        with open(cache_file, "r") as f:
+            for curr in json.loads(f.read()):
+                res.append(curr)
+
+        assert type(res) == list
+        for currency in res:
+            assert_types(currency)
+            assert_consistence(currency)
+    else:
+        event_loop.run_until_complete(wrapper())
