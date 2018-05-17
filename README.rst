@@ -6,7 +6,7 @@ pymarketcap
 
 |ReadTheDocs| |Binder|
 
-|PyPI| |PyPI Versions| |LICENSE|
+|PyPI| |PyPI-Versions| |LICENSE|
 
 
 pymarketcap is a library for retrieve data from
@@ -53,10 +53,10 @@ Documentation
 - `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`__.
 - `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
 
-`Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/contributing.rst>`__
+`Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/contributing.rst>`__
 ------------------------------------------------------------------------------------------
 
-`Testing <https://github.com/mondeja/pymarketcap/blob/master/doc/testing.rst>`__
+`Testing <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/testing.rst>`__
 --------------------------------------------------------------------------------
 
 `Changelog <https://cnhv.co/1y9ex>`__
@@ -77,7 +77,7 @@ Support
    :target: https://cnhv.co/1xgw5
 .. |PyPI| image:: https://img.shields.io/pypi/v/pymarketcap.svg
    :target: https://cnhv.co/1xgwg
-.. |PyPI Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
+.. |PyPI-Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
    :target: https://cnhv.co/1xgwm
 .. |Binder| image:: https://mybinder.org/badge.svg
    :target: https://cnhv.co/1y9ff
