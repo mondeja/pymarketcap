@@ -331,7 +331,7 @@ cdef class Pymarketcap:
         """
         cdef short i, len_i
         if not currency:
-            url =  "https://api.coinmarketcap.com/v2/ticker/?&convert=%s" % limit
+            url =  "https://api.coinmarketcap.com/v2/ticker/?&convert=%s" % convert
             url += "&start=%d" % start
             url += "&limit=%s" % limit
             return loads(self._get(url.encode()))
