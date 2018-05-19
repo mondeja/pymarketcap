@@ -98,3 +98,10 @@ def test_convert():
         if currency:
             assert_types(res)
             assert_consistence(res)
+
+
+def test_ticker_all():
+    res = pym.ticker_all()
+    for curr in res:
+        assert_types(curr)
+        assert_consistence(curr)

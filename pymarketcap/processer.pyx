@@ -17,7 +17,7 @@ cpdef currency(res, convert):
             r'data-currency-volume.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
         )
         _price = re.search(r'quote_price.+data-usd="(\?|\d+\.*\d*e*[-|+]*\d*)"', res)
-    else:
+    else:  # convert == "btc"
         _total_markets_cap = re.search(
             r'data-format-market-cap.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
         )
@@ -29,16 +29,24 @@ cpdef currency(res, convert):
         )
 
     vol_24h = _total_markets_volume.group(1)
-    try: total_cap = _total_markets_cap.group(1)
-    except AttributeError: total_cap = "?"
-    try: price = float(_price.group(1))
-    except ValueError: price = "?"
+    try:
+        total_cap = _total_markets_cap.group(1)
+    except AttributeError:
+        total_cap = None
+    else:
+        total_cap = float(total_cap)
+    try:
+        price = _price.group(1)
+    except AttributeError:
+        price = None
+    else:
+        price = float(price)
 
-    response = {"markets_cap": float(total_cap) if total_cap != "?" else None,
+    response = {"markets_cap": total_cap,
                 "markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
-                "price": price if price != "?" else None}
+                "price": price}
 
-    # Circulating, total and maximum supply
+    # Circulating, maximum and total supply
     supply = re.findall(
         r'data-format-supply.+data-format-value="(\?|\d+\.*\d*e*[-|+]*\d*)"', res
     )

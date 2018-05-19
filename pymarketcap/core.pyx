@@ -296,7 +296,7 @@ cdef class Pymarketcap:
         Args:
             convert (str, optional): return 24h volume, and
                 market cap in terms of another currency.
-                See ticker_badges property to get valid values.
+                See ``ticker_badges`` property to get valid values.
                 As default ``"USD"``.
 
         Returns (dict):
@@ -313,6 +313,15 @@ cdef class Pymarketcap:
 
     cpdef ticker(self, currency=None, limit=0, start=0, convert="USD"):
         """Get currencies with other aditional data.
+        Only returns 100 currencies in each request. Use
+        :py:meth:`pymarketcap.Pymarketcap.ticker_all` method
+        for retrieve all currencies navegation through API
+        pagination.
+
+
+        .. seealso:
+
+           `Coinmarketcap API documentation <https://coinmarketcap.com/api/>`__
 
         Args:
             currency (str, optional): Specify a currency to return data,
@@ -342,6 +351,36 @@ cdef class Pymarketcap:
             url += "?convert=%s" % convert
             return loads(self._get(url.encode()))
 
+    cpdef ticker_all(self, convert="USD"):
+        """Get all currencies in coinmarketcap from
+        :py:meth:`pymarketcap.Pymarketcap.ticker` method.
+        Takes some time to be completed.
+
+        Args:
+            convert: (str, optional): Allows to convert prices, 24h volumes
+                and market capitalizations in terms of one of badges
+                returned by ``ticker_badges`` property.
+                As default, ``"USD"``.
+
+        Returns (list):
+            All currencies metadata.
+        """
+        cdef short start = 1
+        response = []
+
+        num_cryptocurrencies = None
+        while True:
+            cryptocurrencies = self.ticker(start=start, convert="USD")
+            if not num_cryptocurrencies:
+                num_cryptocurrencies = \
+                    cryptocurrencies["metadata"]["num_cryptocurrencies"]
+            for curr in cryptocurrencies["data"].values():
+                response.append(curr)
+            start += 100
+            if start > num_cryptocurrencies:
+                break
+        return response
+
     # ====================================================================
 
                        #######    WEB SCRAPER    #######
@@ -354,6 +393,8 @@ cdef class Pymarketcap:
             All currencies rates used internally by coinmarketcap to calculate
             the prices shown.
         """
+        cdef short start = 1
+
         res = self._get(b"https://coinmarketcap.com")
         rates = re_findall(
             r'data-([a-z]+)="(\d+\.*[\d|e|-]*)"', res[-10000:-2000]
@@ -361,7 +402,6 @@ cdef class Pymarketcap:
         response = {currency.upper(): float(rate) for currency, rate in rates}
 
         # Ticker API method pagination
-        start = 1
         num_cryptocurrencies = None
         while True:
             cryptocurrencies = self.ticker(start=start)
