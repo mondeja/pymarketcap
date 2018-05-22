@@ -3,12 +3,14 @@
 
 import pytest
 
-from pymarketcap.tests.graphs import assert_types
 from pymarketcap import (
     AsyncPymarketcap,
-    Pymarketcap
+    Pymarketcap,
 )
+from pymarketcap.tests.graphs import assert_types
+
 pym = Pymarketcap()
+
 
 @pytest.mark.end2end
 def test_every_graphs_currency(event_loop):
@@ -26,8 +28,6 @@ def test_every_graphs_currency(event_loop):
 
                 assert_types(currency)
 
-            assert type(res) == list
+            assert isinstance(res, list)
 
     event_loop.run_until_complete(wrapper())
-
-

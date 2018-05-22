@@ -30,21 +30,38 @@ cpdef currency(res, convert):
 
     vol_24h = _total_markets_volume.group(1)
     try:
+        vol_24h = _total_markets_volume.group(1)
+        vol_24h = float(vol_24h)
+    except AttributeError:
+        vol_24h = None
+    except ValueError:
+        if vol_24h != "?":
+            raise
+        vol_24h = None
+    try:
         total_cap = _total_markets_cap.group(1)
+        total_cap = float(total_cap)
     except AttributeError:
         total_cap = None
-    else:
-        total_cap = float(total_cap)
+    except ValueError:
+        if total_cap != "?":
+            raise
+        total_cap = None
     try:
         price = _price.group(1)
+        price = float(price)
     except AttributeError:
         price = None
-    else:
-        price = float(price)
+    except ValueError:
+        if price != "?":
+            raise
+        price = None
 
-    response = {"markets_cap": total_cap,
-                "markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
-                "price": price}
+    response = {
+        "markets_cap": total_cap,
+        "markets_volume_24h": vol_24h,
+        "price": price
+    }
 
     # Circulating, maximum and total supply
     supply = re.findall(
@@ -368,12 +385,12 @@ cpdef tokens(res, convert):
 
 cpdef graphs(res, start, end):
     response = {}
-    for key in list(res.keys()):
+    for key, value in res.items():
         group = []
-        for _tmp, data in res[key]:
-            tmp = datetime.fromtimestamp(int(_tmp/1000))
+        for _tmp, data in value:
+            tmp = datetime.fromtimestamp(_tmp / 1000)
             try:
-                if tmp >= start and tmp <= end:
+                if start <= tmp <= end:
                     group.append([tmp, data])
             except TypeError:
                 group.append([tmp, data])

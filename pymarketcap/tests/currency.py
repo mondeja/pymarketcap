@@ -5,6 +5,7 @@
 
 from pymarketcap.tests import type_test
 
+
 def assert_types(res):
     map_types = {
         "symbol":             str,
@@ -29,6 +30,7 @@ def assert_types(res):
     assert isinstance(res, dict)
     for key, value in res.items():
         type_test(map_types, key, value)
+
 
 def assert_consistence(res):
     assert len(list(res.keys())) == 18
