@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
 import pytest
 
-from pymarketcap.tests.consts import asyncparms
-from pymarketcap.tests.historical import (
-    assert_types,
-    assert_consistence
-)
 from pymarketcap import (
     AsyncPymarketcap,
-    Pymarketcap
+    Pymarketcap,
 )
+from pymarketcap.tests.consts import asyncparms
+from pymarketcap.tests.historical import (assert_consistence, assert_types)
+
 pym = Pymarketcap()
 
 cache_file = os.path.join(
-    os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+    os.path.abspath(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    ),
     "cache", "every_historical.json"
 )
 
 res = []
+
 
 @pytest.mark.end2end
 def test_every_historical(event_loop):
@@ -37,14 +38,14 @@ def test_every_historical(event_loop):
 
                 assert_types(currency)
                 assert_consistence(currency)
-            assert type(res) == list
+            assert isinstance(res, list)
 
     if os.path.exists(cache_file):
         with open(cache_file, "r") as f:
             for curr in json.loads(f.read()):
                 res.append(curr)
 
-        assert type(res) == list
+        assert isinstance(res, list)
         for currency in res:
             assert_types(currency)
             assert_consistence(currency)

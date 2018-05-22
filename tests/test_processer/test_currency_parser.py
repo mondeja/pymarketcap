@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
 import pytest
 
@@ -23,6 +23,7 @@ res = []
 end2end_marked_if_not_cache = \
     pytest.mark.end2end if not exists_cache_file else disabled_decorator
 
+
 @pytest.mark.order1
 @end2end_marked_if_not_cache
 def test_all_currencies(event_loop):
@@ -30,12 +31,14 @@ def test_all_currencies(event_loop):
         async with AsyncPymarketcap(**asyncparms) as apym:
             async for currency in apym.every_currency():
                 res.append(currency)
+
     if exists_cache_file:
         with open(cache_file, "r") as f:
             for curr in json.loads(f.read()):
                 res.append(curr)
     else:
         event_loop.run_until_complete(get_all_currencies())
+
 
 def assert_any_field_in_response(field, readable_field):
     found = False
@@ -50,7 +53,7 @@ def assert_any_field_in_response(field, readable_field):
                 found = True
         elif isinstance(value, (int, float, bool)):
             found = True
-        elif value == None:
+        elif value is None:
             continue
         else:
             msg = "Case not anticipated. 'type(value) == %r'"
@@ -62,46 +65,58 @@ def assert_any_field_in_response(field, readable_field):
               + "Check 'processer:currency()' function.")
         raise err
 
+
 @end2end_marked_if_not_cache
 def test_chats():
     assert_any_field_in_response("chats", "chat")
+
 
 @end2end_marked_if_not_cache
 def test_webs():
     assert_any_field_in_response("webs", "website")
 
+
 @end2end_marked_if_not_cache
 def test_explorers():
     assert_any_field_in_response("explorers", "explorer")
+
 
 @end2end_marked_if_not_cache
 def test_webs():
     assert_any_field_in_response("message_boards", "message board")
 
+
 @end2end_marked_if_not_cache
 def test_source_code():
     assert_any_field_in_response("source_code", "source code link")
+
 
 @end2end_marked_if_not_cache
 def test_announcement():
     assert_any_field_in_response("announcement", "announcement")
 
+
 @end2end_marked_if_not_cache
 def test_mineable():
     assert_any_field_in_response("mineable", "'mineable == True' flag")
+
 
 @end2end_marked_if_not_cache
 def test_rank():
     assert_any_field_in_response("rank", "'rank != None'")
 
+
 @end2end_marked_if_not_cache
 def test_max_supply():
     assert_any_field_in_response("max_supply", "'max_supply != None'")
+
 
 @end2end_marked_if_not_cache
 def test_total_supply():
     assert_any_field_in_response("total_supply", "'total_supply != None'")
 
+
 @end2end_marked_if_not_cache
 def test_circulating_supply():
-    assert_any_field_in_response("circulating_supply", "'circulating_supply != None'")
+    assert_any_field_in_response("circulating_supply",
+                                 "'circulating_supply != None'")
