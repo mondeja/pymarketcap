@@ -5,9 +5,9 @@
 
 # Standard Python modules
 import logging
+from functools import partial
 from json import loads
-from json.decoder import JSONDecodeError
-from datetime import datetime
+from datetime import datetime, date
 from asyncio import (
     ensure_future,
     Queue,
@@ -19,11 +19,15 @@ from aiohttp import ClientSession
 from tqdm import tqdm
 
 # Internal Cython modules
-from pymarketcap import Pymarketcap
-from pymarketcap import processer
+from pymarketcap import processer, Pymarketcap
 
 # Internal Python modules
-from pymarketcap.consts import DEFAULT_FORMATTER
+from pymarketcap.consts import (
+    DEFAULT_FORMATTER,
+    DATETIME_MIN_TIME,
+    DATETIME_MAX_TIME
+)
+from pymarketcap.util import cmc_timestamp
 
 # Logging initialization
 LOGGER_NAME = "/pymarketcap%s" % __file__.split("pymarketcap")[-1]
@@ -31,6 +35,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 LOGGER_HANDLER = logging.StreamHandler()
 LOGGER_HANDLER.setFormatter(DEFAULT_FORMATTER)
 LOGGER.addHandler(LOGGER_HANDLER)
+
 
 class AsyncPymarketcap(ClientSession):
     """Asynchronous scraper for coinmarketcap.com
@@ -63,9 +68,8 @@ class AsyncPymarketcap(ClientSession):
     """
     def __init__(self, queue_size=10, progress_bar=True,
                  consumers=10, timeout=15, logger=LOGGER,
-                 debug=False, json=None, sync=Pymarketcap(),
-                 **kwargs):
-        super(AsyncPymarketcap, self).__init__(**kwargs)
+                 debug=False, sync=Pymarketcap(), **kwargs):
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.logger = logger
         self.sync = sync
@@ -81,6 +85,9 @@ class AsyncPymarketcap(ClientSession):
             "Graphs", (),
             {"every_currency": self._every_currency}
         )
+
+        self.__start = None
+        self.__end = None
 
         if debug:
             self.logger.setLevel(logging.DEBUG)
@@ -100,12 +107,20 @@ class AsyncPymarketcap(ClientSession):
             itr_len = len(itr)
         except TypeError:
             itr_len = 1000000
-        num_of_consumers = num_of_consumers or min(self.connector_limit, itr_len)
-        consumers = [ensure_future(
-            self._consumer(main_queue=queue, dlq=dlq, responses=responses)) for _ in
-                     range(num_of_consumers or self.connector_limit)]
-        dlq_consumers = [ensure_future(
-            self._consumer(dlq, dlq, responses)) for _ in range(num_of_consumers)]
+
+        if num_of_consumers is None:
+            num_of_consumers = min(self.connector_limit, itr_len)
+
+        consumers = [
+            ensure_future(
+                self._consumer(main_queue=queue, dlq=dlq, responses=responses)
+            )
+            for _ in range(num_of_consumers or self.connector_limit)
+        ]
+        dlq_consumers = [
+            ensure_future(self._consumer(dlq, dlq, responses))
+            for _ in range(num_of_consumers)
+        ]
         await self._producer(itr, build_url_callback, queue, desc=desc)
         await queue.join()
         await dlq.join()
@@ -116,41 +131,39 @@ class AsyncPymarketcap(ClientSession):
             consumer.cancel()
         return responses
 
-    async def _producer(self, items,
-                        build_url_callback,
-                        queue, desc=""):
+    async def _producer(self, items, build_url_callback, queue, desc=""):
         for item in tqdm(items, desc=desc, disable=not self.progress_bar):
             await queue.put(await build_url_callback(item))
 
     async def _consumer(self, main_queue, dlq, responses):
         while True:
+            url = await main_queue.get()
             try:
-                url = await main_queue.get()
                 responses.append([url, await self._get(url)])
-                # Notify the queue that the item has been processed
-                main_queue.task_done()
             except AsyncioTimeoutError:
                 self.logger.debug("Problem with %s, Moving to DLQ" % url)
                 await dlq.put(url)
-                main_queue.task_done()
+
+            # Notify the queue that the item has been processed
+            main_queue.task_done()
 
     # ====================================================================
 
                          #######   SCRAPER   #######
 
     async def _base_currency_url(self, curr):
-        parms = (self.sync.field_type(curr), curr)
-        response = self.sync.cryptocurrency_by_field_value(*parms)
+        params = (self.sync.field_type(curr), curr)
+        response = self.sync.cryptocurrency_by_field_value(*params)
         if not response:
             raise ValueError(
-                "Any cryptocurrency found matching %s == %r." % parms
+                "Any cryptocurrency found matching %s == %r." % params
             )
         else:
             curr = response["website_slug"]
         return "https://coinmarketcap.com/currencies/%s" % curr
 
-    async def every_currency(self, currencies=None,
-                             convert="USD", consumers=None):
+    async def every_currency(self, currencies=None, convert="USD",
+                             consumers=None):
         """Return general data from every currency in coinmarketcap
         passing a list of currencies as first parameter.
         As default returns data for all currencies.
@@ -169,14 +182,18 @@ class AsyncPymarketcap(ClientSession):
 
         Returns (list): Data for all currencies.
         """
-        currencies = currencies if currencies else \
-             [curr["website_slug"] for curr in self.sync.cryptocurrencies]
+        if currencies is None:
+            currencies = [
+                curr["website_slug"]
+                for curr in self.sync.cryptocurrencies
+            ]
+
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
             consumers if consumers else self.consumers,
-            desc="Retrieving every currency data " \
-                 + "for %d currencies from coinmarketcap" % len(currencies)
+            desc="Retrieving every currency data "
+                 "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
@@ -188,8 +205,8 @@ class AsyncPymarketcap(ClientSession):
             )
             yield response
 
-    async def every_markets(self, currencies=None,
-                            convert="USD", consumers=None):
+    async def every_markets(self, currencies=None, convert="USD",
+                            consumers=None):
         """Returns markets data from every currency in coinmarketcap
         passing a list of currencies as first parameter.
         As default returns data for all currencies.
@@ -210,19 +227,25 @@ class AsyncPymarketcap(ClientSession):
         Returns (async iterator):
                 Data for all currencies.
         """
-        currencies = currencies if currencies else \
-            [curr["website_slug"] for curr in self.sync.cryptocurrencies]
+        if currencies is None:
+            currencies = [
+                curr["website_slug"]
+                for curr in self.sync.cryptocurrencies
+            ]
+
         res = await self._async_multiget(
             currencies,
             self._base_currency_url,
             consumers if consumers else self.consumers,
-            desc="Retrieving all markets " \
-                 + "for %d currencies from coinmarketcap" % len(currencies)
+            desc="Retrieving all markets "
+                 "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
-            response = {"markets": processer.markets(raw_res[20000:], convert.lower()),
-                        "slug": url.split("/")[-1]}
+            response = {
+                "markets": processer.markets(raw_res[20000:], convert.lower()),
+                "slug": url.split("/")[-1]
+            }
             response.update(
                 self.sync.cryptocurrency_by_field_value(
                     "website_slug", url.split("/")[-1]
@@ -231,19 +254,18 @@ class AsyncPymarketcap(ClientSession):
             yield response
 
     async def _base_historical_url(self, curr):
-        parms = (self.sync.field_type(curr), curr)
-        response = self.sync.cryptocurrency_by_field_value(*parms)
+        params = (self.sync.field_type(curr), curr)
+        response = self.sync.cryptocurrency_by_field_value(*params)
         if not response:
             raise ValueError(
-                "Any cryptocurrency found matching %s == %r." % parms
+                "Any cryptocurrency found matching %s == %r." % params
             )
         else:
             curr = response["website_slug"]
-        url = "https://coinmarketcap.com/currencies/%s/historical-data" % curr
-        _start = "%d%02d%02d" % (self.__start.year, self.__start.month, self.__start.day)
-        _end = "%d%02d%02d" % (self.__end.year, self.__end.month, self.__end.day)
-        url += "?start=%s&end=%s" % (_start, _end)
-        return url
+        url = ("https://coinmarketcap.com/currencies"
+               "/{currency}/historical-data"
+               "?start={start:%Y%m%d}&end={end:%Y%m%d}")
+        return url.format(currency=curr, start=self.__start, end=self.__end)
 
     async def every_historical(self, currencies=None,
                                start=datetime(2008, 8, 18),
@@ -279,20 +301,30 @@ class AsyncPymarketcap(ClientSession):
         """
         self.__start = start
         self.__end = end
-        currencies = currencies if currencies else \
-            [curr["website_slug"] for curr in self.sync.cryptocurrencies]
+        if currencies is None:
+            currencies = [
+                curr["website_slug"]
+                for curr in self.sync.cryptocurrencies
+            ]
+
         res = await self._async_multiget(
             currencies,
             self._base_historical_url,
             consumers if consumers else self.consumers,
-            desc="Retrieving all historical data " \
-                 + "for %d currencies from coinmarketcap" % len(currencies)
+            desc="Retrieving all historical data "
+                 "for %d currencies from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
-            response = {"history": processer.historical(raw_res[50000:],
-                                                        start, end, revert),
-                        "slug": url.split("/historical-data")[0].split("/")[-2]}
+            response = {
+                "history": processer.historical(
+                    raw_res[50000:],
+                    start,
+                    end,
+                    revert
+                ),
+                "slug": url.split("/historical-data")[0].split("/")[-2]
+            }
             response.update(
                 self.sync.cryptocurrency_by_field_value(
                     "website_slug", url.split("/")[-2]
@@ -305,10 +337,11 @@ class AsyncPymarketcap(ClientSession):
 
     async def exchange(self, name, convert="USD"):
         convert = convert.lower()
-        res = await self._get(_base_exchange_url(name))[20000:]
+        res = await self._get(await self._base_exchange_url(name))[20000:]
         return processer.exchange(res, convert)
 
-    async def every_exchange(self, exchanges=None, convert="USD", consumers=None):
+    async def every_exchange(self, exchanges=None, convert="USD",
+                             consumers=None):
         """Returns general data from every exchange
         in coinmarketcap passing a list of exchanges
         as first parameter. As default returns data
@@ -332,14 +365,19 @@ class AsyncPymarketcap(ClientSession):
             General data from all exchanges.
         """
         convert = convert.lower()
-        exchanges = exchanges if exchanges else \
-            [exc["website_slug"] for exc in self.sync.cryptoexchanges]
+
+        if exchanges is None:
+            exchanges = [
+                exc["website_slug"]
+                for exc in self.sync.cryptoexchanges
+            ]
+
         res = await self._async_multiget(
             exchanges,
             self._base_exchange_url,
             consumers if consumers else self.consumers,
-            desc="Retrieving all exchange data " \
-                 + "for %d exchanges from coinmarketcap" % len(exchanges)
+            desc="Retrieving all exchange data "
+                 "for %d exchanges from coinmarketcap" % len(exchanges)
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
@@ -355,19 +393,31 @@ class AsyncPymarketcap(ClientSession):
 
                         #######   GRAPHS API   #######
 
-    async def _base_graphs_currency_url(self, curr):
-        parms = (self.sync.field_type(curr), curr)
-        response = self.sync.cryptocurrency_by_field_value(*parms)
+    async def _base_graphs_currency_url(self, curr, start=None, end=None):
+        params = (self.sync.field_type(curr), curr)
+        response = self.sync.cryptocurrency_by_field_value(*params)
         if not response:
             raise ValueError(
-                "Any cryptocurrency found matching %s == %r." % parms
+                "Any cryptocurrency found matching %s == %r." % params
             )
         else:
             curr = response["website_slug"]
-        return "https://graphs2.coinmarketcap.com/currencies/%s" % curr
 
-    async def _every_currency(self, currencies=None,
-                              start=None, end=None, consumers=None):
+        url = "https://graphs2.coinmarketcap.com/currencies/%s" % curr
+
+        if isinstance(start, date):
+            start = datetime.combine(start, DATETIME_MIN_TIME)
+        if isinstance(end, date):
+            end = datetime.combine(end, DATETIME_MAX_TIME)
+
+        if isinstance(start, datetime) and isinstance(end, datetime):
+            start_tsmp = cmc_timestamp(start)
+            end_tsmp = cmc_timestamp(end)
+            url = "%s/%d/%d/" % (url.strip("/"), start_tsmp, end_tsmp)
+        return url
+
+    async def _every_currency(self, currencies=None, start=None, end=None,
+                              use_auto_timeframe=False, consumers=None):
         """Returns graphs data from every currency in
         coinmarketcap passing a list of currencies as
         first parameter. As default returns graphs data
@@ -382,6 +432,8 @@ class AsyncPymarketcap(ClientSession):
                 graphs data in datetime. As default ``None``.
             end (datetime, optional): Time to end retrieving
                 graphs data in datetime. As default ``None``.
+            use_auto_timeframe (bool, optional): Use auto time frames same
+                as fronted API. As default ``False``
             consumers (int, optional): Number of consumers
                 processing the requests simultaneously.
                 As default ``None``
@@ -389,14 +441,25 @@ class AsyncPymarketcap(ClientSession):
 
         Returns (async iterator): Graphs data from all currencies.
         """
-        currencies = currencies if currencies else \
-            [curr["website_slug"] for curr in self.sync.cryptocurrencies]
+        url_kwargs = {}
+        if use_auto_timeframe:
+            url_kwargs.update(
+                start=start,
+                end=end,
+            )
+
+        if currencies is None:
+            currencies = [
+                curr["website_slug"]
+                for curr in self.sync.cryptocurrencies
+            ]
+
         res = await self._async_multiget(
             currencies,
-            self._base_graphs_currency_url,
+            partial(self._base_graphs_currency_url, **url_kwargs),
             consumers if consumers else self.consumers,
-            desc="Retrieving all graphs data " \
-                 + "for %d currencies from coinmarketcap" % len(currencies)
+            desc="Retrieving all graphs data for %d currencies "
+                 "from coinmarketcap" % len(currencies)
         )
         for url, raw_res in res:
             self.logger.debug("Processing data from %s" % url)
@@ -404,7 +467,7 @@ class AsyncPymarketcap(ClientSession):
             response = processer.graphs(raw_res, start, end)
             response.update(
                 self.sync.cryptocurrency_by_field_value(
-                    "website_slug", url.split("/")[-1]
+                    "website_slug", url.split("/")[4]
                 )
             )
             yield response

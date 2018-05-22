@@ -5,6 +5,7 @@
 
 from datetime import datetime
 
+
 def assert_types(res):
     assert isinstance(res, dict)
     for field, values in res.items():
