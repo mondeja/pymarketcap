@@ -24,3 +24,5 @@ async.py
 test_currency_tracking.py
 *.go
 .coverage
+
+.idea

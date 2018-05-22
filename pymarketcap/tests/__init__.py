@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """Shared interfaces tests modules."""
+from time import sleep
 
 from pymarketcap.errors import CoinmarketcapHTTPError
+
 
 def type_test(map_types, key, value):
     """Test every type of the dictionary pairs
@@ -18,11 +20,15 @@ def type_test(map_types, key, value):
     Raises:
        ``AssertionError`` if types and keys doesn't match.
     """
-    try:
-        assert isinstance(value, map_types[key])
-    except AssertionError as err:
-        print("Key: %s\nValue: %r\n" % (key, value))
-        raise err
+    _types = map_types.get(key)
+    if _types is not None:
+        msg = "Key: %s\nValue: %r\nTypes: %r\n" % (key, value, _types)
+        try:
+            assert isinstance(value, _types), msg
+        except AssertionError as err:
+            print(msg)
+            raise err
+
 
 def assert_cryptocurrency_or_exchange_types(res):
     for key, value in res.items():
@@ -30,6 +36,7 @@ def assert_cryptocurrency_or_exchange_types(res):
             assert isinstance(value, int)
         else:
             assert isinstance(value, str)
+
 
 def restart_if_http_error(res):
     def real_decorator(func):
@@ -55,6 +62,7 @@ def restart_if_http_error(res):
             return response
         return wrapper
     return real_decorator
+
 
 def disabled_decorator(func):
     """This decorator disables the provided function, and does nothing."""

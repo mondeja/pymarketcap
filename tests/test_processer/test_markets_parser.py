@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
 import pytest
 
@@ -23,6 +23,7 @@ res = []
 end2end_marked_if_not_cache = \
     pytest.mark.end2end if not exists_cache_file else disabled_decorator
 
+
 @pytest.mark.order1
 @end2end_marked_if_not_cache
 def test_all_markets(event_loop):
@@ -30,12 +31,14 @@ def test_all_markets(event_loop):
         async with AsyncPymarketcap(**asyncparms) as apym:
             async for currency in apym.every_markets():
                 res.append(currency)
+
     if exists_cache_file:
         with open(cache_file, "r") as f:
             for exc in json.loads(f.read()):
                 res.append(exc)
     else:
         event_loop.run_until_complete(get_all_markets())
+
 
 def assert_any_field_in_response(field, readable_field):
     found = False
@@ -50,7 +53,7 @@ def assert_any_field_in_response(field, readable_field):
                 found = True
         elif isinstance(value, (int, float, bool)):
             found = True
-        elif value == None:
+        elif value is None:
             continue
         else:
             msg = "Case not anticipated. 'type(value) == %r'"
@@ -62,21 +65,26 @@ def assert_any_field_in_response(field, readable_field):
               + "Check 'processer:markets()' function.")
         raise err
 
+
 @end2end_marked_if_not_cache
 def test_name():
     assert_any_field_in_response("name", "currency name")
+
 
 @end2end_marked_if_not_cache
 def test_website_slug():
     assert_any_field_in_response("website_slug", "website_slug")
 
+
 @end2end_marked_if_not_cache
 def test_symbol():
     assert_any_field_in_response("symbol", "currency symbol")
 
+
 @end2end_marked_if_not_cache
 def test_id():
     assert_any_field_in_response("id", "currency id")
+
 
 @end2end_marked_if_not_cache
 def test_markets():

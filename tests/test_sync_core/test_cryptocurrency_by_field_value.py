@@ -2,11 +2,13 @@
 
 from pymarketcap import Pymarketcap
 from pymarketcap.tests import assert_cryptocurrency_or_exchange_types
+
 pym = Pymarketcap()
 
 SYMBOL = "BTC"
 NAME = "Bitcoin"
 WEBSITE_SLUG = "bitcoin"
+
 
 def test_valid_cryptocurrency():
     res = pym.cryptocurrency_by_field_value("website_slug",
@@ -17,9 +19,11 @@ def test_valid_cryptocurrency():
 
     assert_cryptocurrency_or_exchange_types(res)
 
+
 INVALID_WEBSITE_SLUG = "hnsdhkfyfd7Fye	ogufgk"
+
 
 def test_invalid_cryptocurrency():
     res = pym.cryptocurrency_by_field_value("website_slug",
-    	                                    INVALID_WEBSITE_SLUG)
-    assert res == None
+                                            INVALID_WEBSITE_SLUG)
+    assert res is None

@@ -3,20 +3,22 @@
 
 """Tests for ticker() method"""
 
-from pymarketcap.tests import type_test
 from pymarketcap import Pymarketcap
+from pymarketcap.tests import type_test
+
 pym = Pymarketcap()
+
 
 def assert_types(res):
     map_types = {
-        "name":               str,
-        "symbol":             str,
-        "added":              str,
-        "market_cap":         (float, type(None)),
-        "price":              float,
+        "name": str,
+        "symbol": str,
+        "added": str,
+        "market_cap": (float, type(None)),
+        "price": float,
         "circulating_supply": (float, type(None)),
-        "volume_24h":         (float, type(None)),
-        "percent_change":     (float, type(None)),
+        "volume_24h": (float, type(None)),
+        "percent_change": (float, type(None)),
     }
 
     assert isinstance(res, list)
@@ -24,11 +26,13 @@ def assert_types(res):
     for currency in res:
         assert isinstance(currency, dict)
         for key, value in currency.items():
-                type_test(map_types, key, value)
+            type_test(map_types, key, value)
+
 
 def test_types():
     res = pym.recently()
     assert_types(res)
+
 
 def test_convert():
     res_btc = pym.recently(convert="BTC")

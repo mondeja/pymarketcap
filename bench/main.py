@@ -38,7 +38,8 @@ common_light_setup = "%s;%s" % (basic_setup, light_init)
 
 BENCHS = [
     {"setup": basic_setup, "run": common_init, "name": "__init__"},
-    {"setup": common_light_setup, "run": "cmc._cache_symbols_ids()", "name": "_cache_symbols"},
+    # Deprecated in version 4.0.0
+    # {"setup": common_light_setup, "run": "cmc._cache_symbols_ids()", "name": "_cache_symbols"},
     {"setup": common_light_setup, "run": "cmc.ticker()", "name": "ticker"},
     #{"setup": common_setup, "run": "cmc.ticker('STEEM', convert='EUR')",
     #    "name": "ticker", "kwargs": dict(currency="STEEM", convert="EUR")},
@@ -207,6 +208,7 @@ def file_prepare_results():
                 LAST_RESULTS = json.loads(f.read())
         except json.decoder.JSONDecodeError:
             LAST_RESULTS = None
+
 
 if __name__ == "__main__":
     argparsing()
