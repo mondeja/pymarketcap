@@ -10,15 +10,8 @@ Contributing
 Known issues and enhacements
 ----------------------------
 
-`TODO list <https://github.com/mondeja/pymarketcap/milestone/2>`__
-
-Enhacements
-~~~~~~~~~~~
-
 |Enhancement|
 
-Bugs
-~~~~
 
 - Total: |Total bugs|
 - Tests: |Test bugs|
@@ -35,7 +28,7 @@ Basic guidelines
 --------------
 
 Basic benchmarking
-~~~~~~~~~~~~~~~~~~
+------------------
 
 You can test basically benchmarking of ``Pymarketcap`` class methods running
 ``python3 bench/main.py``. You can filter by name of benchmarks, change
@@ -43,7 +36,7 @@ the number of repetitions for each one or change file where
 benchmarks results are stored: run ``python3 bench/main.py --help``.
 
 How does pymarketcap works in depth?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 |Repo size| |Code size|
 
@@ -53,8 +46,7 @@ How does pymarketcap works in depth?
    Run ``make precompile-sources`` to do manual code precompilation and
    ``make restore-sources`` for restore souce code to original state.
 -  Numerical values returned by the scraper are real values with
-   which `coinmarketcap.com <https://www.coinmarketcap.com>`__ works, not the values displayed on their
-   frontend (see source HTML code of the web).
+   which `coinmarketcap.com <https://www.coinmarketcap.com>`__ works, not the values displayed on their frontend (see source HTML code of the web).
 
 --------------
 
@@ -65,8 +57,8 @@ Pull requesters
 ~~~~~~~~~~~~~~~
 
 - `badele <https://github.com/badele>`__
-- `wilcollins <https://github.com/wilcollins>`__
 - `nkoshell <https://github.com/nkoshell>`__
+- `wilcollins <https://github.com/wilcollins>`__
 
 Bug hunters
 ~~~~~~~~~~~
