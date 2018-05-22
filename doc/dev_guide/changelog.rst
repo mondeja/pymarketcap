@@ -6,6 +6,7 @@ Changelog
 
 - Some tests added which assert if a field is ``None`` between all fields methods responses (see `#46 <https://github.com/mondeja/pymarketcap/issues/46>`__). These check if a field are not being parsed by ``processer.pyx`` regular expressions.
 - New method ``ticker_all`` due to `coinmarketcap API <https://coinmarketcap.com/api/>`__ has implemented a limit of 100 for the number of currencies in ``/ticker/`` endpoint responses. With ``ticker_all`` we can retrieve all currencies from ``ticker`` method responses.
+- New parameter added ``use_auto_timeframe`` in some methods until pull request `#52 <https://github.com/mondeja/pymarketcap/pull/52/commits/9dc5dba5dfabb11649bf0257d3992cefbb41d46b>`__.
 
 4.0.0
 ~~~~~

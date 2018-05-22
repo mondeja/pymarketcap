@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+"""Pymarketcap utilities module."""
+
+# Standard python modules
 import sys
 import time
 from datetime import datetime

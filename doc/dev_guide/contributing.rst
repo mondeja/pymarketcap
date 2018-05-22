@@ -66,6 +66,7 @@ Pull requesters
 
 - `badele <https://github.com/badele>`__
 - `wilcollins <https://github.com/wilcollins>`__
+- `nkoshell <https://github.com/nkoshell>`__
 
 Bug hunters
 ~~~~~~~~~~~

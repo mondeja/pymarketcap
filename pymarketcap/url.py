@@ -2,10 +2,12 @@
 
 """Urllib implementation for pymarketcap."""
 
+# Standard python modules
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
 from socket import timeout as TimeoutHTTPError
 
+# Internal python modules
 from pymarketcap import __version__
 from pymarketcap.errors import CoinmarketcapHTTPError408
 

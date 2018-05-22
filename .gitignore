@@ -11,8 +11,7 @@ NOTES.md
 *.json
 
 # Local test development
-builder_checks.py
-proof.py
+foo.py
 env/
 .benchmarks/
 .pytest_cache/
