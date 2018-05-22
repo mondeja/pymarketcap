@@ -30,21 +30,38 @@ cpdef currency(res, convert):
 
     vol_24h = _total_markets_volume.group(1)
     try:
+        vol_24h = _total_markets_volume.group(1)
+        vol_24h = float(vol_24h)
+    except AttributeError:
+        vol_24h = None
+    except ValueError:
+        if vol_24h != "?":
+            raise
+        vol_24h = None
+    try:
         total_cap = _total_markets_cap.group(1)
+        total_cap = float(total_cap)
     except AttributeError:
         total_cap = None
-    else:
-        total_cap = float(total_cap)
+    except ValueError:
+        if total_cap != "?":
+            raise
+        total_cap = None
     try:
         price = _price.group(1)
+        price = float(price)
     except AttributeError:
         price = None
-    else:
-        price = float(price)
+    except ValueError:
+        if price != "?":
+            raise
+        price = None
 
-    response = {"markets_cap": total_cap,
-                "markets_volume_24h": float(vol_24h) if vol_24h != "?" else None,
-                "price": price}
+    response = {
+        "markets_cap": total_cap,
+        "markets_volume_24h": vol_24h,
+        "price": price
+    }
 
     # Circulating, maximum and total supply
     supply = re.findall(
@@ -91,7 +108,7 @@ cpdef currency(res, convert):
     return response
 
 cpdef markets(res, convert):
-    sources = re.findall(r'<a href="/exchanges/.+/">([\s\w\.-]+)</a>', res)
+    sources = re.findall(r'<a.*?href="/exchanges/.+/".*?>([\s\w\.-]+)</a>', res)
     markets = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
     volume_24h = re.findall(r'ume" .*data-%s="(\d+\.\d+)' % convert, res)
     price = re.findall(r'"price" .*data-%s="(\?|\d+\.*\d*e*[-|+]*\d*)' % convert, res)
@@ -116,26 +133,34 @@ cpdef markets(res, convert):
 cpdef ranks(res):
     cdef int rank_len = 30
 
-    names_slugs = re.findall(r'<a href="/currencies/(.+)/">(.+)</a>', res)[6:]
+    names_slugs = re.findall(
+        r'<a.*?href="/currencies/([^/]+?)/".*?>([^<>]+?)</a>', res
+    )
     symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
     volume_24h = re.findall(r'ume" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
     price = re.findall(r'ice" .*data-usd="(\d+\.*[\d|e|-]*)"', res)
     percent_change = re.findall(r'right" .*data-usd="(-*\d+\.*[\d|e|-]*)"', res)
 
-    index_map = {
-        "gainers": {"1h": 0, "7d": 30, "24h": 60},
-        "losers": {"1h": 90, "7d": 150, "24h": 120}
+    periods = ["1h", "24h", "7d"]
+    index_map ={
+        "gainers": dict(zip(periods, (0, 30, 60))),
+        "losers": dict(zip(periods, (90, 150, 120)))
     }
 
-    return {rank: {period: [{
-        "name": names_slugs[index_map[rank][period]+i][1],
-        "website_slug": names_slugs[index_map[rank][period]+i][0],
-        "symbol": symbols[index_map[rank][period]+i],
-        "volume_24h": float(volume_24h[index_map[rank][period]+i]),
-        "price": float(price[index_map[rank][period]+i]),
-        "percent_change": float(percent_change[index_map[rank][period]+i])
-    } for i in range(rank_len)] \
-         for period in ["1h", "24h", "7d"] } for rank in ["gainers", "losers"]}
+    return {
+        rank: {
+            period: [{
+                "name": names_slugs[index_map[rank][period] + i][1].strip(),
+                "website_slug": names_slugs[index_map[rank][period] + i][0],
+                "symbol": symbols[index_map[rank][period] + i],
+                "volume_24h": float(volume_24h[index_map[rank][period] + i]),
+                "price": float(price[index_map[rank][period] + i]),
+                "percent_change": float(percent_change[index_map[rank][period] + i])
+            } for i in range(rank_len)]
+            for period in periods
+        }
+        for rank in index_map
+    }
 
 cpdef historical(res, start, end, revert):
     cdef long len_i, i, i2, i3
@@ -186,7 +211,9 @@ cpdef historical(res, start, end, revert):
     return list(reversed(response)) if revert else response
 
 def recently(res, convert):
-    names = re.findall(r'<a href="/currencies/.+/">(.+)</a>', res)[6:]
+    names =  re.findall(
+        r'<a.*?href="/currencies/[^/]+?/".*?>([^<>]+?)</a>', res
+    )
     symbols = re.findall(r'<td class="text-left">(.+)</td>', res)
     added = re.findall(r'<td class="text-right.*">(Today|\d+ days ago)</td>', res)
     mcap = re.findall(r'cap .*data-%s="(\?|\d+\.*[\d|e|-|\+]*)"' % convert, res)
@@ -227,7 +254,7 @@ def recently(res, convert):
         }
 
 cpdef exchange(res, convert):
-    currencies = re.findall(r'"market-name">(.+)</a>', res)
+    currencies = re.findall(r'".*?market-name.*?">(.+)</a>', res)
     pairs = re.findall(r'target="_blank">(%s)</a>' % PAIRS_REGEX, res)
     vol_24h = re.findall(r'ume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
     prices = re.findall(r'price" .*data-%s="(\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res)
@@ -285,9 +312,13 @@ cpdef exchange(res, convert):
 
 cpdef exchanges(res, convert):
     cdef int i
-    exchanges = re.findall(r'<a href="/exchanges/.+/">(.+)</a>', res)
+    exchanges =  re.findall(
+        r'<a.*?href="/exchanges/([^/]+?)/">([^<>]+?)</a>', res
+    )
     indexes = re.findall(r'<td>(\d+)</td>', res)
-    currencies = re.findall(r'/currencies/.+/">(.+)</a>', res)[2:]
+    currencies =  re.findall(
+        r'<a.*?href="/currencies/[^/]+?/".*?>([^<>]+?)</a>', res
+    )
     links_pairs = re.findall(r'<a href="(.*)" .*_blank">(%s)</a>' % PAIRS_REGEX, res)
     volumes = re.findall(
         r'class="text-right .*volume" .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
@@ -296,7 +327,7 @@ cpdef exchanges(res, convert):
     perc_volumes = re.findall(r'"percent-volume">(\d+\.*\d*)</span>', res)
 
     response = []
-    for exc in exchanges:
+    for slug, exc in exchanges:
         markets = []
         for _ in indexes:
             i = int(_)
@@ -324,14 +355,21 @@ cpdef exchanges(res, convert):
 
         response.append({
             "name": exc,
+            "website_slug": slug,
             "markets": markets,
         })
 
     return response
 
 cpdef tokens(res, convert):
-    names = re.findall(r'currency-name-container" href="/currencies/.+/">(.+)</a>', res)
-    symbols = re.findall(r'currency-symbol"><a href="/currencies/.+/">(.+)</a>', res)
+    names = re.findall(
+        r'currency-name-container.*?".*?href="/currencies/[^/]+?/".*?>([^<>]+?)</a>',
+        res
+    )
+    symbols = re.findall(
+        r'currency-symbol.*?".*?href="/currencies/[^/]+?/".*?>([^<>]+?)</a>',
+        res
+    )
     platforms = re.findall(r'platform-name" data-sort="([^"]+)">', res)
     caps = re.findall(
         r'market-cap .*data-%s="(\?|\d+\.*\d*e{0,1}-{0,1}\d*)"' % convert, res
@@ -368,12 +406,12 @@ cpdef tokens(res, convert):
 
 cpdef graphs(res, start, end):
     response = {}
-    for key in list(res.keys()):
+    for key, value in res.items():
         group = []
-        for _tmp, data in res[key]:
-            tmp = datetime.fromtimestamp(int(_tmp/1000))
+        for _tmp, data in value:
+            tmp = datetime.fromtimestamp(_tmp / 1000)
             try:
-                if tmp >= start and tmp <= end:
+                if start <= tmp <= end:
                     group.append([tmp, data])
             except TypeError:
                 group.append([tmp, data])

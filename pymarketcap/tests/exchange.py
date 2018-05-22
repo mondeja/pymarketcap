@@ -5,6 +5,7 @@
 
 from pymarketcap.tests import type_test
 
+
 def assert_types(res):
     """Type assertions for ``exchange()`` methods attribute."""
     map_types = {
@@ -36,6 +37,7 @@ def assert_types(res):
         for key, value in market.items():
             type_test(map_types, key, value)
 
+
 def assert_consistence(res):
     assert res["name"] # len(res["name"]) > 0
-    assert res["name"] != None
+    assert res["name"] is not None

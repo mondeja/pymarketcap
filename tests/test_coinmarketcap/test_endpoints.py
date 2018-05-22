@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from time import sleep
-from random import choice
 from urllib.request import urlopen
-from tqdm import tqdm
 
 import pytest
+from tqdm import tqdm
 
 from pymarketcap import Pymarketcap
 from pymarketcap.tests.utils import (
     random_cryptocurrency,
-    random_exchange
+    random_exchange,
 )
+
 pym = Pymarketcap()
 
 cryptocurrency = random_cryptocurrency(pym)
@@ -48,17 +48,19 @@ endpoints = [
                                 "%sglobal/marketcap-altcoin/" % base_graphs_api_url]),
 ]
 
+
 def assert_up(ep):
     req = urlopen(ep)
     assert req.getcode() != 404
     req.close()
+
 
 @pytest.mark.end2end
 def test_endpoints():
     for i, (method, eps) in enumerate(tqdm(endpoints)):
         if i == 0:
             tqdm.write("tests/test_endpoints.py::test_endpoints")
-        if type(eps) != list:
+        if not isinstance(eps, list):
             eps = [eps]
         for ep in eps:
             tqdm.write("%23s() --> %s" % (method, ep))

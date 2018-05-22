@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from pymarketcap import Pymarketcap
+
 pym = Pymarketcap()
 
 exchanges = pym.exchanges()
+
 
 def assert_any_field_in_response(field, readable_field):
     found = False
@@ -15,7 +17,7 @@ def assert_any_field_in_response(field, readable_field):
             found = True
             for market in value:
                 for _key, _value in market.items():
-                    if _value == None:
+                    if _value is None:
                         found = False
                         break
                 if found == False:
@@ -23,7 +25,7 @@ def assert_any_field_in_response(field, readable_field):
         elif isinstance(value, str):
             if value != "":
                 found = True
-        elif value == None:
+        elif value is None:
             continue
         else:
             msg = "Case not anticipated. 'type(value) == %r'"
@@ -35,8 +37,10 @@ def assert_any_field_in_response(field, readable_field):
               + "Check 'processer:exchanges()' function.")
         raise err
 
+
 def test_name():
     assert_any_field_in_response("name", "exchange name")
+
 
 def test_markets():
     assert_any_field_in_response("markets", "market")
