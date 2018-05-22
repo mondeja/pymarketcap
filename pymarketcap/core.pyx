@@ -8,12 +8,13 @@ from re import (
     findall as re_findall
 )
 from time import time
-from datetime import datetime
+from datetime import datetime, date
 from json import loads
 from urllib.request import urlretrieve
 from urllib.error import HTTPError
 
 # Internal Cython modules
+from pymarketcap.consts import DATETIME_MIN_TIME, DATETIME_MAX_TIME
 from pymarketcap.curl import get_to_memory
 from pymarketcap import processer
 
@@ -23,6 +24,7 @@ from pymarketcap.errors import (
     CoinmarketcapHTTPError404,
     CoinmarketcapTooManyRequestsError
 )
+from pymarketcap.util import cmc_timestamp
 
 # HTTP errors mapper
 http_errors_map = {
@@ -649,7 +651,8 @@ cdef class Pymarketcap:
 
                        #######   GRAPHS API   #######
 
-    cpdef _currency(self, unicode curr, start=None, end=None):
+    cpdef _currency(self, unicode curr, start=None, end=None,
+                    use_auto_timeframe=False):
         """Get graphs data of a currency.
 
         Args:
@@ -658,6 +661,8 @@ cdef class Pymarketcap:
                 graphs data in datetime type. As default ``None``.
             end (datetime, optional): Time to end retrieving
                 graphs data in datetime type. As default ``None``.
+            use_auto_timeframe (bool, optional): Use auto time frames same 
+                as fronted API. As default ``False``
 
         Returns (dict):
             Dict info with next keys: ``"market_cap_by_available_supply"``,
@@ -676,11 +681,23 @@ cdef class Pymarketcap:
             curr = response["website_slug"]
 
         url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % curr.encode()
+
+        if use_auto_timeframe:
+            if isinstance(start, date):
+                start = datetime.combine(start, DATETIME_MIN_TIME)
+            if isinstance(end, date):
+                end = datetime.combine(end, DATETIME_MAX_TIME)
+
+            if isinstance(start, datetime) and isinstance(end, datetime):
+                start_tsmp = cmc_timestamp(start)
+                end_tsmp = cmc_timestamp(end)
+                url = b"%s/%d/%d/" % (url.strip(b"/"), start_tsmp, end_tsmp)
+
         res = loads(self._get(url))
 
         return processer.graphs(res, start, end)
 
-    cpdef _dominance(self, start=None, end=None):
+    cpdef _dominance(self, start=None, end=None, use_auto_timeframe=False):
         """Get currencies dominance percentage graph
 
         Args:
@@ -688,16 +705,29 @@ cdef class Pymarketcap:
                 graphs data in datetime. As default ``None``.
             end (optional, datetime): Time to start retrieving
                 graphs data in datetime. As default ``None``.
+            use_auto_timeframe (bool, optional): Use auto time frames same 
+                as fronted API. As default ``False``
 
         Returns (dict):
             Altcoins and dominance percentage values with timestamps.
         """
-        res = loads(self._get(
-            b"https://graphs2.coinmarketcap.com/global/dominance/")
-        )
+        url = b"https://graphs2.coinmarketcap.com/global/dominance/"
+        if use_auto_timeframe:
+            if isinstance(start, date):
+                start = datetime.combine(start, DATETIME_MIN_TIME)
+            if isinstance(end, date):
+                end = datetime.combine(end, DATETIME_MAX_TIME)
+
+            if isinstance(start, datetime) and isinstance(end, datetime):
+                start_tsmp = cmc_timestamp(start)
+                end_tsmp = cmc_timestamp(end)
+                url = b"%s/%d/%d/" % (url.strip(b"/"), start_tsmp, end_tsmp)
+
+        res = loads(self._get(url))
         return processer.graphs(res, start, end)
 
-    cpdef _global_cap(self, bitcoin=True, start=None, end=None):
+    cpdef _global_cap(self, bitcoin=True, start=None, end=None,
+                      use_auto_timeframe=False):
         """Get global market capitalization graphs, including
         or excluding Bitcoin.
 
@@ -709,16 +739,28 @@ cdef class Pymarketcap:
                 graphs data in datetime. As default ``None``.
             end (optional, datetime): Time to start retrieving
                 graphs data in datetime. As default ``None``.
+            use_auto_timeframe (bool, optional): Use auto time frames same 
+                as fronted API. As default ``False``
 
         Returns (dict):
             Whose values are lists of lists with timestamp and values,
             a data structure with the keys: ``"volume_usd"`` and
             ``"market_cap_by_available_supply"``.
         """
-        cdef bytes url
         url = b"https://graphs2.coinmarketcap.com/global/marketcap-altcoin/"
         if bitcoin:
             url = b"https://graphs2.coinmarketcap.com/global/marketcap-total/"
+
+        if use_auto_timeframe:
+            if isinstance(start, date):
+                start = datetime.combine(start, DATETIME_MIN_TIME)
+            if isinstance(end, date):
+                end = datetime.combine(end, DATETIME_MAX_TIME)
+
+            if isinstance(start, datetime) and isinstance(end, datetime):
+                start_tsmp = cmc_timestamp(start)
+                end_tsmp = cmc_timestamp(end)
+                url = b"%s/%d/%d/" % (url.strip(b"/"), start_tsmp, end_tsmp)
 
         res = loads(self._get(url))
         return processer.graphs(res, start, end)

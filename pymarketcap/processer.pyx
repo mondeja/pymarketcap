@@ -3,8 +3,9 @@
 
 # Standard Python modules
 import re
-from datetime import datetime
+from datetime import datetime, date
 
+from pymarketcap.consts import DATETIME_MIN_TIME, DATETIME_MAX_TIME
 # RegEx parsing
 PAIRS_REGEX = "[\s\$@\w\.]+/[\s\$@\w\.]+"
 
@@ -405,15 +406,37 @@ cpdef tokens(res, convert):
     return response
 
 cpdef graphs(res, start, end):
+    is_start = isinstance(start, datetime)
+    is_end = isinstance(end, datetime)
+    is_both = is_start and is_end
+
+    dt_filter = _get_dt_filter(start, end)
+
     response = {}
     for key, value in res.items():
         group = []
         for _tmp, data in value:
             tmp = datetime.fromtimestamp(_tmp / 1000)
-            try:
-                if start <= tmp <= end:
-                    group.append([tmp, data])
-            except TypeError:
+            if dt_filter(tmp):
                 group.append([tmp, data])
         response[key] = group
     return response
+
+cdef _get_dt_filter(start, end):
+    if isinstance(start, date):
+        start = datetime.combine(start, DATETIME_MIN_TIME)
+    if isinstance(end, date):
+        end = datetime.combine(end, DATETIME_MAX_TIME)
+
+    is_start = isinstance(start, datetime)
+    is_end = isinstance(end, datetime)
+    is_both = is_start and is_end
+
+    if is_both:
+        return lambda dt: start <= dt <= end
+    elif is_start:
+        return lambda dt: dt >= start
+    elif is_end:
+        return lambda dt: dt <= end
+    else:
+        return lambda dt: dt
