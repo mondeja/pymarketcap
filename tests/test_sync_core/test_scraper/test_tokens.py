@@ -19,7 +19,7 @@ def assert_number_of_tokens(res):
     data = req.read()
     req.close()
     indexes = int(
-        re_findall(r'<td class="text-center">\n(\d+)\n</td>', data.decode())[-1]
+        re_findall(r'<td class="text-center">\n*(.+)\n*</td>', data.decode())[-1]
     )
     assert len(res) in [indexes-1, indexes, indexes+1]
 

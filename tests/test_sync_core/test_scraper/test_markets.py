@@ -33,8 +33,6 @@ def test_without_convert():
     print('(<currency>["website_slug"] == "%s")' % website_slug, end=" ")
     res = pym.markets(website_slug)
     assert_types(res)
-    from pprint import pprint
-    pprint(res)
     assert_consistence(res)
     assert_number_of_markets(res)
 
