@@ -19,7 +19,7 @@ New version 4.0.0
 
 - See `changelog <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>`__ for more details.
 
-This new version introduce some breaking changes (see `Documentation reference <http://pymarketcap.readthedocs.io/reference.html>`__).
+This new version introduce some breaking changes (see `Documentation reference <http://pymarketcap.readthedocs.io/user_guide/reference.html>`__).
 
 
 Install
@@ -51,7 +51,7 @@ From source
 Documentation
 -------------
 - `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`__.
-- `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=docs%2Fsync_live.ipynb>`__.
+- `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Fsync_live.ipynb>`__.
 
 `Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/contributing.rst>`__
 ------------------------------------------------------------------------------------------
