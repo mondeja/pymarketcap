@@ -405,9 +405,9 @@ class AsyncPymarketcap(ClientSession):
 
         url = "https://graphs2.coinmarketcap.com/currencies/%s" % curr
 
-        if isinstance(start, date):
+        if type(start) is date:
             start = datetime.combine(start, DATETIME_MIN_TIME)
-        if isinstance(end, date):
+        if type(end) is date:
             end = datetime.combine(end, DATETIME_MAX_TIME)
 
         if isinstance(start, datetime) and isinstance(end, datetime):
