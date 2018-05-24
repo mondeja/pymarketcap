@@ -3,11 +3,16 @@
 
 import os
 import sys
-import argparse
 from shlex import split as parse
 from subprocess import check_output
-from setuptools import setup, find_packages
+
+from pip.req import parse_requirements
+from setuptools import find_packages, setup
 from setuptools.extension import Extension
+
+CURR_DIR = os.path.dirname(__file__)
+REQ_PATH = os.path.join(CURR_DIR, "requirements.txt")
+
 
 def simple_call(command):
     try:
@@ -15,9 +20,10 @@ def simple_call(command):
     except Exception as e:
         return 1
 
+
 def spec_sys_calls(command):
     if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-        command = [command, "sudo %s" % (command)]
+        command = [command, "sudo %s" % command]
     return [command]
 
 
@@ -34,12 +40,8 @@ def install_cython_via_pip():
 
 try:
     from Cython.Build import cythonize
-except ImportError:   # Cython required
-    print("Cython not found. You need to install Cython before pymarketcap.")
-    sys.exit(1)
-
-CURR_DIR = os.path.dirname(__file__)
-REQ_PATH = os.path.join(CURR_DIR, "requirements.txt")
+except ImportError:  # Cython required
+    exit("Cython not found. You need to install Cython before pymarketcap.")
 
 code = 1
 base_call = "pip3 install -r %s" % REQ_PATH
@@ -50,13 +52,12 @@ for i, command in enumerate(calls):
         break
 
 if code == 0:
-    print("Dependencies installed sucessfully.")
+    print("Dependencies installed successfully.")
 else:
     print("Error installing dependencies, installing pymarketcap anywhere...")
 
-
 # ===========  Precompiler  ===========
-if not "sdist" in sys.argv:
+if "sdist" not in sys.argv:
     from precompiler import run_builder, run_unbuilder
 
     source = os.path.join(os.getcwd(), "pymarketcap", "core.pyx")
@@ -66,39 +67,34 @@ if not "sdist" in sys.argv:
             if run_builder(source):
                 pass
             else:
-                print("Error building pymarketcap.")
-                sys.exit(1)
+                exit("Error building pymarketcap.")
         else:
-            print("Error building pymarketcap.")
-            sys.exit(1)
+            exit("Error building pymarketcap.")
 
 # Check if minimum Python3.6
 PYTHON_VERSION = sys.version_info
-if PYTHON_VERSION < (3,6):
-    if PYTHON_VERSION > (3,5):
+if PYTHON_VERSION < (3, 6,):
+    if PYTHON_VERSION > (3, 5,):
         if "--quiet" not in sys.argv:
             while True:
-                msg = "\nPython version:\n%s\n\nYou need " % sys.version \
-                    + "to install almost Python3.6 in order to use " \
-                    + "the asynchronous Pymarketcap interface.\n" \
-                    + "Install pymarketcap without it anyway? Y/N: "
+                msg = (
+                          "\nPython version:\n%s\n\nYou need "
+                          "to install almost Python3.6 in order to use "
+                          "the asynchronous Pymarketcap interface.\n"
+                          "Install pymarketcap without it anyway? Y/N: "
+                      ) % PYTHON_VERSION
                 cont = str(input(msg)).lower()
                 if cont == "n":
-                    print("Installation cancelled.")
-                    sys.exit(0)
-                    break
+                    exit("Installation cancelled.")
                 elif cont != "y":
                     print("Invalid option.")
                 else:
                     print("Installing pymarketcap...")
                     break
     else:
-        print("You need almost Python3.5 version to install pymarketcap.")
-        sys.exit(1)
-
+        exit("You need almost Python3.5 version to install pymarketcap.")
 
 # ===========  Cython compilation  ===========
-
 COMPILE_CURL = True
 
 # Windows
@@ -108,11 +104,12 @@ if sys.platform.startswith('win32') and "--force-curl" not in sys.argv:
 if "--force-curl" in sys.argv:
     sys.argv.remove("--no-curl")
 
-                          # Building on ReadTheDocs (very crazy):
+# Building on ReadTheDocs (very crazy):
 if "--no-curl" in sys.argv or os.environ.get("READTHEDOCS") == "True":
     COMPILE_CURL = False
     if "--no-curl" in sys.argv:
         sys.argv.remove("--no-curl")
+
 
 def declare_cython_extension(ext_name, libraries=None):
     """Declare a Cython extension module for setuptools.
@@ -131,12 +128,13 @@ def declare_cython_extension(ext_name, libraries=None):
 
     return Extension(ext_name, [ext_path], libraries=libraries)
 
+
 ext_modules = [
     declare_cython_extension("pymarketcap.core"),
-    declare_cython_extension("pymarketcap.processer")
+    declare_cython_extension("pymarketcap.processer"),
 ]
 
-package_data={"pymarketcap": ["core.pyx", "processer.pyx"]}
+package_data = {"pymarketcap": ["core.pyx", "processer.pyx", ]}
 
 if COMPILE_CURL:
     ext_modules.append(
@@ -144,8 +142,7 @@ if COMPILE_CURL:
     )
     package_data["pymarketcap"].extend(["curl.pyx", "curl.pxd"])
 else:
-    core_path = os.path.join(os.path.dirname(__file__),
-                             "pymarketcap", "core.pyx")
+    core_path = os.path.join(CURR_DIR, "pymarketcap", "core.pyx")
     with open(core_path, "r") as f:
         content = f.readlines()
 
@@ -159,36 +156,33 @@ else:
 
 ext_modules = cythonize(ext_modules)
 
-
 # ===========  Package metadata  ===========
-
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
+with open(os.path.join(CURR_DIR, 'README.rst')) as f:
     LONG_DESC = f.read()
 
-with open(REQ_PATH, "r") as f:
-    REQ = [line.strip("\n") for line in f.readlines()]
+REQ = [l.name for l in parse_requirements(REQ_PATH, session="local")]
 
 author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
-    name = "pymarketcap",
-    version = "4.0.009",
-    url = "https://github.com/mondeja/pymarketcap",
-    download_url = "https://github.com/mondeja/pymarketcap/archive/master.zip",
-    author = author,
-    maintainer = author,
-    author_email = author_email,
-    maintainer_email = author_email,
+    name="pymarketcap",
+    version="4.0.009",
+    url="https://github.com/mondeja/pymarketcap",
+    download_url="https://github.com/mondeja/pymarketcap/archive/master.zip",
+    author=author,
+    maintainer=author,
+    author_email=author_email,
+    maintainer_email=author_email,
     platforms=['any'],
-    license = "BSD License",
-    description = "Python3 API and web scraper for coinmarketcap.com.",
-    long_description = LONG_DESC,
-    keywords = ["coinmarketcap", "cryptocurrency", "API", "wrapper",
-                "scraper", "json", "BTC", "Bitcoin", "C", "Curl", "Cython"],
-    install_requires = REQ,
-    packages = find_packages(exclude=["precompiler"]),
-    ext_modules = ext_modules,
-    classifiers = [
+    license="BSD License",
+    description="Python3 API and web scraper for coinmarketcap.com.",
+    long_description=LONG_DESC,
+    keywords=["coinmarketcap", "cryptocurrency", "API", "wrapper",
+              "scraper", "json", "BTC", "Bitcoin", "C", "Curl", "Cython"],
+    install_requires=REQ,
+    packages=find_packages(exclude=["precompiler"]),
+    ext_modules=ext_modules,
+    classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Financial and Insurance Industry",
@@ -204,11 +198,13 @@ install = setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    zip_safe = True,
-    provides = ["setup_template_cython"]
+    zip_safe=True,
+    provides=["setup_template_cython"]
 )
 
 print(
-    "\n%s v%s installation finished succesfully." \
-    % (install.get_name().capitalize(), install.get_version())
+    "\n%s v%s installation finished succesfully." % (
+        install.get_name().capitalize(),
+        install.get_version()
+    )
 )
