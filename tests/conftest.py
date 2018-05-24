@@ -5,7 +5,9 @@ import sys
 import asyncio
 import pytest
 
-sys.path.append(os.path.join(os.getcwd(), "pymarketcap"))
+sys.path.append(
+    os.path.abspath(os.path.join(os.getcwd(), "pymarketcap"))
+)
 
 tests_cache_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "cache")
 if not os.path.exists(tests_cache_dir):

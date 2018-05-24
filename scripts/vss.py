@@ -16,7 +16,7 @@ new_version_targets = [
     original_version,
     {
         "filepath": os.path.join(BASEDIR, "setup.py"),
-        "regex": r'version\s=\s"(.+?)",'
+        "regex": r'version="(.+?)",'
     },
     {
         "filepath": os.path.join(BASEDIR, "pymarketcap", "curl.pyx"),

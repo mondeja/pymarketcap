@@ -6,7 +6,6 @@ import sys
 from shlex import split as parse
 from subprocess import check_output
 
-from pip.req import parse_requirements
 from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
@@ -160,13 +159,14 @@ ext_modules = cythonize(ext_modules)
 with open(os.path.join(CURR_DIR, 'README.rst')) as f:
     LONG_DESC = f.read()
 
-REQ = [l.name for l in parse_requirements(REQ_PATH, session="local")]
+with open(REQ_PATH, "r") as f:
+    REQ = [line.strip("\n") for line in f.readlines()]
 
 author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name="pymarketcap",
-    version="4.0.009",
+    version="4.0.0010",
     url="https://github.com/mondeja/pymarketcap",
     download_url="https://github.com/mondeja/pymarketcap/archive/master.zip",
     author=author,
