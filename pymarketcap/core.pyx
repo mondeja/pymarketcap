@@ -683,9 +683,9 @@ cdef class Pymarketcap:
         url = b"https://graphs2.coinmarketcap.com/currencies/%s/" % curr.encode()
 
         if use_auto_timeframe:
-            if isinstance(start, date):
+            if type(start) is date:
                 start = datetime.combine(start, DATETIME_MIN_TIME)
-            if isinstance(end, date):
+            if type(end) is date:
                 end = datetime.combine(end, DATETIME_MAX_TIME)
 
             if isinstance(start, datetime) and isinstance(end, datetime):
@@ -713,9 +713,9 @@ cdef class Pymarketcap:
         """
         url = b"https://graphs2.coinmarketcap.com/global/dominance/"
         if use_auto_timeframe:
-            if isinstance(start, date):
+            if type(start) is date:
                 start = datetime.combine(start, DATETIME_MIN_TIME)
-            if isinstance(end, date):
+            if type(end) is date:
                 end = datetime.combine(end, DATETIME_MAX_TIME)
 
             if isinstance(start, datetime) and isinstance(end, datetime):
@@ -752,9 +752,9 @@ cdef class Pymarketcap:
             url = b"https://graphs2.coinmarketcap.com/global/marketcap-total/"
 
         if use_auto_timeframe:
-            if isinstance(start, date):
+            if type(start) is date:
                 start = datetime.combine(start, DATETIME_MIN_TIME)
-            if isinstance(end, date):
+            if type(end) is date:
                 end = datetime.combine(end, DATETIME_MAX_TIME)
 
             if isinstance(start, datetime) and isinstance(end, datetime):

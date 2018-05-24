@@ -405,12 +405,10 @@ cpdef tokens(res, convert):
         })
     return response
 
-cpdef graphs(res, start, end):
-    is_start = isinstance(start, datetime)
-    is_end = isinstance(end, datetime)
-    is_both = is_start and is_end
-
-    dt_filter = _get_dt_filter(start, end)
+cpdef dict graphs(res, start, end):
+    cdef dt_filter = _get_dt_filter(start, end)
+    cdef str key
+    cdef list value
 
     response = {}
     for key, value in res.items():
@@ -423,14 +421,14 @@ cpdef graphs(res, start, end):
     return response
 
 cdef _get_dt_filter(start, end):
-    if isinstance(start, date):
+    if type(start) is date:
         start = datetime.combine(start, DATETIME_MIN_TIME)
-    if isinstance(end, date):
+    if type(end) is date:
         end = datetime.combine(end, DATETIME_MAX_TIME)
 
-    is_start = isinstance(start, datetime)
-    is_end = isinstance(end, datetime)
-    is_both = is_start and is_end
+    cdef bint is_start = isinstance(start, datetime)
+    cdef bint is_end = isinstance(end, datetime)
+    cdef bint is_both = is_start and is_end
 
     if is_both:
         return lambda dt: start <= dt <= end
