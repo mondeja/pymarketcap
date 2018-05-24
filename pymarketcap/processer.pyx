@@ -414,7 +414,7 @@ cpdef dict graphs(res, start, end):
     for key, value in res.items():
         group = []
         for _tmp, data in value:
-            tmp = datetime.fromtimestamp(_tmp / 1000)
+            tmp = datetime.utcfromtimestamp(_tmp / 1000)
             if dt_filter(tmp):
                 group.append([tmp, data])
         response[key] = group
