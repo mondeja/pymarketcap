@@ -705,7 +705,7 @@ cdef class Pymarketcap:
                 graphs data in datetime. As default ``None``.
             end (optional, datetime): Time to start retrieving
                 graphs data in datetime. As default ``None``.
-            use_auto_timeframe (bool, optional): Use auto time frames same 
+            use_auto_timeframe (bool, optional): Use auto time frames same
                 as fronted API. As default ``False``
 
         Returns (dict):
@@ -739,7 +739,7 @@ cdef class Pymarketcap:
                 graphs data in datetime. As default ``None``.
             end (optional, datetime): Time to start retrieving
                 graphs data in datetime. As default ``None``.
-            use_auto_timeframe (bool, optional): Use auto time frames same 
+            use_auto_timeframe (bool, optional): Use auto time frames same
                 as fronted API. As default ``False``
 
         Returns (dict):

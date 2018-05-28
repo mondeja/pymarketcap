@@ -10,7 +10,7 @@ from datetime import datetime
 
 def get_timestamp(dt):
     if not isinstance(dt, datetime):
-        raise ValueError('Argument `dt` must be is instance `datetime`')
+        raise ValueError('Argument `dt` must be is instance `datetime`.')
 
     if sys.version_info < (3, 3):
         return time.mktime(dt.timetuple()) + dt.microsecond / 1000000.

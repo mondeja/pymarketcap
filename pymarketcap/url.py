@@ -40,7 +40,7 @@ def get_to_memory(url, timeout, debug):
         return Response(b"", 404, url)
     except TimeoutHTTPError:
         raise CoinmarketcapHTTPError408(
-            "Request timeout exceed (%d seconds)" % timeout
+            "Request timeout exceed (%d seconds)." % timeout
         )
     else:
         data = req.read()

@@ -62,26 +62,30 @@ def test_limit():
 def test_symbol():
     symbol = random_cryptocurrency(pym)["symbol"]
     print('(<currency>["symbol"] == "%s")' % symbol, end=" ")
-    res = pym.ticker(symbol)["data"]
+    res = pym.ticker(symbol)
 
-    assert_types(res)
-    assert_consistence(res)
+    if res:
+        assert_types(res["data"])
+        assert_consistence(res["data"])
 
 def test_name():
     name = random_cryptocurrency(pym)["name"]
     print('(<currency>["name"] == "%s")' % name, end=" ")
-    res = pym.ticker(name)["data"]
+    res = pym.ticker(name)
 
-    assert_types(res)
-    assert_consistence(res)
+    if res:
+        assert_types(res["data"])
+        assert_consistence(res["data"])
 
 def test_start():
     pos = randint(0, len(pym.cryptocurrencies))
-    res = pym.ticker(start=pos)["data"]
-    curr_id = list(res.keys())[0]
-    assert res[curr_id]["rank"] == pos
-    assert_types(res[curr_id])
-    assert_consistence(res[curr_id])
+    res = pym.ticker(start=pos)
+
+    if res:
+        curr_id = list(res["data"].keys())[0]
+        assert res["data"][curr_id]["rank"] == pos
+        assert_types(res["data"][curr_id])
+        assert_consistence(res["data"][curr_id])
 
 def test_convert():
     for currency in [True, False]:  # With and without currency
@@ -94,14 +98,15 @@ def test_convert():
         else:
             print("(Badge: %s)" % badge, end=" ")
 
-        res = pym.ticker(currency=symbol, convert=badge)["data"]
-        if currency:
-            assert_types(res)
-            assert_consistence(res)
+        res = pym.ticker(currency=symbol, convert=badge)
+        if currency and res:
+            assert_types(res["data"])
+            assert_consistence(res["data"])
 
 
 def test_ticker_all():
     res = pym.ticker_all()
-    for curr in res:
-        assert_types(curr)
-        assert_consistence(curr)
+    if res:
+        for curr in res:
+            assert_types(curr)
+            assert_consistence(curr)

@@ -37,6 +37,8 @@ You need to install `cython <http://cython.readthedocs.io/en/latest/src/quicksta
 From source
 -----------
 
+::
+
     git clone https://github.com/mondeja/pymarketcap.git
     cd pymarketcap
     pip3 install -r requirements.txt
