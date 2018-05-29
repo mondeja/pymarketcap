@@ -84,7 +84,7 @@ Support
 .. |PyPI-Versions| image:: https://img.shields.io/pypi/pyversions/pymarketcap.svg
     :target: https://cnhv.co/1xgwm
 .. |Binder| image:: https://mybinder.org/badge.svg
-    :target: https://cnhv.co/1y9ff
+    :target: https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Fsync_live.ipynb
 .. |Status| image:: https://img.shields.io/pypi/status/pymarketcap.svg
     :target: https://cnhv.co/1xgwm
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/pymarketcap/badge/?version=latest
