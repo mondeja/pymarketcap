@@ -14,13 +14,6 @@ pymarketcap is a library for retrieve data from
 of a cythonized scraper and and API wrapper built with libcurl, but is
 posible to compile a lightweight version with standard ``urllib``
 
-New version 4.0.0
------------------
-
-- See changelog_ for more details.
-
-This new version introduce some breaking changes (see `Documentation reference <http://pymarketcap.readthedocs.io/user_guide/reference.html>`_).
-
 
 Install
 =======

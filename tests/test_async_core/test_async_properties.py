@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from pymarketcap import (
-    AsyncPymarketcap,
-    Pymarketcap,
-)
+import pytest
+
+try:
+    from pymarketcap import AsyncPymarketcap
+except ImportError:
+    pass
+from pymarketcap import Pymarketcap
 from pymarketcap.tests.consts import asyncparms
 
-
+@pytest.mark.py36
 def test_sync_interface(event_loop):
     async def wrapper():
         async with AsyncPymarketcap(**asyncparms) as apym:

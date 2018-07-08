@@ -43,6 +43,8 @@ cdef class Pymarketcap:
             As default ``20``.
         debug: (bool, optional): Show low level data in get requests.
             As default, ``False``.
+        proxy_addr (bytes, optional): Proxy to use with Pymarketcap.
+            As default, ``b""``.
     """
     cdef readonly dict _cryptocurrencies
     cdef readonly list _cryptoexchanges
@@ -50,12 +52,14 @@ cdef class Pymarketcap:
     cdef readonly list _converter_cache
 
     cdef public long timeout
+    cdef public object proxy_addr
     cdef public object graphs
     cdef public bint debug
 
-    def __init__(self, timeout=15, debug=False):
+    def __init__(self, timeout=15, debug=False, proxy_addr=b""):
         self.timeout = timeout
         self.debug = debug
+        self.proxy_addr = proxy_addr
 
         #: object: Initialization of graphs internal interface
         self.graphs = type("Graphs", (), self._graphs_interface)
@@ -220,12 +224,13 @@ cdef class Pymarketcap:
             self._converter_cache = [self.currency_exchange_rates, time()]
             return self._converter_cache
 
-    cdef _get(self, char *url):
+    cpdef _get(self, char *url):
         """Internal function to make a HTTP GET request
         using the curl Cython bridge to C library or urllib
         standard library, depending of installation."""
         cdef int status
-        req = get_to_memory(<char *>url, self.timeout, <bint>self.debug)
+        req = get_to_memory(<char *>url, self.timeout,
+                            <bint>self.debug, <char *>self.proxy_addr)
         status = req.status_code
         if status == 200:
             return req.text.decode()

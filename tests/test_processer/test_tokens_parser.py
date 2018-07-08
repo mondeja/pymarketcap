@@ -48,8 +48,8 @@ def test_platform():
 
 def test_circulating_supply():
     assert_any_field_in_response(
-        field="circulating_supply",
-        readable_field="circulating_supply",
+        "circulating_supply",
+        "circulating_supply",
         may_be_empty=True
     )
 
@@ -63,12 +63,12 @@ def test_market_cap():
 
 
 def test_price():
-    assert_any_field_in_response("price", "price")
+    assert_any_field_in_response("price", "price", may_be_empty=True)
 
 
 def test_volume_24h():
     assert_any_field_in_response(
-        field="volume_24h",
-        readable_field="volume_24h",
+        "volume_24h",
+        "volume_24h",
         may_be_empty=True
     )

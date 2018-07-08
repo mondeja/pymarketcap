@@ -41,7 +41,7 @@ cdef class Response(object):
         self.text = text
 
 cpdef Response get_to_memory(const char *url, long timeout,
-                             bint debug):
+                             bint debug, const char *proxy_addr):
     """Send a get request using a buffer stored in memory.
 
     Args:
@@ -59,7 +59,7 @@ cpdef Response get_to_memory(const char *url, long timeout,
     cdef long true = 1L
     version = curl_version()
     cdef CURL *curl = curl_easy_init()
-    cdef const char *user_agent = "pymarketcap 4.0.0012"
+    cdef const char *user_agent = "pymarketcap 4.0.0013"
     cdef const char *accept_encoding = "gzip, deflate"
     cdef char *raw_body
 
@@ -76,6 +76,10 @@ cpdef Response get_to_memory(const char *url, long timeout,
         ret = curl_easy_setopt(curl, CURLOPT_URL, url)
         ret = curl_easy_setopt(curl, CURLOPT_TIMEOUT,
                                <void *>timeout)
+
+        if proxy_addr != b"":
+            ret = curl_easy_setopt(curl, CURLOPT_PROXY,
+                                   proxy_addr);
 
         ret = curl_easy_setopt(curl, CURLOPT_HTTPGET,
                                &true)

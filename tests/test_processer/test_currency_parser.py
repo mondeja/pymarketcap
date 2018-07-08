@@ -6,7 +6,10 @@ import os
 
 import pytest
 
-from pymarketcap import AsyncPymarketcap
+try:
+    from pymarketcap import AsyncPymarketcap
+except ImportError:
+    pass
 from pymarketcap.tests import disabled_decorator
 from pymarketcap.tests.consts import asyncparms
 
@@ -24,6 +27,7 @@ end2end_marked_if_not_cache = \
     pytest.mark.end2end if not exists_cache_file else disabled_decorator
 
 
+@pytest.mark.py36
 @pytest.mark.order1
 @end2end_marked_if_not_cache
 def test_all_currencies(event_loop):
@@ -65,57 +69,57 @@ def assert_any_field_in_response(field, readable_field):
               + "Check 'processer:currency()' function.")
         raise err
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_chats():
     assert_any_field_in_response("chats", "chat")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_webs():
     assert_any_field_in_response("webs", "website")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_explorers():
     assert_any_field_in_response("explorers", "explorer")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_webs():
     assert_any_field_in_response("message_boards", "message board")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_source_code():
     assert_any_field_in_response("source_code", "source code link")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_announcement():
     assert_any_field_in_response("announcement", "announcement")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_mineable():
     assert_any_field_in_response("mineable", "'mineable == True' flag")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_rank():
     assert_any_field_in_response("rank", "'rank != None'")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_max_supply():
     assert_any_field_in_response("max_supply", "'max_supply != None'")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_total_supply():
     assert_any_field_in_response("total_supply", "'total_supply != None'")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_circulating_supply():
     assert_any_field_in_response("circulating_supply",

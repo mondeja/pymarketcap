@@ -18,13 +18,18 @@ def pytest_addoption(parser):
                      default=False, help="Run slower tests.")
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--end2end"):
+    if not config.getoption("--end2end"):
         # Run end2end tests
-        return
-    skip_end2end = pytest.mark.skip(reason="Need --end2end option to run")
-    for item in items:
-        if "end2end" in item.keywords:
-            item.add_marker(skip_end2end)
+        
+        skip_end2end = pytest.mark.skip(reason="Need --end2end option to run")
+        for item in items:
+            if "end2end" in item.keywords:
+                item.add_marker(skip_end2end)
+    if sys.version_info < (3, 6,):
+        skip_py36 = pytest.mark.skip(reason="Need Python v3.6 to run asynchronous tests.")
+        for item in items:
+            if "py36" in item.keywords:
+                item.add_marker(skip_py36)
 
 @pytest.yield_fixture()
 def event_loop():

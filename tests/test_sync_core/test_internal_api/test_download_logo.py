@@ -59,7 +59,7 @@ def test_invalid():
     assert "%dx%d is not a valid size." % (size, size) in str(excinfo)
 
     # Valid size that doesn't exist for a currency.
-    symbol = "BEST"
+    symbol = "GMX"
     size = 200
     with pytest.raises(ValueError) as excinfo:
         pym.download_logo(symbol, size=size)

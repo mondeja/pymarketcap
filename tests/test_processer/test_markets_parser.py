@@ -6,7 +6,10 @@ import os
 
 import pytest
 
-from pymarketcap import AsyncPymarketcap
+try:
+    from pymarketcap import AsyncPymarketcap
+except ImportError:
+    pass
 from pymarketcap.tests import disabled_decorator
 from pymarketcap.tests.consts import asyncparms
 
@@ -24,6 +27,7 @@ end2end_marked_if_not_cache = \
     pytest.mark.end2end if not exists_cache_file else disabled_decorator
 
 
+@pytest.mark.py36
 @pytest.mark.order1
 @end2end_marked_if_not_cache
 def test_all_markets(event_loop):
@@ -65,27 +69,27 @@ def assert_any_field_in_response(field, readable_field):
               + "Check 'processer:markets()' function.")
         raise err
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_name():
     assert_any_field_in_response("name", "currency name")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_website_slug():
     assert_any_field_in_response("website_slug", "website_slug")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_symbol():
     assert_any_field_in_response("symbol", "currency symbol")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_id():
     assert_any_field_in_response("id", "currency id")
 
-
+@pytest.mark.py36
 @end2end_marked_if_not_cache
 def test_markets():
     assert_any_field_in_response("markets", "market")

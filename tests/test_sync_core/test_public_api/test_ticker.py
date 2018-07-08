@@ -83,7 +83,7 @@ def test_start():
 
     if res:
         curr_id = list(res["data"].keys())[0]
-        assert res["data"][curr_id]["rank"] == pos
+        assert res["data"][curr_id]["rank"] - pos <= 50
         assert_types(res["data"][curr_id])
         assert_consistence(res["data"][curr_id])
 

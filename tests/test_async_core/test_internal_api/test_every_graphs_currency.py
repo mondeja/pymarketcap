@@ -4,10 +4,11 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from pymarketcap import (
-    AsyncPymarketcap,
-    Pymarketcap,
-)
+try:
+    from pymarketcap import AsyncPymarketcap
+except ImportError:
+    pass
+from pymarketcap import Pymarketcap
 from pymarketcap.tests.graphs import assert_types
 
 pym = Pymarketcap()
@@ -36,7 +37,7 @@ async def graphs_currency(**kwargs):
             currencies.append(currency)
         return currencies
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_graphs_currency(event_loop):
     async def wrapper():
@@ -48,7 +49,7 @@ def test_every_graphs_currency(event_loop):
 
     event_loop.run_until_complete(wrapper())
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_graphs_currency_with_start(event_loop):
     async def wrapper():
@@ -70,7 +71,7 @@ def test_every_graphs_currency_with_start(event_loop):
 
     event_loop.run_until_complete(wrapper())
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_graphs_currency_with_end(event_loop):
     async def wrapper():
@@ -92,7 +93,7 @@ def test_every_graphs_currency_with_end(event_loop):
 
     event_loop.run_until_complete(wrapper())
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_graphs_currency_with_start_end(event_loop):
     async def wrapper():
@@ -122,7 +123,7 @@ def test_every_graphs_currency_with_start_end(event_loop):
 
     event_loop.run_until_complete(wrapper())
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_graphs_currency_with_start_end_use_auto_timeframe(event_loop):
     async def wrapper():

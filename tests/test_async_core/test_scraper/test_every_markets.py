@@ -6,10 +6,11 @@ import os
 
 import pytest
 
-from pymarketcap import (
-    AsyncPymarketcap,
-    Pymarketcap,
-)
+try:
+    from pymarketcap import AsyncPymarketcap
+except ImportError:
+    pass
+from pymarketcap import Pymarketcap
 from pymarketcap.tests.consts import asyncparms
 from pymarketcap.tests.markets import (assert_consistence, assert_types)
 
@@ -24,7 +25,7 @@ cache_file = os.path.join(
 
 res = []
 
-
+@pytest.mark.py36
 @pytest.mark.end2end
 def test_every_markets(event_loop):
     async def wrapper():

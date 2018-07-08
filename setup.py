@@ -76,12 +76,11 @@ if PYTHON_VERSION < (3, 6,):
     if PYTHON_VERSION > (3, 5,):
         if "--quiet" not in sys.argv:
             while True:
-                msg = (
-                          "\nPython version:\n%s\n\nYou need "
-                          "to install almost Python3.6 in order to use "
-                          "the asynchronous Pymarketcap interface.\n"
-                          "Install pymarketcap without it anyway? Y/N: "
-                      ) % PYTHON_VERSION
+                msg_scheme = "\nPython version:\n%s\n\nYou need " \
+                           + "to install almost Python3.6 in order to use " \
+                           + "the asynchronous Pymarketcap interface.\n" \
+                           + "Install pymarketcap without it anyway? Y/N: "
+                msg = msg_scheme % str(PYTHON_VERSION)
                 cont = str(input(msg)).lower()
                 if cont == "n":
                     exit("Installation cancelled.")
@@ -166,7 +165,7 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name="pymarketcap",
-    version="4.0.0012",
+    version="4.0.0013",
     url="https://github.com/mondeja/pymarketcap",
     download_url="https://github.com/mondeja/pymarketcap/archive/master.zip",
     author=author,

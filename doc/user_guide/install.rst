@@ -2,6 +2,10 @@
 Install
 #######
 
+*********
+From Pypi
+*********
+
 You need to install `cython <http://cython.readthedocs.io/en/latest/src/quickstart/install.html>`__ before pymarketcap. Try: ``pip3 install Cython`` and then:
 
 ::
@@ -26,3 +30,18 @@ From source
 - To install with urllib, use ``--no-curl``.
 
 
+********************
+Known install issues
+********************
+
+::
+
+    pymarketcap/core.c:16:20: fatal error: Python.h: No such file or directory
+
+- Solución (Linux): ``sudo apt-get install python3-dev`` 
+
+::
+
+    pymarketcap/curl.c:581:23: fatal error: curl/curl.h: No such file or directory
+
+- Solución (Linux):  ``sudo apt-get install libcurl4-openssl-dev``
