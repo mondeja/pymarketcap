@@ -59,7 +59,7 @@ cpdef Response get_to_memory(const char *url, long timeout,
     cdef long true = 1L
     version = curl_version()
     cdef CURL *curl = curl_easy_init()
-    cdef const char *user_agent = "pymarketcap 4.0.0014"
+    cdef const char *user_agent = "pymarketcap 4.0.0015"
     cdef const char *accept_encoding = "gzip, deflate"
     cdef char *raw_body
 

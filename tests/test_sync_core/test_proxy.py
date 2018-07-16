@@ -2,10 +2,19 @@
 
 import json
 import time
+import socket
+
+import pytest
 
 from pymarketcap import Pymarketcap
 from pymarketcap.errors import CoinmarketcapHTTPError
 
+def tor_proxy_closed():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    return sock.connect_ex(("127.0.0.1", 9050)) == 1
+
+@pytest.mark.skipif(tor_proxy_closed(),
+                    reason="Requires the opening of local Tor proxy (9050).")
 def test_proxy():
     HTTPerror = True
     attempts = 10
