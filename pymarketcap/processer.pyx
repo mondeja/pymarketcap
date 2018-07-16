@@ -167,12 +167,14 @@ cpdef historical(res, start, end, revert):
     cdef long len_i, i, i2, i3
 
     dates = re.findall(r'<td class="text-left">(.+)</td>', res)
-    vol_marketcap = re.findall(r'cap data-format-value="(-|\d+\.*[\d+-e]*)"', res)
+    vol_marketcap = re.findall(
+        r'td\sdata-format-market-cap\sdata-format-value="(-|\d+\.*[\d+-e]*)"', res
+    )
     ohlc = re.findall(r'fiat data-format-value="(-|\d+\.*[\d+-e]*)"', res)
 
     len_i = len(dates)
     i = 0
-    i2 = min([len(vol_marketcap*2) - len(ohlc), 2])
+    i2 = min([len(vol_marketcap*2) - len(ohlc), 2]) + 1
     i3 = 0
 
     response = []

@@ -19,7 +19,7 @@ class Response:
         self.status_code = status_code
         self.url = url
 
-def get_to_memory(url, timeout, debug):
+def get_to_memory(url, timeout, debug, proxy_addr):
     """GET request stored in memory.
 
     Args:
