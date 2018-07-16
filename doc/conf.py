@@ -26,7 +26,7 @@ author = 'Álvaro Mondéjar Rubio'
 
 
 # The full version, including alpha/beta/rc tags
-release = "4.0.0013"
+release = "4.0.0014"
 # The short X.Y version
 version = ".".join(release.split(".")[:-1])
 

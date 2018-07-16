@@ -165,7 +165,7 @@ author, author_email = ("Álvaro Mondéjar Rubio", "mondejar1994@gmail.com")
 
 install = setup(
     name="pymarketcap",
-    version="4.0.0013",
+    version="4.0.0014",
     url="https://github.com/mondeja/pymarketcap",
     download_url="https://github.com/mondeja/pymarketcap/archive/master.zip",
     author=author,
