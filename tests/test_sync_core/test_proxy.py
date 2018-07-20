@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import json
 import time
 import socket
@@ -13,8 +14,15 @@ def tor_proxy_closed():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     return sock.connect_ex(("127.0.0.1", 9050)) == 1
 
+ON_TRAVIS = os.environ.get("TRAVIS", None) != None
+ON_APPVEYOR = os.environ.get("APPVEYOR", None) != None
+ON_CI = ON_TRAVIS or ON_APPVEYOR
+
 @pytest.mark.skipif(tor_proxy_closed(),
                     reason="Requires the opening of local Tor proxy (9050).")
+@pytest.mark.skipif(ON_CI,
+                    reason="Pymarketcap doesn't support Tor browser proxies" \
+                          + " inside CI environments.")
 def test_proxy():
     HTTPerror = True
     attempts = 10
