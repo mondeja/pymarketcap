@@ -46,28 +46,25 @@ Documentation
 - `Static documentation at Readthedocs <https://pymarketcap.readthedocs.io>`_.
 - `Live running notebook hosted at Binderhub <https://mybinder.org/v2/gh/mondeja/pymarketcap/master?filepath=doc%2Fsync_live.ipynb>`_.
 
-Contributing_
--------------
-.. _Contributing: <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/contributing.rst>
+`Contributing <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/contributing.rst>`_
+---------------------------------------------------------------------------------------------------
 
-Testing_
---------
-.. _Testing: <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/testing.rst>
+`Testing <https://github.com/mondeja/pymarketcap/blob/master/doc/dev_guide/testing.rst>`__
+------------------------------------------------------------------------------------------
 
-Changelog_
-~~~~~~~~~~
-.. _Changelog: <https://cnhv.co/1y9ex>
 
-License_
-~~~~~~~~
-.. _License: <https://cnhv.co/1xgxi>
+`Changelog <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _Changelog: <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>
+
+`License <https://github.com/mondeja/pymarketcap/blob/master/LICENSE>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Support
 ~~~~~~~
 
 - Issue Tracker: https://github.com/mondeja/pymarketcap/issues
 - |Ask me anything| mondejar1994@gmail.com
-
 
 
 .. |TravisCI| image:: https://travis-ci.org/mondeja/pymarketcap.svg?branch=master
