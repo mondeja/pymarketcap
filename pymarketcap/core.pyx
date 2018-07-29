@@ -31,9 +31,7 @@ http_errors_map = {
     "429": CoinmarketcapTooManyRequestsError,
     "404": CoinmarketcapHTTPError404,
 }
-
 http_error_numbers = [int(number) for number in http_errors_map.keys()]
-
 
 cdef class Pymarketcap:
     """Synchronous class for retrieve data from https://coinmarketcap.com.

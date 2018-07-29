@@ -182,7 +182,7 @@ class AsyncPymarketcap(ClientSession):
 
         Returns (list): Data for all currencies.
         """
-        if currencies is None:
+        if not currencies:
             currencies = [
                 curr["website_slug"]
                 for curr in self.sync.cryptocurrencies
@@ -227,7 +227,7 @@ class AsyncPymarketcap(ClientSession):
         Returns (async iterator):
                 Data for all currencies.
         """
-        if currencies is None:
+        if not currencies:
             currencies = [
                 curr["website_slug"]
                 for curr in self.sync.cryptocurrencies
@@ -301,7 +301,7 @@ class AsyncPymarketcap(ClientSession):
         """
         self.__start = start
         self.__end = end
-        if currencies is None:
+        if not currencies:
             currencies = [
                 curr["website_slug"]
                 for curr in self.sync.cryptocurrencies
@@ -448,7 +448,7 @@ class AsyncPymarketcap(ClientSession):
                 end=end,
             )
 
-        if currencies is None:
+        if not currencies:
             currencies = [
                 curr["website_slug"]
                 for curr in self.sync.cryptocurrencies

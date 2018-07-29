@@ -51,7 +51,7 @@ cpdef Response get_to_memory(const char *url, long timeout,
         debug (bint): Flag to activate/desactivate body
             response printing.
 
-    Returns (Response):
+    Returns (:class:`pymarketcap.curl.Response`):
         Returns a class with next attributes:
             ``text``, ``status_code``, ``url``.
     """
