@@ -38,10 +38,10 @@ Known install issues
 
     pymarketcap/core.c:16:20: fatal error: Python.h: No such file or directory
 
-- Solución (Linux): ``sudo apt-get install python3-dev`` 
+- Solution (Linux): ``sudo apt-get install python3-dev`` 
 
 ::
 
     pymarketcap/curl.c:581:23: fatal error: curl/curl.h: No such file or directory
 
-- Solución (Linux):  ``sudo apt-get install libcurl4-openssl-dev``
+- Solution (Linux):  ``sudo apt-get install libcurl4-openssl-dev``

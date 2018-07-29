@@ -2,9 +2,7 @@ pymarketcap
 ===========
 
 
-|TravisCI| |AppVeyor| |Status|
-
-|ReadTheDocs| |Binder|
+|TravisCI| |AppVeyor| |Status| |ReadTheDocs| |Binder|
 
 |PyPI| |PyPI-Versions| |LICENSE|
 
@@ -24,7 +22,7 @@ You need to install `cython <http://cython.readthedocs.io/en/latest/src/quicksta
 
    pip3 install pymarketcap
 
-- On Windows will be used ``urllib`` library to make synchronous requests and on Linux/Mac will be build against `libcurl <https://curl.haxx.se/docs/install.html>`_ C library. You can control this (see below):
+- On Windows, `urllib <https://docs.python.org/3/library/urllib.html>`_  will be used library by default to make synchronous requests whereas that on Linux/Mac will be built using `libcurl <https://curl.haxx.se/docs/install.html>`_ C library. You can control this (see below):
 
 
 From source
@@ -55,7 +53,6 @@ Documentation
 
 `Changelog <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. _Changelog: <http://pymarketcap.readthedocs.io/dev_guide/changelog.html>
 
 `License <https://github.com/mondeja/pymarketcap/blob/master/LICENSE>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
