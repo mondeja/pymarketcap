@@ -26,9 +26,9 @@ install-light:
 	$(pip install) -r requirements.txt
 	$(run-setup) install --no-curl
 
-dev-install:
+install-dev:
 	$(pip install) -r dev-requirements.txt
-	$(run-setup) install
+	$(run-setup) develop
 
 uninstall:
 	$(pip) uninstall pymarketcap -y
@@ -75,8 +75,8 @@ version:
 	$(python) -c "import pymarketcap as p;print(p.__version__);"
 	cd pymarketcap
 
-push:
-	bash scripts/push.sh
+version-micro-up:
+	$(python) scripts/vss.py micro
 
-push-no-test:
-	bash scripts/push.sh --no-tests
+version-micro-down:
+	$(python) scripts/vss.py unmicro

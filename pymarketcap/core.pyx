@@ -106,7 +106,7 @@ cdef class Pymarketcap:
             self._cryptocurrencies = self.listings()
         return self._cryptocurrencies["data"]
 
-    cpdef cryptocurrency_by_field_value(self, unicode field, unicode value):
+    cpdef cryptocurrency_by_field_value(self, unicode field, value):
         """Returns a currency listed given a field and value
         if ``field`` and ``value`` parameters matches for a currency,
         otherwise returns ``None``.
@@ -165,7 +165,7 @@ cdef class Pymarketcap:
                 return exchange
         return None
 
-    cpdef field_type(self, value):
+    def field_type(self, value):
         """Get a field type between ``"name"``, ``"symbol"``,
         ``"id"`` or ``"website_slug"``given a value. This
         method maybe is not strict, but used with previous

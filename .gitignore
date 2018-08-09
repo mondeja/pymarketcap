@@ -23,4 +23,4 @@ test_currency_tracking.py
 *.go
 .coverage
 
-.idea
+Python-3.6.4/**/**
