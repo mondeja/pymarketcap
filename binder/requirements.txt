@@ -1,4 +1,4 @@
 cython>=0.28.1
 aiohttp>=3.0.9
 tqdm>=4.19.6
-
+pip>=18.0

@@ -22,5 +22,3 @@ async.py
 test_currency_tracking.py
 *.go
 .coverage
-
-Python-3.6.4/**/**
