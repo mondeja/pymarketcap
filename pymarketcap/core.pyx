@@ -145,7 +145,7 @@ cdef class Pymarketcap:
             response = self._cryptoexchanges
         return response
 
-    cpdef exchange_by_field_value(self, unicode field, unicode value):
+    cpdef exchange_by_field_value(self, unicode field, value):
         """Returns a exchange listed given a field and value
         if ``field`` and ``value`` parameters matches for a exchange,
         otherwise returns ``None``.
