@@ -18,7 +18,7 @@ class Builder:
     def __init__(self, source=os.path.join(os.getcwd(), "pymarketcap", "core.pyx")):
         self.source = source
         self.test_sources = {
-            "test_ticker": os.path.join(os.getcwd(), "tests", "test_sync_core",
+            "test_ticker": os.path.join(os.getcwd(), "test", "test_sync_core",
                                         "test_public_api", "test_ticker.py")
         }
 

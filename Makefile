@@ -47,10 +47,10 @@ clean:
 	sudo rm pymarketcap/*.c pymarketcap/*.so tests/cache/*.json
 
 test:
-	pytest tests -vs
+	pytest test -vs
 
 test-end2end:
-	pytest tests -vs --end2end
+	pytest test -vs --end2end
 
 precompile-sources:
 	$(python) -c "from precompiler import run_builder;import os; \

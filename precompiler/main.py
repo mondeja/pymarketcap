@@ -20,6 +20,7 @@ def run_builder(source):
             builder.build(func)
     except Exception as e:
         print("Error precompiling pymarketcap source code.")
+        print(e)
         return False
 
     print("Pymarketcap source code precompiled successfully.")
